@@ -1,0 +1,33 @@
+<project name="Quiz Fetch Mail" default="install" basedir=".">
+
+	<description>Quick Fetch Mail</description>
+
+	<property name="install.dir" location="${basedir}/../../bin/mail/" />
+	<property name="src.dir" location="${basedir}" />
+	<property name="build.dir" location="${basedir}" />
+
+	<target name="all" depends="install" />
+
+	<target name="install" depends="build">
+          <mkdir dir="${install.dir}" />
+          <copy file="mail.jar" todir="${install.dir}" />
+          <copy todir="${install.dir}">
+            <fileset dir="${build.dir}">
+	      <include name="*.class" />
+	    </fileset>
+          </copy>
+	</target>
+
+	<target name="build">
+          <javac destdir="${build.dir}" nowarn="on" source="1.6" fork="yes"
+		 srcdir="${src.dir}" debug="on" classpath="mail.jar" />
+	</target>
+
+	<target name="clean">
+	  <delete dir="${install.dir}" />
+	  <delete>
+	    <fileset dir="${build.dir}" includes="*.class" />
+	  </delete>
+	</target>
+
+</project>

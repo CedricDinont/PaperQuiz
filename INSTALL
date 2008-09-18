@@ -1,0 +1,15 @@
+Ce programme nécessite un certain nombre de bibliothèques tierces :
+- la bibliothèque Magick++ (popur la reconnaissance des marques sur les images).
+  Sous Fedora, le paquet s'appelle ImageMagick-c++.
+- le programme ldapsearch (pour accéder aux informations sur les étudiants 
+  dans l'annuaire LDAP).
+  Sous Fedora, le paquet s'appelle openldap-utils.
+- Un environnement Sun Java 1.6 correctement configuré (pour la partie 
+  de récupération de fichiers scannés depuis la boîte mail).
+
+Si vous avez récupéré Quiz à partir du serveur Subversion
+ou si vous voulez recompiler les programmes de reconnaissance de marques,
+il vous faudra également les fichiers de développement pour Magick++.
+Sous Fedora, le paquet s'appelle ImageMagick-c++-devel.
+Pour compiler les programmes en C et en Java, tapez make dans le 
+répertoire src/ 
