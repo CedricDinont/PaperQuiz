@@ -1,3 +1,5 @@
+# normal usage: awk -f ../correcteur.awk -v bad=-0.5 -v outputmode=ooffice brut.txt
+
 function int2letter(a,   b) {
     if(a==0) 
 	return "";
@@ -12,29 +14,46 @@ function int2letter(a,   b) {
 }
 
 BEGIN {
-# awk -f ../correcteur.awk -v bad=-0.5 brut.txt
     FS=";";
     if(students=="")
+	# file with students names
+	# format: LASTNAME firstname code
 	students="../students.txt";
     if(corrige=="")
+	# correction file
+	# format: question_number;number_of_possible_answers;expected_answers;coefficient;bonus
+	# example: 1;4;R2\R4;1;0
+	# comments are possible with the "#" character
 	corrige="corrige.txt";
     if(good=="")
+	# number of points per right answer
 	good=+1;
     if(bad=="")
-	bad=0;  # Warning - bad should be negative
+	# number of points per wrong answer, Warning - "bad" should be negative
+	bad=0;
     if(outputmode==openoffice)
+	# OpenOffice output or stdout
 	outputmode=ooffice
     if(ooffile=="")
+	# OpenOffice output file
 	ooffile="results.csv"
     if(statfile=="")
+	# statistics per question
 	statfile="/dev/stdout";
+    if(binlength=="")
+	# bining length for marks statistics
+	binlength=2;
+    if(OOFS=="")
+	# OpenOffice separator
+	# Do not use ";" since this sign is needed in OpenOffice functions (IF and so on)
+	OOFS=",";
 
 #   import student names
     while(getline<students>0) {
 	split($0,a," ");
 	absent[a[3]]=1; # a priori absent...
 	if(outputmode=="ooffice")
-	    stutab[a[3]]=sprintf("%s;%s",a[1],a[2]);
+	    stutab[a[3]]=sprintf("%s%c%s",a[1],OOFS,a[2]);
 	else
 	    stutab[a[3]]=sprintf("%-20s %-20s",a[1],a[2]);
     }
@@ -42,33 +61,36 @@ BEGIN {
 
 #   import correction
     nr_questions=0;
-    nr_fields_corr=5;
-    inputline=0;
-#   format is:
-#   question_nr;nb_possible_responses;correct_answers(eg.R1\R5);coef;bonus
+    nr_fields_corr=5; # there should be 5 fields in file corrige, but keep it as a parameter...
+    inputline=0; # trace inputline for warning outputs...
+#   format: question_nr;nb_possible_answers;correct_answers(eg.R1\R5);coef;bonus
     while(getline<corrige>0) {
 	inputline++;
 	if($1!~"#" && NF==nr_fields_corr) {
-
-	    if($1 in nr_responses) {
-		printf "Warning - in \"%s\" line %d:\n\tquestion %d already defined --> use bonus!!\n",corrige,inputline,$1 > "/dev/stderr";
+	    
+	    if($1 in nr_answers) {
+		# already seen!!!
+		printf "WARNING - in \"%s\" line %d:\n\tquestion %d already defined --> use bonus!!\n",corrige,inputline,$1 > "/dev/stderr";
 		bonus[$1]=1;
 		corr[$1,0]=1;
 	    } else {
-		nr_responses[$1]=$2; # number of possible responses for question $1
-		if($2>max_nr_responses)
-		    max_nr_responses=$2;
+		# normal way
+		nr_answers[$1]=$2; # number of possible responses for question $1
+		if($2>max_nr_answers)
+		    max_nr_answers=$2;
 		
 		nr_correct[$1]=split($3,a,"\\");
+		# nr_correct[q] (nr of correct answers at question "q") is used to compute mark
 		if(nr_correct[$1]==0) {
-		    printf "Warning - in \"%s\" line %d question %d:\n\t no correct response!!\n",corrige,inputline,$1 > "/dev/stderr";
+		    printf "WARNING - in \"%s\" line %d question %d:\n\t no correct response!!\n",corrige,inputline,$1 > "/dev/stderr";
 		    nr_correct[$1]=1; # prevent division by 0
 		} else {
 		    for(r in a) {
 			gsub("R","",a[r]);
 			corr[$1,a[r]]=1;
-			if(a[r]>nr_responses[$1]) {
-			    printf "Warning - in \"%s\" line %d question %d:\n\t response R%-2d out of range --> use bonus!!\n",corrige,inputline,$1,a[r] > "/dev/stderr";
+			# by default corr[x,y] is initialized at 0
+			if(a[r]>nr_answers[$1]) {
+			    printf "WARNING - in \"%s\" line %d question %d:\n\t response R%-2d out of range --> use bonus!!\n",corrige,inputline,$1,a[r] > "/dev/stderr";
 			    bonus[$1]=1;
 			}
 		    }
@@ -79,137 +101,238 @@ BEGIN {
 		if($1>nr_questions)
 		    nr_questions=$1;
 		
-		minmark+=bad/nr_correct[$1]*(nr_responses[$1]-nr_correct[$1]);
+		minmark+=bad*coeff[$1]/nr_correct[$1]*(nr_answers[$1]-nr_correct[$1]);
+		maxmark+=coeff[$1];
 	    }
 	} else if($1!~"#" && NF!=nr_fields_corr && NF>0)
-	    printf "Warning - in \"%s\" line %d:\n\tWrong number of fields (found %d instead of %d) --> question ignored!!\n",corrige,inputline,NF,nr_fields_corr > "/dev/stderr";
+	    # Wrong number of fields!!!
+	    printf "WARNING - in \"%s\" line %d:\n\tWrong number of fields (found %d instead of %d) --> question ignored!!\n",corrige,inputline,NF,nr_fields_corr > "/dev/stderr";
     }
     close(corrige);
-    maxmark=nr_questions;
-#   printf "%d questions\n",nr_questions > "/dev/stderr";
-#   printf "Mark between %6.2f and %6.2f\n",minmark,maxmark > "/dev/stderr";
+    printf "%d questions\n",nr_questions > "/dev/stdout";
+    printf "Mark between %6.3f and %6.3f\n",minmark,maxmark > "/dev/stdout";
 
-#   check corrige consistency
+#   check corrige consistency: nr of questions should be equal to max(question_nr)
     for(q=1;q<=nr_questions;q++) {
-	if( ! (q in nr_responses) ) {
-	    printf "Warning - in \"%s\":\n\tquestion %d undefined --> use bonus!!\n",corrige,q > "/dev/stderr";
-	    nr_responses[q]=0;
+	if( ! (q in nr_answers) ) {
+	    printf "WARNING - in \"%s\":\n\tquestion %d undefined --> use bonus!!\n",corrige,q > "/dev/stderr";
+	    nr_answers[q]=0;
 	    coeff[q]=1;
 	    bonus[q]=1;
 	    corr[q,0]=1;
 	}
     }
 
+    # OpenOffice output
     if(outputmode=="ooffice") {
-#	at this point, we suppose everything above correct
-	printf "student_name;student_first_name;student_id" > ooffile;
+	# at this point, we suppose everything above correct
+	printf "student_name%cstudent_first_name%cstudent_id",OOFS,OOFS > ooffile;
 	colstart=4;
+	nr_void_col=2; # nr of void columns between marks and rubbish calculus
 	for(q=1;q<=nr_questions;q++)
-	    printf "; Q%3d",q > ooffile;
-	printf "; TOTAL\ncoefficients" > ooffile;
-
-	for(q=2;q<=colstart-1;q++)
-	    printf ";" > ooffile;
+	    printf "%c Q%3d",OOFS,q > ooffile;
+	printf "%c TOTAL",OOFS > ooffile;
+	# add dummy columns
+	for(i=0;i<nr_void_col;i++)
+	    printf "%c",OOFS > ooffile;
+	# then put calculus aside
 	for(q=1;q<=nr_questions;q++)
-	    printf "; %f",coeff[q] > ooffile;
-	printf ";=SUM(%s2:%s2)\nbonus",int2letter(colstart),int2letter(nr_questions+colstart-1) > ooffile;
-
-	for(q=2;q<=colstart-1;q++)
-	    printf ";" > ooffile;
-	for(q=1;q<=nr_questions;q++)
-	    printf "; %4d",bonus[q] > ooffile;
+	    printf "%c Q%3d",OOFS,q > ooffile;
 	printf "\n" > ooffile;
-	line=4; # first student line !
+	###### NEWLINE
+
+	printf "coefficients" > ooffile;
+	for(q=2;q<=colstart-1;q++)
+	    printf "%c",OOFS > ooffile;
+	for(q=1;q<=nr_questions;q++)
+	    printf "%c %f",OOFS,coeff[q] > ooffile;
+	printf "%c=SUM(%s2:%s2)",OOFS,int2letter(colstart),int2letter(nr_questions+colstart-1) > ooffile;
+	for(q=0;q<nr_void_col;q++)
+	    printf "%c",OOFS > ooffile;
+	printf "%cmarks x coeffs\n",OOFS > ooffile;
+	###### NEWLINE
+
+	printf "bonus" > ooffile
+	for(q=2;q<=colstart-1;q++)
+	    printf "%c",OOFS > ooffile;
+	for(q=1;q<=nr_questions;q++)
+	    printf "%c %4d",OOFS,bonus[q] > ooffile;
+	printf "\n" > ooffile;
+	###### NEWLINE
+
+	printf "nr_expected_answers" > ooffile;
+	for(q=2;q<=colstart-1;q++)
+	    printf "%c",OOFS > ooffile;
+	for(q=1;q<=nr_questions;q++)
+	    printf "%c %4d",OOFS,nr_correct[q] > ooffile;
+	printf "%c=SUM(%s4:%s4)\n",OOFS,int2letter(colstart),int2letter(nr_questions+colstart-1) > ooffile;
+	###### NEWLINE
+
+	line=5; # first student line !
+	first_stuline=line;
     } else {
-	printf "%-20s %-20s 0000    %6.2f  (min_mark=%6.2f)\n","#------","CORRIGE",maxmark,minmark;
+	printf "%-20s %-20s 0000    %6.3f  (min_mark=%6.3f)\n","#------","CORRIGE",maxmark,minmark;
     }
 
 }
 
 $1!~"Code" {
-    mark[$1]=0;
     absent[$1]=0;
+    # globstudmark[$1] = global student "s" mark, set to 0 by default
+    # questudmark[s,q] = student "s" mark at question "q", set to 0 by default
+    # stugood[s] and stubad[s] stand for number of right and wrong ticks of student "s"
 
-#   response[q,r] = nr responses "r" at question "q"
-#   "r=0" for no response
-#   printf "%5d %s\n",$1,stutab[$1];
     for(q=2;q<=nr_questions+1;q++) {
 
 	if($q=="") {
-	    responses[q-1,0]++;
+	    # class_responses[q,r] = nr of answers "r" at question "q" ("r=0" for no answer)
+	    class_responses[q-1,0]++;
+	    # studresp[s,q,r] = 1 iff student "s" has answered "r" at question "q"
 	    studresp[$1,q-1,0]=1;
 
 	} else {
-#	    update student ($1) tab of responses for question q-1
-	    split($q,a,"\\");
-	    for(r in a) {
-		gsub("R","",a[r]);
-		responses[q-1,a[r]]++;
-		studresp[$1,q-1,a[r]]=1;
+	    # update student ($1) answers table for question q-1
+	    split($q,tab,"\\");
+	    for(r in tab) {
+		gsub("R","",tab[r]);
+		class_responses[q-1,tab[r]]++;
+		studresp[$1,q-1,tab[r]]=1;
 	    }
 
-#           compute mark
-#	    printf "\t-->S%-5d Q%-2d ",$1,q-1;
-	    for(r=1;r<=nr_responses[q-1];r++) {
+	    # compute mark
+	    for(r=1;r<=nr_answers[q-1];r++) {
 		if(corr[q-1,r]==1 && studresp[$1,q-1,r]==1) {
-#		    match!
-		    studmark[$1,q-1]+=good;
+		    # match!
+		    questudmark[$1,q-1]+=good/nr_correct[q-1];
+		    globstudmark[$1]+=coeff[q-1]*good/nr_correct[q-1];
 		    stugood[$1]++;
 		} else if(corr[q-1,r]==0 && studresp[$1,q-1,r]==1) {
-#		    mismatch!
-		    studmark[$1]+=bad;
+		    # mismatch!
+#		    printf "\t\tquestudmark[%d,%d] from %f downto %f\n",$1,q-1,questudmark[$1],questudmark[$1]+bad/nr_correct[q-1] > "/dev/stderr";
+		    questudmark[$1,q-1]+=bad/nr_correct[q-1];
+		    globstudmark[$1]+=coeff[q-1]*bad/nr_correct[q-1];
 		    stubad[$1]++;
-#		    printf "Student:%4d Q%-2d mismatched at R%-2d\n",$1,q-1,r;
 		}
-#		printf "%5d ",studresp[$1,q-1,r];
 	    }
-#	    printf "\n";
 	}
     }
 
-#   output
+    # OpenOffice output
     if(outputmode=="ooffice") {
-	printf "%s;%d",stutab[$1],$1 > ooffile;   # stutab[$1] has two fields!!
+	printf "%s%c%d",stutab[$1],OOFS,$1 > ooffile;   # remind that stutab[s] has two fields
 	for(q=1;q<=nr_questions;q++)
-	    printf ";%.2f",studmark[$1,q] > ooffile;
-	printf ";=SUM(%s%d:%s%d)\n",int2letter(colstart),line,int2letter(nr_questions+colstart-1),line > ooffile;
+	    printf "%c%.3f",OOFS,questudmark[$1,q] > ooffile;
+	printf "%c=IF(%s%d=\"ABS\";\"ABS\";20*SUM(%s%d:%s%d)/%s$2)",OOFS,int2letter(colstart),line,int2letter(colstart+nr_questions+nr_void_col+1),line,int2letter(colstart+2*nr_questions+nr_void_col),line,int2letter(colstart+nr_questions) > ooffile;
+	# add dummy columns
+	for(i=0;i<nr_void_col;i++)
+	    printf "%c",OOFS > ooffile;
+	# then put calculus aside
+	for(q=1;q<=nr_questions;q++) {
+	    colname=int2letter(colstart-1+q);
+	    printf "%c=IF(NOT(%s$3=0);%s$2;%s%d*%s$2)",OOFS,colname,colname,colname,line,colname > ooffile;
+	}
+	printf "\n" > ooffile;
 	line++;
+	###### NEWLINE
+
     } else {
-	printf "%s %5d     %5.2f \t (= %5.2f  %-5.2f)\n",stutab[$1],$1,mark[$1],stugood[$1]*good,stubad[$1]*bad;
+	printf "%s %5d    %6.3f \t (correct_ticks: %3d   wrong_ticks: %3d )\n",stutab[$1],$1,globstudmark[$1],stugood[$1],stubad[$1];
     }
 }
 
 END {
-#   output ABS
+    # OpenOffice output
     if(outputmode=="ooffice") {
+
+	# output ABSENTS
 	for(s in stutab)
 	    if(absent[s]==1) {
-		printf "%s;%d",stutab[s],s > ooffile;   # stutab[s] has two fields!!
+		printf "%s%c%d",stutab[s],OOFS,s > ooffile;   # stutab[s] has two fields!!
 		for(q=1;q<=nr_questions;q++)
-		    printf ";ABS",studmark[$1,q] > ooffile;
-		printf "\n" > ooffile;
+		    printf "%c\"ABS\"",OOFS,questudmark[$1,q] > ooffile;
+		printf "%c=IF(%s%d=\"ABS\";\"ABS\";20*SUM(%s%d:%s%d)/%s$2)\n",OOFS,int2letter(colstart),line,int2letter(colstart+nr_questions+nr_void_col+1),line,int2letter(colstart+2*nr_questions+nr_void_col),line,int2letter(colstart+nr_questions) > ooffile;
+		line++;
 	    }
+	last_stuline=line-1;
+	###### NEWLINE
+
+	printf "\n" > ooffile;
+	line++;
+	###### NEWLINE
+
+	# average over class for each question and global marks
+	printf "avg" > ooffile;
+	for(q=2;q<=colstart-1;q++)
+	    printf "%c",OOFS > ooffile;
+ 	for(q=1;q<=nr_questions+1;q++) { # +1 for "TOTAL" statistics
+	    colname=int2letter(colstart-1+q);
+ 	    printf "%c=AVERAGE(%s%d:%s%d)",OOFS,colname,first_stuline,colname,last_stuline > ooffile;
+	}
+	printf "\n" > ooffile;
+	line++;
+	###### NEWLINE
+
+	# standart deviation over class for each question and global marks
+	printf "rms" > ooffile;
+	for(q=2;q<=colstart-1;q++)
+	    printf "%c",OOFS > ooffile;
+ 	for(q=1;q<=nr_questions+1;q++) { # +1 for "TOTAL" statistics
+	    colname=int2letter(colstart-1+q);
+ 	    printf "%c=STDEV(%s%d:%s%d)",OOFS,colname,first_stuline,colname,last_stuline > ooffile;
+	}
+	printf "\n\n" > ooffile;
+	line+=2;
+	###### NEWLINE - NEWLINE
+
+	# compute nr of present students and repartition of marks
+	printf "presents%c=%s%d%c%cmarks%c",OOFS,int2letter(5+1000-int(1000-20/binlength)),line+1,OOFS,OOFS,OOFS > ooffile;
+	for(n=binlength;n<20;n+=binlength)
+	    printf "]%d;%d]%c",n-binlength,n,OOFS > ooffile;
+	printf ">%d\n",n-binlength > ooffile;
+	line++;
+	###### NEWLINE
+
+	printf "absents%c=COUNTIF($%s$%d:$%s$%d;\"ABS\")%c%crepartition%c",OOFS,int2letter(colstart),first_stuline,int2letter(colstart),last_stuline,OOFS,OOFS,OOFS > ooffile;
+	printf "=%s%d%c",int2letter(5),line+1,OOFS > ooffile;
+	for(n=binlength;n<20-binlength;n+=binlength)
+	    printf "=%s%d-%s%d%c",int2letter(5+n/binlength),line+1,int2letter(4+n/binlength),line+1,OOFS > ooffile;
+	printf "=COUNTIF($%s$%d:$%s$%d;\">%d\")%c=SUM(%s%d:%s%d)\n",int2letter(colstart+nr_questions),first_stuline,int2letter(colstart+nr_questions),last_stuline,n,OOFS,int2letter(5),line,int2letter(4+1000-int(1000-20/binlength)),line > ooffile; # 1000-int(1000-x) rounds "x" towards +infty (well... towards +1000)
+	line++;
+	###### NEWLINE
+
+	for(n=1;n<4;n++)
+	    printf "%c",OOFS > ooffile;
+	printf "cumulative%c",OOFS > ooffile;
+	for(n=binlength;n<20;n+=binlength)
+	    printf "=COUNTIF($%s$%d:$%s$%d;\"<=%d\")%c",int2letter(colstart+nr_questions),first_stuline,int2letter(colstart+nr_questions),last_stuline,n,OOFS > ooffile;
+	printf "=%s%d+%s%d\n",int2letter(3+20/binlength),line,int2letter(4+20/binlength),line-1 > ooffile;
+	line++;
+	###### NEWLINE
+
     } else {
+	# output ABSENTS
 	for(s in stutab)
 	    if(absent[s]==1)
 		printf "%s %5d      ABS\n",stutab[s],s;
     }
 
 #   stats
-    printf "#Response:VOID    " > statfile;
-    for(r=1;r<=max_nr_responses;r++)
+    printf "#Ans:   coeff  VOID     " > statfile;
+    for(r=1;r<=max_nr_answers;r++)
 	printf "R%-4d  ",r > statfile;
-    printf "\n" > statfile;
+    printf "(sutdents|correction)\n" > statfile;
 
     for(q=1;q<=nr_questions;q++) {
-	printf "#Q%-2d    ",q > statfile;
-	if(bonus[q]==1)
-	    for(r=0;r<=max_nr_responses;r++)
-		printf "%5s  ","X.X" > statfile;
-	else {
-	    for(r=0;r<=nr_responses[q];r++)
-		printf "%5.1f  ",responses[q,r]+corr[q,r]/10 > statfile;
-	    for(r=nr_responses[q]+1;r<=max_nr_responses;r++)
+	printf "#Q%-2d    %5.2f ",q,coeff[q] > statfile;
+	if(bonus[q]==1) {
+	    for(r=0;r<=nr_answers[q];r++)
+		printf "%3d%2s  ",class_responses[q,r],"|X" > statfile;
+	    for(r=nr_answers[q]+1;r<=max_nr_answers;r++)
+		printf "%5s  ","_" > statfile;
+	} else {
+	    for(r=0;r<=nr_answers[q];r++)
+		printf "%3d|%1d  ",class_responses[q,r],corr[q,r] > statfile;
+	    for(r=nr_answers[q]+1;r<=max_nr_answers;r++)
 		printf "%5s  ","_" > statfile;
 	}
 	printf "\n" > statfile;
