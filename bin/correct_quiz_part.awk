@@ -1,4 +1,4 @@
-# normal usage: awk -f ../correcteur.awk -v bad=-0.5 -v outputmode=ooffice brut.txt
+# normal usage: awk -f ../correcteur.awk -v outputmode=ooffice brut.txt
 
 function int2letter(a,   b) {
     if(a==0) 
@@ -21,16 +21,17 @@ BEGIN {
 	students="../students.txt";
     if(corrige=="")
 	# correction file
-	# format: question_number;number_of_possible_answers;expected_answers;coefficient;bonus
-	# example: 1;4;R2\R4;1;0
+	# format: question_number;number_of_possible_answers;expected_answers;bonif;malus;coefficient;bonus
+	# example: 1;4;R2\R4;1;-.5;1;0
 	# comments are possible with the "#" character
+	# "bonus" are used for ill-posed questions
 	corrige="corrige.txt";
-    if(good=="")
-	# number of points per right answer
-	good=+1;
-    if(bad=="")
-	# number of points per wrong answer, Warning - "bad" should be negative
-	bad=0;
+#     if(good=="")
+#     # number of points per right answer
+#     good=+1;
+#     if(bad=="")
+#     # number of points per wrong answer, Warning - "bad" should be negative
+#     bad=0;
     if(outputmode==openoffice)
 	# OpenOffice output or stdout
 	outputmode=ooffice
@@ -56,14 +57,15 @@ BEGIN {
 	    stutab[a[3]]=sprintf("%s%c%s",a[1],OOFS,a[2]);
 	else
 	    stutab[a[3]]=sprintf("%-20s %-20s",a[1],a[2]);
+	# a[3] might be a string like "P45079"
     }
     close(students);
 
 #   import correction
     nr_questions=0;
-    nr_fields_corr=5; # there should be 5 fields in file corrige, but keep it as a parameter...
+    nr_fields_corr=7; # there should be 7 fields in file corrige, but keep it as a parameter...
     inputline=0; # trace inputline for warning outputs...
-#   format: question_nr;nb_possible_answers;correct_answers(eg.R1\R5);coef;bonus
+#   format: question_nr;nb_possible_answers;correct_answers(eg.R1\R5);bonif;malus;coef;bonus
     while(getline<corrige>0) {
 	inputline++;
 	if($1!~"#" && NF==nr_fields_corr) {
@@ -75,6 +77,9 @@ BEGIN {
 		corr[$1,0]=1;
 	    } else {
 		# normal way
+		if($1>nr_questions)
+		    nr_questions=$1;
+
 		nr_answers[$1]=$2; # number of possible responses for question $1
 		if($2>max_nr_answers)
 		    max_nr_answers=$2;
@@ -95,13 +100,14 @@ BEGIN {
 			}
 		    }
 		}
-		coeff[$1]=$4;
+		good[$1]=$4;
+		bad[$1]=$5;
+		coeff[$1]=$6;
+
 		if(bonus[$1]==0)
-		    bonus[$1]=$5;
-		if($1>nr_questions)
-		    nr_questions=$1;
-		
-		minmark+=bad*coeff[$1]/nr_correct[$1]*(nr_answers[$1]-nr_correct[$1]);
+		    bonus[$1]=$7;
+
+		minmark+=bad[$1]*coeff[$1]/nr_correct[$1]*(nr_answers[$1]-nr_correct[$1]);
 		maxmark+=coeff[$1];
 	    }
 	} else if($1!~"#" && NF!=nr_fields_corr && NF>0)
@@ -126,19 +132,14 @@ BEGIN {
     # OpenOffice output
     if(outputmode=="ooffice") {
 	# at this point, we suppose everything above correct
-	printf "student_name%cstudent_first_name%cstudent_id",OOFS,OOFS > ooffile;
 	colstart=4;
-	nr_void_col=2; # nr of void columns between marks and rubbish calculus
+	colname1=int2letter(colstart);
+	colname2=int2letter(nr_questions+colstart-1);
+
+	printf "student_name%cstudent_first_name%cstudent_id",OOFS,OOFS > ooffile;
 	for(q=1;q<=nr_questions;q++)
 	    printf "%c Q%3d",OOFS,q > ooffile;
-	printf "%c TOTAL",OOFS > ooffile;
-	# add dummy columns
-	for(i=0;i<nr_void_col;i++)
-	    printf "%c",OOFS > ooffile;
-	# then put calculus aside
-	for(q=1;q<=nr_questions;q++)
-	    printf "%c Q%3d",OOFS,q > ooffile;
-	printf "\n" > ooffile;
+	printf "%c TOTAL\n",OOFS > ooffile;
 	###### NEWLINE
 
 	printf "coefficients" > ooffile;
@@ -146,18 +147,33 @@ BEGIN {
 	    printf "%c",OOFS > ooffile;
 	for(q=1;q<=nr_questions;q++)
 	    printf "%c %f",OOFS,coeff[q] > ooffile;
-	printf "%c=SUM(%s2:%s2)",OOFS,int2letter(colstart),int2letter(nr_questions+colstart-1) > ooffile;
-	for(q=0;q<nr_void_col;q++)
-	    printf "%c",OOFS > ooffile;
-	printf "%cmarks x coeffs\n",OOFS > ooffile;
+	printf "%c=SUM($%s$2:$%s$2)\n",OOFS,colname1,colname2 > ooffile;
 	###### NEWLINE
 
-	printf "bonus" > ooffile
+	printf "bonification" > ooffile;
+	for(q=2;q<=colstart-1;q++)
+	    printf "%c",OOFS > ooffile;
+	for(q=1;q<=nr_questions;q++)
+	    printf "%c %f",OOFS,good[q] > ooffile;
+	printf "%c=SUMPRODUCT($%s$2:$%s$2;$%s$3:$%s$3)",OOFS,colname1,colname2,colname1,colname2 > ooffile;
+	printf "%cmax_mark\n",OOFS > ooffile;
+	###### NEWLINE
+
+	printf "malus" > ooffile;
+	for(q=2;q<=colstart-1;q++)
+	    printf "%c",OOFS > ooffile;
+	for(q=1;q<=nr_questions;q++)
+	    printf "%c %f",OOFS,bad[q] > ooffile;
+	printf "%c=SUMPRODUCT($%s$2:$%s$2;$%s$4:$%s$4;$%s$7:$%s$7;1/$%s$6:$%s$6)-SUMPRODUCT($%s$2:$%s$2;$%s$4:$%s$4;$%s$6:$%s$6;1/$%s$6:$%s$6)",OOFS,colname1,colname2,colname1,colname2,colname1,colname2,colname1,colname2,colname1,colname2,colname1,colname2,colname1,colname2,colname1,colname2 > ooffile;
+	printf "%cmin_mark\n",OOFS > ooffile;
+	###### NEWLINE
+
+	printf "bonus (gift)" > ooffile
 	for(q=2;q<=colstart-1;q++)
 	    printf "%c",OOFS > ooffile;
 	for(q=1;q<=nr_questions;q++)
 	    printf "%c %4d",OOFS,bonus[q] > ooffile;
-	printf "\n" > ooffile;
+	printf "%c=SUM($%s$5:$%s$5)\n",OOFS,colname1,colname2 > ooffile;
 	###### NEWLINE
 
 	printf "nr_expected_answers" > ooffile;
@@ -165,17 +181,25 @@ BEGIN {
 	    printf "%c",OOFS > ooffile;
 	for(q=1;q<=nr_questions;q++)
 	    printf "%c %4d",OOFS,nr_correct[q] > ooffile;
-	printf "%c=SUM(%s4:%s4)\n",OOFS,int2letter(colstart),int2letter(nr_questions+colstart-1) > ooffile;
+	printf "%c=SUM(%s6:%s6)\n",OOFS,colname1,colname2 > ooffile;
 	###### NEWLINE
 
-	line=5; # first student line !
+	printf "nr_max_answers" > ooffile;
+	for(q=2;q<=colstart-1;q++)
+	    printf "%c",OOFS > ooffile;
+	for(q=1;q<=nr_questions;q++)
+	    printf "%c %4d",OOFS,nr_answers[q] > ooffile;
+	printf "%c=SUM(%s7:%s7)\n\n",OOFS,colname1,colname2 > ooffile;
+	###### NEWLINE - NEWLINE
+
+	line=9; # first student line !
 	first_stuline=line;
     } else {
 	printf "%-20s %-20s 0000    %6.3f  (min_mark=%6.3f)\n","#------","CORRIGE",maxmark,minmark;
     }
-
 }
 
+#-------------------------------------------------------------------------------------------------------------
 $1!~"Code" {
     absent[$1]=0;
     # globstudmark[$1] = global student "s" mark, set to 0 by default
@@ -203,14 +227,15 @@ $1!~"Code" {
 	    for(r=1;r<=nr_answers[q-1];r++) {
 		if(corr[q-1,r]==1 && studresp[$1,q-1,r]==1) {
 		    # match!
-		    questudmark[$1,q-1]+=good/nr_correct[q-1];
-		    globstudmark[$1]+=coeff[q-1]*good/nr_correct[q-1];
+		    questudmark[$1,q-1]+=good[q-1]/nr_correct[q-1];
+		    globstudmark[$1]+=coeff[q-1]*good[q-1]/nr_correct[q-1];
+		    questugood[$1,q-1]++;
 		    stugood[$1]++;
 		} else if(corr[q-1,r]==0 && studresp[$1,q-1,r]==1) {
 		    # mismatch!
-#		    printf "\t\tquestudmark[%d,%d] from %f downto %f\n",$1,q-1,questudmark[$1],questudmark[$1]+bad/nr_correct[q-1] > "/dev/stderr";
-		    questudmark[$1,q-1]+=bad/nr_correct[q-1];
-		    globstudmark[$1]+=coeff[q-1]*bad/nr_correct[q-1];
+		    questudmark[$1,q-1]+=bad[q-1]/nr_correct[q-1];
+		    globstudmark[$1]+=coeff[q-1]*bad[q-1]/nr_correct[q-1];
+		    questubad[$1,q-1]++;
 		    stubad[$1]++;
 		}
 	    }
@@ -220,18 +245,11 @@ $1!~"Code" {
     # OpenOffice output
     if(outputmode=="ooffice") {
 	printf "%s%c%d",stutab[$1],OOFS,$1 > ooffile;   # remind that stutab[s] has two fields
-	for(q=1;q<=nr_questions;q++)
-	    printf "%c%.3f",OOFS,questudmark[$1,q] > ooffile;
-	printf "%c=IF(%s%d=\"ABS\";\"ABS\";20*SUM(%s%d:%s%d)/%s$2)",OOFS,int2letter(colstart),line,int2letter(colstart+nr_questions+nr_void_col+1),line,int2letter(colstart+2*nr_questions+nr_void_col),line,int2letter(colstart+nr_questions) > ooffile;
-	# add dummy columns
-	for(i=0;i<nr_void_col;i++)
-	    printf "%c",OOFS > ooffile;
-	# then put calculus aside
 	for(q=1;q<=nr_questions;q++) {
-	    colname=int2letter(colstart-1+q);
-	    printf "%c=IF(NOT(%s$3=0);%s$2;%s%d*%s$2)",OOFS,colname,colname,colname,line,colname > ooffile;
+	    currentcol=int2letter(colstart+q-1);
+	    printf "%c=IF(%s$5=0;(%s$3*%d+%s$4*%d)/%s$6;%s$3)",OOFS,currentcol,currentcol,questugood[$1,q],currentcol,questubad[$1,q],currentcol,currentcol > ooffile;
 	}
-	printf "\n" > ooffile;
+	printf "%c=IF($%s%d=\"ABS\";\"ABS\";20*SUMPRODUCT($%s$2:$%s$2;$%s%d:$%s%d)/$%s$2)\n",OOFS,colname1,line,colname1,colname2,colname1,line,colname2,line,int2letter(colstart+nr_questions) > ooffile;
 	line++;
 	###### NEWLINE
 
@@ -240,6 +258,7 @@ $1!~"Code" {
     }
 }
 
+#-------------------------------------------------------------------------------------------------------------
 END {
     # OpenOffice output
     if(outputmode=="ooffice") {
@@ -250,7 +269,7 @@ END {
 		printf "%s%c%d",stutab[s],OOFS,s > ooffile;   # stutab[s] has two fields!!
 		for(q=1;q<=nr_questions;q++)
 		    printf "%c\"ABS\"",OOFS,questudmark[$1,q] > ooffile;
-		printf "%c=IF(%s%d=\"ABS\";\"ABS\";20*SUM(%s%d:%s%d)/%s$2)\n",OOFS,int2letter(colstart),line,int2letter(colstart+nr_questions+nr_void_col+1),line,int2letter(colstart+2*nr_questions+nr_void_col),line,int2letter(colstart+nr_questions) > ooffile;
+		printf "%c=IF(%s%d=\"ABS\";\"ABS\";20*SUM(%s%d:%s%d)/%s$2)\n",OOFS,colname1,line,int2letter(colstart+nr_questions+nr_void_col+1),line,int2letter(colstart+2*nr_questions+nr_void_col),line,int2letter(colstart+nr_questions) > ooffile;
 		line++;
 	    }
 	last_stuline=line-1;
@@ -285,29 +304,41 @@ END {
 	###### NEWLINE - NEWLINE
 
 	# compute nr of present students and repartition of marks
-	printf "presents%c=%s%d%c%cmarks%c",OOFS,int2letter(5+1000-int(1000-20/binlength)),line+1,OOFS,OOFS,OOFS > ooffile;
+	printf "presents%c=%s%d\n",OOFS,int2letter(2+1000-int(1000-20/binlength)),line+4 > ooffile;
+	# 1000-int(1000-x) rounds "x" towards +infty (well... towards +1000)
+	line++;
+	###### NEWLINE
+	
+	printf "absents%c=COUNTIF($%s$%d:$%s$%d;\"ABS\")\n\n",OOFS,colname1,first_stuline,colname1,last_stuline > ooffile;
+	line+=2;
+	###### NEWLINE - NEWLINE
+
+	# repartition...
+	printf "marks" > ooffile;
 	for(n=binlength;n<20;n+=binlength)
-	    printf "]%d;%d]%c",n-binlength,n,OOFS > ooffile;
-	printf ">%d\n",n-binlength > ooffile;
+	    printf "%c]%d;%d]",OOFS,n-binlength,n > ooffile;
+	printf "%c>%d\n",OOFS,n-binlength > ooffile;
 	line++;
 	###### NEWLINE
 
-	printf "absents%c=COUNTIF($%s$%d:$%s$%d;\"ABS\")%c%crepartition%c",OOFS,int2letter(colstart),first_stuline,int2letter(colstart),last_stuline,OOFS,OOFS,OOFS > ooffile;
-	printf "=%s%d%c",int2letter(5),line+1,OOFS > ooffile;
+	printf "repartition" > ooffile;
+	printf "%c=B%d",OOFS,line+1 > ooffile;
 	for(n=binlength;n<20-binlength;n+=binlength)
-	    printf "=%s%d-%s%d%c",int2letter(5+n/binlength),line+1,int2letter(4+n/binlength),line+1,OOFS > ooffile;
-	printf "=COUNTIF($%s$%d:$%s$%d;\">%d\")%c=SUM(%s%d:%s%d)\n",int2letter(colstart+nr_questions),first_stuline,int2letter(colstart+nr_questions),last_stuline,n,OOFS,int2letter(5),line,int2letter(4+1000-int(1000-20/binlength)),line > ooffile; # 1000-int(1000-x) rounds "x" towards +infty (well... towards +1000)
+	    printf "%c=%s%d-%s%d",OOFS,int2letter(2+n/binlength),line+1,int2letter(1+n/binlength),line+1 > ooffile;
+	printf "%c=COUNTIF($%s$%d:$%s$%d;\">%d\")",OOFS,int2letter(colstart+nr_questions),first_stuline,int2letter(colstart+nr_questions),last_stuline,n > ooffile;
+	printf "%c=SUM(B%d:%s%d)\n",OOFS,line,int2letter(1+1000-int(1000-20/binlength)),line > ooffile;
+	# 1000-int(1000-x) rounds "x" towards +infty (well... towards +1000)
 	line++;
 	###### NEWLINE
 
-	for(n=1;n<4;n++)
-	    printf "%c",OOFS > ooffile;
-	printf "cumulative%c",OOFS > ooffile;
+	printf "cumulative" > ooffile;
 	for(n=binlength;n<20;n+=binlength)
-	    printf "=COUNTIF($%s$%d:$%s$%d;\"<=%d\")%c",int2letter(colstart+nr_questions),first_stuline,int2letter(colstart+nr_questions),last_stuline,n,OOFS > ooffile;
-	printf "=%s%d+%s%d\n",int2letter(3+20/binlength),line,int2letter(4+20/binlength),line-1 > ooffile;
+	    printf "%c=COUNTIF($%s$%d:$%s$%d;\"<=%d\")",OOFS,int2letter(colstart+nr_questions),first_stuline,int2letter(colstart+nr_questions),last_stuline,n > ooffile;
+	printf "%c=%s%d+%s%d\n",OOFS,int2letter(1000-int(1000-20/binlength)),line,int2letter(1+1000-int(1000-20/binlength)),line-1 > ooffile;
 	line++;
 	###### NEWLINE
+
+	printf "$A$%d:$%s$%d\n",line-3,int2letter(1+1000-int(1000-20/binlength)),line-2 > "chartcorners.txt"
 
     } else {
 	# output ABSENTS
