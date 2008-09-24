@@ -1,0 +1,52 @@
+/* The following rule is necessary to have all slides appear in print! DO NOT REMOVE IT! */
+.slide, ul {page-break-inside: avoid; visibility: visible !important;}
+.slide:first-child {page-break-before: avoid}
+.slide {page-break-before: always}
+
+body {
+	font-size: 26pt;
+	background-image: url(bodybg.png);
+	background-attachment: fixed;
+	background-position: top left bottom right;
+	bakground-repeat:no-repeat;
+	background-size:100%;
+	background-origin: padding;
+
+	margin: 0 0 0 0;
+	padding: 0px 0px 0px 0px;
+/*	padding: 40px 30px 30px 30px; */
+}
+* {color: black;}
+
+div.slide:first-child {padding-top: 100px;padding-bottom: 10px;}
+
+div.slide {	padding-top: 2px;}
+
+div.slide:first-child h1 {font-size: 28pt; border: none; margin: 0.5em 0 0.25em;}
+div.slide:first-child h3 {margin: 0; padding: 0;}
+div.slide:first-child h4 {margin: 0 0 0.5em; padding: 0;}
+div.slide:first-child {margin-bottom: 3em;}
+
+div.slidecontent ul li {margin: 0 0 20px 0;}
+
+div.slidecontent ul ul li {margin: 0 0 10px 0;}
+
+div.slidecontent ul ul ul li {margin: 0 0 10px 0;}
+
+/* h1 {border-top: 2pt solid gray; border-bottom: 1px dotted silver;} */
+h1 {border-top: 2pt solid gray; border-bottom: 1px solid gray;}
+.extra {background: transparent !important; margin: 0 0 0 30px;}
+div.extra, pre.extra, .example {font-size: 15pt; color: #333; }
+ul.extra a {font-weight: bold; }
+p.example {display: none;}
+
+#header {display: none;}
+#footer h1 {margin: 0; border-bottom: 1px solid; color: gray; font-style: italic;}
+#footer h2, #controls {display: none;}
+
+/* The following rule keeps the layout stuff out of print.  Remove at your own risk! */
+.layout, .layout * {display: none !important;}
+
+.slide ul ul > li {list-style: circle;}
+.slide ul ul.multi > li {list-style: square;}
+.slidecontent ul ul ul li {font-size: 10pt; margin: 0 0 0 0; list-style: disc;}
