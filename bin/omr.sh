@@ -21,44 +21,52 @@ ERRORS="false"
 
 for file in ${INPUT_FILES} 
 do
+    ERROR="false"
     echo -n "OMR ${file}...  "
 
+    echo -n "1 "
     # image nb_vert nb_horz mark_width mark height min_top max_top min_left max_left min_bottom max_bottom min_right max_right
-    ${SCRIPT_DIR}/omr1 ${file}    10 45    2 10    2 6    2 9    94  98     91 98  >> ${OMR_LOG_FILE}
-    if (( $? == 0 ))
+    ${SCRIPT_DIR}/omr1 ${file}    10 45    2 10    2 6    2 9    94  98     91 98  >> ${OMR_LOG_FILE} 
+    if (( $? != 0 ))
     then
-       ERRORS="true"
+       ERROR="true"
     fi
 
-    ${SCRIPT_DIR}/omr1 ${file}    10 45    2 10    2 6    2 9    94  98     91 98  >> ${OMR_LOG_FILE}
-    if (( $? == 0 ))
+    echo -n "2 "
+    convert ${file} -rotate 270 -type TrueColor ${file}.bmp
+    ${SCRIPT_DIR}/omr2 ${file}.bmp ${file}.output.bmp ${file}.omr2_data 45 10 >> ${OMR_LOG_FILE}
+    if (( $? != 0 ))
     then
-       ERRORS="true"
+       ERROR="true"
     fi
 
-    diff ${file}.omr1_data ${file}.omr1_data
-    if (( $? == 0 ))
+    convert ${file}.output.bmp ${file}_corrected2.jpg
+    rm -f ${file}.bmp ${file}.output.bmp 2>&1 > /dev/null
+
+    diff ${file}.omr1_data ${file}.omr2_data 2>&1 > /dev/null
+    if (( $? != 0 ))
     then
-       ERRORS="true"
+       ERROR="true"
        echo "- Difference between ${file}.omr1_data and ${file}.omr2_data." >> ${OMR_ERRORS_FILE}
     fi
 
-    if [ ${ERRORS} = "true" ]
+    if [ "${ERROR}" = "true" ]
     then
-       OUTPUT_DIR=${QUIZ_DIR}/omr_output/
-       echo "[OK]"
-    else
+       ERRORS="true"
        echo "[ERROR]"
        OUTPUT_DIR=${QUIZ_DIR}/omr_errors/
+    else
+       echo "[OK]"
+       OUTPUT_DIR=${QUIZ_DIR}/omr_output/
     fi
 
-    mv ${file} ${file}.omr_data ${file}_corrected.jpg ${file}_binarized.jpg ${OUTPUT_DIR}
+    mv -f ${file} ${file}.omr*_data ${file}_corrected.jpg ${file}_corrected2.jpg ${file}_binarized.jpg ${OUTPUT_DIR} 2>&1 > /dev/null
     echo "=======================" >>  ${OMR_LOG_FILE}
 done
 
 echo -n "All done. "
 
-if [ ${ERRORS} = "true" ]
+if [ "${ERRORS}" = "true" ]
 then
     echo "There were errors. Resolve them in ${QUIZ_NAME}/omr_errors/ directory and call omr_errors_resolved.sh before continuing with prepare_correction.sh."
     exit 2

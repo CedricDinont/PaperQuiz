@@ -19,7 +19,7 @@ mkdir ${QUIZ_DIR}/correction_errors/
 echo "# Ce fichier doit contenir la répartition des questions 
 # en fonction des matières.
 # On décrit une matière par ligne sous la forme :
-#      nom_matiere;question_debut;question_fin
+#      nom_matiere:question_debut:question_fin
 
 " > ${QUIZ_DIR}/quiz.conf
 

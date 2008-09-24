@@ -34,7 +34,7 @@ Utiliser l'imprimante du niveau 4 avec les paramètres suivants :
     - niveaux de gris
     - résolution : 200 dpi
     - format de fichier : jpeg
-Ne pas scanner plus de 5 pages à la fois pour ne pas dépasser la limite de taille
+Ne pas scanner plus de 25 pages à la fois pour ne pas dépasser la limite de taille
 des mails.
 Les pages peuvent être scannées dans n'importe quel sens de rotation.
 Il est possible de scanner une page de référence contenant les réponses attendues.

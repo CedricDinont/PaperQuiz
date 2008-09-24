@@ -6,7 +6,7 @@ source ${SCRIPT_DIR}/quiz_common.sh
 OMR_DATA_FILES=`ls ${QUIZ_DIR}/omr_output/*.omr1_data  2> /dev/null`
 
 QUIZ_PART_NB=0
-
+echo $QUIZ_PARTS
 for QUIZ_PART in ${QUIZ_PARTS} 
 do
 echo "Creating data for '${QUIZ_PART}'"
@@ -36,7 +36,7 @@ NR <= 5 {
   }
 }
 NR == 5 {
-  printf "p%d%d%d%d%d;", login[1], login[2], login[3], login[4], login[5]
+  printf "%d%d%d%d%d;", login[1], login[2], login[3], login[4], login[5]
 }
 NR > 5 {
   for (i = 1; i <= NF; i = i + 1) {

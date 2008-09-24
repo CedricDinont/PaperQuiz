@@ -207,8 +207,14 @@ int main(int argc, char** argv) {
       float d_x = (*it2)->left;
       float d_y = (*it2)->top + (*it2)->height/2;
 
-      i = ((d_y-(((b_y-d_y)/(b_x-d_x))*d_x))-(a_y-(((c_y-a_y)/(c_x-a_x))*a_x)))/(((c_y-a_y)/(c_x-a_x))-((b_y-d_y)/(b_x-d_x)));
-      j = i*((c_y-a_y)/(c_x-a_x))+(a_y-((c_y-a_y)/(c_x-a_x)*a_x));
+      if (a_x == c_x) {
+	i = a_x;
+	j = (b_y + d_y) / 2;
+      } else {
+	i = ((d_y-(((b_y-d_y)/(b_x-d_x))*d_x))-(a_y-(((c_y-a_y)/(c_x-a_x))*a_x)))/(((c_y-a_y)/(c_x-a_x))-((b_y-d_y)/(b_x-d_x)));
+	j = i*((c_y-a_y)/(c_x-a_x))+(a_y-((c_y-a_y)/(c_x-a_x)*a_x));
+      }
+      //   cout << endl << "i=" << i << " j=" << j << endl;
 
       average = computeAverage(image, i, j);
       cout << average << " ";
