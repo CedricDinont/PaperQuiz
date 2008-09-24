@@ -9,6 +9,9 @@
 // Authors: Jorge Palos
 //
 ////////////////////////////////////////////////////////////////////
+
+#include "filtre.h"
+
 int SeuilImage(SDL_Surface *image,Uint8 seuil)
 {
 int i,j;				//attention : image en NdG

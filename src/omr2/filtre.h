@@ -1,3 +1,7 @@
+#ifndef FILTRE_H
+#define FILTRE_H
+
+#include <SDL/SDL.h>  
 
 #define LOWP1_3X3	0       /* Filtres et masques 3x3 prdfinis */
 #define LOWP2_3X3	1
@@ -43,6 +47,4 @@ short *DefinitionFiltre(short,short *,short *);
 SDL_Surface *ApplicationFiltre(SDL_Surface *,short,short,short *);
 SDL_Surface *ApplicationFiltreCouleur(SDL_Surface *,short,short,short *);
 
-
-
-#include "filtre.c"
+#endif /* FILTRE_H */
