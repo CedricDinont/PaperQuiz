@@ -212,7 +212,7 @@ $1!~"Code" {
     }
 
     printf "%c=20*SUMPRODUCT($%s$2:$%s$2;$%s%d:$%s%d)/$%s$3",OOFS,colname1,colname2,colname1,line,colname2,line,int2letter(colstart+nr_questions) > ooffile;
-    printf "%c=MAX(0;ROUNDUP($%s$%d/$%s$2)*$%s$2)\n",OOFS,int2letter(colstart+nr_questions),line,int2letter(colstart+nr_questions+1),int2letter(colstart+nr_questions+1) > ooffile;
+    printf "%c=MAX(0;ROUNDUP($%s%d/$%s$2)*$%s$2)\n",OOFS,int2letter(colstart+nr_questions),line,int2letter(colstart+nr_questions+1),int2letter(colstart+nr_questions+1) > ooffile;
     line++;
     ###### NEWLINE
 }
