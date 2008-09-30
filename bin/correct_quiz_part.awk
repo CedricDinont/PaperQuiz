@@ -29,9 +29,6 @@ BEGIN {
     if(ooffile=="")
 	# OpenOffice output file
 	ooffile="results.csv"
-    if(statfile=="")
-	# statistics per question
-	statfile="/dev/stdout";
     if(binlength=="")
 	# bining length for marks statistics
 	binlength=2;
@@ -183,6 +180,11 @@ BEGIN {
 
 #-------------------------------------------------------------------------------------------------------------
 $1!~"Code" {
+
+    # ticks[q,r] counts number of ticks for answer "r" at question "q";
+    # r=0  stands for "no answer"
+    # r=-1 stands for "perfect match"
+
     absent[$1]=0;
     printf "%s%c%s",stutab[$1],OOFS,$1 > ooffile;   # remind that stutab[s] has two fields
 
@@ -191,7 +193,10 @@ $1!~"Code" {
 	corresponding_field=q+1;
 	gsub("R","",$corresponding_field);
 	
-	split($corresponding_field,tab,"\\");
+	nans=split($corresponding_field,tab,"\\");
+
+	if(nans==0)
+	    ticks[q,0]++;
 
 	questugood=0;
 	questubad=0;
@@ -204,7 +209,11 @@ $1!~"Code" {
 		questugood++;
 	    else if(corr[q,tab[r]]==0) # mismatch!
 		questubad++;
+
+	    ticks[q,tab[r]]++;
 	}
+	if(questugood==nr_correct[q] && questubad==0)
+	    ticks[q,-1]++;
 	
 	# OpenOffice output
 	currentcol=int2letter(colstart+q-1);
@@ -283,6 +292,41 @@ END {
     printf "\n\n" > ooffile;
     line+=2;
     ###### NEWLINE - NEWLINE
+
+    # now output statistics per question per response over class
+    printf "perfects" > ooffile;
+    for(q=2;q<=colstart-1;q++)
+	printf "%c",OOFS > ooffile;
+    for(q=1;q<=nr_questions;q++)
+	printf "%c%d",OOFS,ticks[q,-1] > ooffile;
+    printf "\n" > ooffile;
+    line++;
+    ###### NEWLINE
+    printf "no answer" > ooffile;
+    for(q=2;q<=colstart-1;q++)
+	printf "%c",OOFS > ooffile;
+    for(q=1;q<=nr_questions;q++)
+	printf "%c%d",OOFS,ticks[q,0] > ooffile;
+    printf "\n" > ooffile;
+    line++;
+    ###### NEWLINE
+
+    for(r=1;r<=max_nr_answers;r++) {
+	printf "answer %d",r > ooffile;
+	for(q=2;q<=colstart-1;q++)
+	    printf "%c",OOFS > ooffile;
+	for(q=1;q<=nr_questions;q++)
+	    if(r<=nr_answers[q])
+		printf "%c%d",OOFS,ticks[q,r] > ooffile;
+	    else
+		printf "%c",OOFS > ooffile;
+	printf "\n" > ooffile;
+	line++;
+	###### NEWLINE
+    }
+    printf "\n" > ooffile;
+    line++;
+    ###### NEWLINE
 
     # compute nr of present students and repartition of marks
     printf "presents%c=%s%d\n",OOFS,int2letter(2+1000-int(1000-20/binlength)),line+4 > ooffile;
