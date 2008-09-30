@@ -26,7 +26,7 @@ do
 
     echo -n "1 "
     # image nb_vert nb_horz mark_width mark height min_top max_top min_left max_left min_bottom max_bottom min_right max_right
-    ${SCRIPT_DIR}/omr1 ${file}    10 45    2 10    2 6    2 9    94  98     91 98  >> ${OMR_LOG_FILE} 
+    ${SCRIPT_DIR}/omr1 ${file}    10 45    2 10    1 6    2 9    94  98     91 98  >> ${OMR_LOG_FILE} 
     if (( $? != 0 ))
     then
        ERROR="true"
@@ -47,7 +47,7 @@ do
     if (( $? != 0 ))
     then
        ERROR="true"
-       echo "- Difference between ${file}.omr1_data and ${file}.omr2_data." >> ${OMR_ERRORS_FILE}
+       echo "Difference between ${file}.omr1_data and ${file}.omr2_data." >> ${OMR_ERRORS_FILE}
     fi
 
     if [ "${ERROR}" = "true" ]

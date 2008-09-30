@@ -7,6 +7,7 @@ Il y a différentes étapes à suivre :
    - reconnaissance des réponses sur les scans,
    - traitement éventuel des erreurs de reconnaissance,
    - transformation des données brutes en vue de la correction,
+   - renseignement de la liste des étudiants,
    - correction,
    - analyse des résultats.
 
@@ -19,6 +20,14 @@ Voici la description des étapes successives à suivre :
 
 - Créer le quiz avec la commande :
   ./bin/create_quiz.sh nom_du_quiz
+Merci de respecter la convention de nommage suivante :
+        AA_MM_JJ-GROUPE-INFO_QUIZ
+    avec :
+       - AA l'année sur 2 chiffres
+       - MM le mois sur deux chiffres
+       - JJ le jour sur deux chiffres
+       - GROUPE le nom de la promo ou du groupe d'étudiants concerné
+       - INFO_QUIZ le nom de la matière ou du sujet concerné
 
 - Editer le fichier quiz_nom_du_quiz/quiz.conf en fonction du nombre de questions
 attribué à chaque matière dans le quiz. Le format à suivre est indiqué dans
@@ -69,6 +78,16 @@ déplace les fichiers correspondants dans le répertoire omr_output de votre qui
   ./bin/prepare_correction.sh nom_du_quiz
 Si une page de référence a été scannée, un fichier nom_matiere.correction_data 
 est généré dans le répertoire correction.
+
+- Renseigner la liste des étudiants :
+Il faut créer un fichier nommé students et le placer dans le répertoire 
+correction du quiz. Il contient sur chaque ligne les informations pour un étudiant
+sous la forme :
+nom prénom pABCDE
+Il est possible de créer ce fichier automatiquement à partir des informations récoltées
+sur les feuilles scannées avec la commande suivante :
+  ./bin/create_students_file_from_scans_infos.sh nom_du_quiz
+Attention, cette manière de procéder ne permet pas de gérer les absents.
 
 - Lancer la correction avec la commande :
   ./bin/correct_quiz.sh nom_du_quiz

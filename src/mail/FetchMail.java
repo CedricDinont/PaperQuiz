@@ -111,7 +111,7 @@ public class FetchMail {
 	    if (disp == null || disp.equalsIgnoreCase(Part.ATTACHMENT)) {
 		String attachmentFilename = p.getFileName();
 		if (attachmentFilename == null) {
-		    System.out.println("No filename: Can't write to disk.");
+		    //   System.out.println("No filename: Can't write to disk.");
 		    return ;
 		}
 		String filename = attachmentsOutputFolder + "/" + attachmentFilename;
@@ -137,6 +137,6 @@ public class FetchMail {
 	
 	FetchMail f = new FetchMail(argv[0]);
 	f.doFetch();
+	System.exit(0);
     }
-
 }

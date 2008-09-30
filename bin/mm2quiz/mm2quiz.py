@@ -179,7 +179,7 @@ class Mm2S5:
     a = []
     self._doTag(a, page, 0)
     answers.append("\\".join(a))
-    answers.append(';1;0\n')
+    answers.append(';1;-0.5,1;0\n')
 
 
   def _doTag(self, answers, line, answer):

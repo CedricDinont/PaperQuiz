@@ -9,15 +9,19 @@ QUIZ_PART_NB=0
 echo $QUIZ_PARTS
 for QUIZ_PART in ${QUIZ_PARTS} 
 do
+echo "======================================="
 echo "Creating data for '${QUIZ_PART}'"
 
 OUTPUT_FILE=${QUIZ_DIR}/correction/${QUIZ_PART}.students_answers
+
+echo "First question: ${QUIZ_PARTS_MIN_QUESTIONS[$QUIZ_PART_NB]}"
+echo "Last question: ${QUIZ_PARTS_MAX_QUESTIONS[$QUIZ_PART_NB]}"
 
 echo -n "" > ${OUTPUT_FILE}
 
 for OMR_DATA_FILE in ${OMR_DATA_FILES}
 do
-    echo "  Parsing ${OMR_DATA_FILE}."
+    echo "    Parsing ${OMR_DATA_FILE}."
     OUTPUT_TEXT=`awk  -v min=${QUIZ_PARTS_MIN_QUESTIONS[$QUIZ_PART_NB]} -v max=${QUIZ_PARTS_MAX_QUESTIONS[$QUIZ_PART_NB]} '
 BEGIN {
   FS=" "
@@ -31,12 +35,20 @@ BEGIN {
 NR <= 5 {
   for (i = 1; i <= NF; i = i + 1) {
      if ($i == "1") {
+	if (login[NR] != -1) {
+		print "Error: Two marks on line", NR > "/dev/stderr"
+		exit 1
+	}
         login[NR] = i - 1
      }
   }
 }
 NR == 5 {
-  printf "%d%d%d%d%d;", login[1], login[2], login[3], login[4], login[5]
+    if ((login[1] == -1) || (login[2] == -1) || (login[3] == -1) || (login[4] == -1) || (login[4] == -1)) {
+	    print "Error: Incomplete login" > "/dev/stderr"
+	    exit 2
+    }
+  printf "p%d%d%d%d%d;", login[1], login[2], login[3], login[4], login[5]
 }
 NR > 5 {
   for (i = 1; i <= NF; i = i + 1) {
@@ -69,6 +81,9 @@ END {
 
 ' ${OMR_DATA_FILE}`
 
+
+
+
 LOGIN=`echo ${OUTPUT_TEXT} | cut -d ";" -f 1`
 if [ "${LOGIN}" = "p00000" ]
 then
@@ -79,6 +94,8 @@ fi
 
 done
 QUIZ_PART_NB=$((${QUIZ_PART_NB} + 1))
+
+echo ""
 done
 
 echo "All done successfully."

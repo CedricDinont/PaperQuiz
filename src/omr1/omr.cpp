@@ -9,6 +9,8 @@ using namespace Magick;
 
 float dotsPerCm;
 int neededWidthForMarks;
+int neededHeightForMarks;
+int *markSizes;
 
 class MarkInfo {
 public:
@@ -17,9 +19,9 @@ public:
 };
 
 void fillMark(Image &image,  Image& correctedImage, int i, int j, int* width, int* height) {
-  if (correctedImage.pixelColor(i, j) == Color("red")) {
-    *width = 1;
-    *height = 1;
+   if (correctedImage.pixelColor(i, j) == Color("red")) {
+     *width = markSizes[i * image.size().width() + j];
+     *height = markSizes[(i * image.size().width() + j) + image.size().width() * image.size().height()];
     return;
   }
   ColorGray color(image.pixelColor(i, j));
@@ -30,6 +32,8 @@ void fillMark(Image &image,  Image& correctedImage, int i, int j, int* width, in
     fillMark(image, correctedImage, i, j + 1, &width3, &height3);
     *width = max(width2 + 1, width3);
     *height = max(height2, height3 + 1);
+    markSizes[i * image.size().width() + j] = *width;
+    markSizes[(i * image.size().width() + j) + image.size().width() * image.size().height()] = *height;
     return;
   } else {
     *width = 0;
@@ -65,7 +69,7 @@ void searchVerticalMarks(Image& image, Image& correctedImage, list<MarkInfo*>& l
     while (j < image.size().height() * j_max_percent / 100) {
       ColorGray color(image.pixelColor(i, j));
       fillMark(image, correctedImage, i, j, &width, &height);
-      if ((height > neededWidthForMarks) && (width > neededWidthForMarks)) {
+      if ((height > neededHeightForMarks) && (width > neededWidthForMarks)) {
 	cout << "    Found a mark (" << width << ", " << height << ") at (" << i << ", " << j << ")." << endl;
 	l.push_back(new MarkInfo(i, j, width, height));
 	i += width;
@@ -84,7 +88,7 @@ void searchHorizontalMarks(Image& image, Image& correctedImage, list<MarkInfo*>&
     while (i < image.size().width() * i_max_percent / 100) {
       ColorGray color(image.pixelColor(i, j));
       fillMark(image, correctedImage, i, j, &width, &height);
-      if ((height > neededWidthForMarks) && (width > neededWidthForMarks)) {
+      if ((height > neededWidthForMarks) && (width > neededHeightForMarks)) {
 	cout << "    Found a mark (" << width << ", " << height << ") at (" << i << ", " << j << ")." << endl;
 	l.push_back(new MarkInfo(i, j, width, height));
 	j += height;
@@ -95,7 +99,14 @@ void searchHorizontalMarks(Image& image, Image& correctedImage, list<MarkInfo*>&
   }  
 }
 
-
+void writeImages(char* name, Image& image, Image& correctedImage) {
+  cout << "Writing binarized image." << endl;  
+  image.quality(50);
+  image.write(string(name) + "_binarized.jpg");  
+  cout << "Writing corrected image." << endl;
+  correctedImage.quality(50);
+  correctedImage.write(string(name) + "_corrected.jpg");
+}
 
 int main(int argc, char** argv) {
   
@@ -136,14 +147,21 @@ int main(int argc, char** argv) {
   cout << "dots per cm: " << dotsPerCm << endl;
   marksWidthInPixels = marksWidth * dotsPerCm / 10;
   marksHeightInPixels = marksHeight * dotsPerCm / 10;
-  neededWidthForMarks = 10.*dotsPerCm / 158;
+  neededWidthForMarks = marksWidthInPixels * 0.5;
+  neededHeightForMarks = marksHeightInPixels * 0.5;
   cout << "Needed width for marks: " << neededWidthForMarks << endl;
+  cout << "Needed height for marks: " << neededHeightForMarks << endl;
 
   cout << "Preparing image." << endl;
   image.threshold(63000);
   
   cout << "Searching for marks." << endl;
-  
+
+  markSizes = (int *) malloc(image.size().width() * image.size().height() * 2 * sizeof(int));
+  for (unsigned int i = 0; i < image.size().width() * image.size().height() * 2; i++) {
+    markSizes[i] = -1;
+  }
+
   cout << "  Top marks." << endl;
   searchVerticalMarks(image, correctedImage, topMarks, leftMarksMaxPercentage, rightMarksMinPercentage, topMarksMinPercentage, topMarksMaxPercentage);
 
@@ -164,6 +182,7 @@ int main(int argc, char** argv) {
   }
   else {
     cout << "  Vertical not OK ("<< topMarks.size() << ", " << bottomMarks.size() << ")." << endl;
+    cerr << "  Vertical not OK ("<< topMarks.size() << ", " << bottomMarks.size() << ")." << endl;
   error = true;
   }
 
@@ -172,11 +191,14 @@ int main(int argc, char** argv) {
   }
   else {
     cout << "  Horizontal not OK ("<< leftMarks.size() << ", " << rightMarks.size() << ")." << endl;
+    cerr << "  Horizontal not OK ("<< leftMarks.size() << ", " << rightMarks.size() << ")." << endl;
     error = true;
   }
 
   if (error) {
+    cerr << "Marks were not correctly detected." << endl;
     cout << "Marks were not correctly detected." << endl;
+    writeImages(argv[1], image, correctedImage);
     exit(2);
   }
 
@@ -255,17 +277,11 @@ int main(int argc, char** argv) {
   for (it = leftMarks.begin(), it2 = rightMarks.begin(); it != leftMarks.end(); ++it, ++it2) {
     correctedImage.draw(DrawableLine((*it)->left, (*it)->top + (*it)->height/2,(*it2)->left + (*it2)->width, (*it2)->top + (*it2)->height/2));
   }
+
+  writeImages(argv[1], image, correctedImage);
   
-  cout << "Writing binarized image." << endl;  
-  image.quality(50);
-  image.write(string(argv[1]) + "_binarized.jpg");  
-  cout << "Writing corrected image." << endl;
-  correctedImage.quality(50);
-  correctedImage.write(string(argv[1]) + "_corrected.jpg");
-
-
   if (error) {
-    cout << "There were unsure ticks." << endl;
+    cerr << "There were unsure ticks for " << argv[1] << "." << endl;
     exit(3);
   } else {
     cout << "Successfully finished." << endl;
