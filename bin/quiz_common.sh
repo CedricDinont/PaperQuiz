@@ -2,7 +2,7 @@
 
 # This file is sourced by scripts that work on quizes.
 
-if (( $# != 1 )); then
+if (( $# < 1 )); then
     echo "Usage: $0 quiz_name."
     exit -1
 fi

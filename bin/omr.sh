@@ -34,7 +34,12 @@ do
 
     echo -n "2 "
     convert ${file} -rotate 270 -type TrueColor ${file}.bmp
-    ${SCRIPT_DIR}/omr2 ${file}.bmp ${file}.output.bmp ${file}.omr2_data 45 10 >> ${OMR_LOG_FILE}
+    WHOAMI=`whoami`
+    if [ "$WHOAMI" = "apache" ]
+    then
+	cd /home/apache
+    fi
+    xvfb-run -a ${SCRIPT_DIR}/omr2 ${file}.bmp ${file}.output.bmp ${file}.omr2_data 45 10 >> ${OMR_LOG_FILE}
     if (( $? != 0 ))
     then
        ERROR="true"

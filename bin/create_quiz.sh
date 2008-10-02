@@ -16,6 +16,8 @@ mkdir ${QUIZ_DIR}/omr_errors/
 mkdir ${QUIZ_DIR}/omr_tmp/
 mkdir ${QUIZ_DIR}/correction/
 mkdir ${QUIZ_DIR}/correction_errors/
+mkdir ${QUIZ_DIR}/processes/
+echo "None" > ${QUIZ_DIR}/processes/current_process
 
 echo "# Ce fichier doit contenir la répartition des questions 
 # en fonction des matières.
