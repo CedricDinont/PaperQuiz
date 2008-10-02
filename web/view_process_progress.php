@@ -33,15 +33,16 @@
 	    echo "Process is finished";
 	  }
 ?>
+<br><br>
 	<td width="50%"><center>Sortie standard</center></td>
 	<td><center>Erreur standard</center></td>
 </tr>
 <tr>
-	<td><?php echo implode('<br>', file($filename_base.".stdout")); ?></td>
-	<td><?php echo implode('<br>', file($filename_base.".stderr")); ?></td>
+	  <td style="font-size:80%"><?php echo implode('<br>', file($filename_base.".stdout")); ?>&nbsp;</td>
+	  <td style="font-size:80%"><?php echo implode('<br>', file($filename_base.".stderr")); ?>&nbsp;</td>
 </tr>
 </table>
-
+<br>
 <?php doMainMenu(); ?>
 
 </body>

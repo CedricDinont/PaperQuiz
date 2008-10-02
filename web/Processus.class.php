@@ -52,6 +52,17 @@ class Processus {
 		return $processes;
 	}
 
+	public static function startQuizScriptAndViewCreatedProcess($quiz_id, $script) {
+	  global $quiz_bin_dir;
+
+	  $quiz = Quiz::getQuizById($quiz_id);
+	  
+	  $p = Processus::createBackgroundProcess($quiz, $quiz_bin_dir.$script." ".$quiz->getName());
+	  echo "<html><head><title>Redirection vers la visualisation de la sortie du processus</title>";
+	  echo "<meta http-equiv=\"REFRESH\" content=\"0; URL=./view_process_progress.php?quiz-id=".$quiz_id."\">";
+          echo "</head><body>Redirection</body></html>";
+	}
+
 }
 
 ?>
