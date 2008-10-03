@@ -49,7 +49,8 @@ BEGIN {
     close(students);
 
 #   import correction
-    nr_questions=0;
+    max_found_questions=0;
+    min_found_questions=999999;
     nr_fields_corr=7; # there should be 7 fields in file corrige, but keep it as a parameter...
     inputline=0; # trace inputline for warning outputs...
 #   format: question_nr;nb_possible_answers;correct_answers(eg.R1\R5);bonif;malus;coef;bonus
@@ -64,8 +65,10 @@ BEGIN {
 		corr[$1,0]=1;
 	    } else {
 		# normal way
-		if($1>nr_questions)
-		    nr_questions=$1;
+		if($1>max_found_questions)
+		    max_found_questions=$1;
+		if($1<min_found_questions)
+		    min_found_questions=$1;
 
 		nr_answers[$1]=$2; # number of possible responses for question $1
 		if($2>max_nr_answers)
@@ -99,27 +102,69 @@ BEGIN {
 	    printf "WARNING - in \"%s\" line %d:\n\tWrong number of fields (found %d instead of %d) --> question ignored!!\n",corrige,inputline,NF,nr_fields_corr > "/dev/stderr";
     }
     close(corrige);
-    printf "%d questions loaded\n",nr_questions > "/dev/stdout";
 
-#   check corrige consistency: nr of questions should be equal to max(question_nr)
-    for(q=1;q<=nr_questions;q++) {
+#   check consistency of corrige: nr of questions should be equal to max_found_questions-min_found_questions+1
+    if(min_question=="")
+	min_question=min_found_questions;
+    else {
+	if(min_question<min_found_questions) {
+	    printf "WARNING - in \"%s\":\n\tquestions from %d to %d undefined --> use bonus!!\n",corrige,min_question,min_found_questions > "/dev/stderr";
+	    for(q=min_question;q<min_found_questions;q++) {
+		# Set parameters that influence the marks
+		bonus[q]=1;
+		coeff[q]=1;
+		good[q]=1;
+		bad[q]=-.5;
+		nr_answers[q]=999999;
+		nr_correct[q]=1;
+		corr[q,0]=1;
+	    }
+	} else if(min_question>min_found_questions)
+	    printf "WARNING - in \"%s\":\n\tToo many questions (from %d to %d) --> ignore questions!!\n",corrige,min_found_questions,min_question > "/dev/stderr";
+    }
+
+    if(max_question=="")
+	max_question=max_found_questions;
+    else {
+	if(max_question>max_found_questions) {
+	    printf "WARNING - in \"%s\":\n\tquestions from %d to %d undefined --> use bonus!!\n",corrige,max_found_questions,max_question > "/dev/stderr";
+	    for(q=max_question;q<max_found_questions;q++) {
+		# Set default parameters
+		bonus[q]=1;
+		coeff[q]=1;
+		good[q]=1;
+		bad[q]=-.5;
+		nr_answers[q]=999999;
+		nr_correct[q]=1; # prevent division by 0
+		corr[q,0]=1;
+	    }
+	} else if(max_question<max_found_questions)
+	    printf "WARNING - in \"%s\":\n\tToo many questions (from %d to %d) --> ignore questions!!\n",corrige,max_question,max_found_questions > "/dev/stderr";
+    }
+
+    for(q=min_question;q<=max_question;q++) {
 	if( ! (q in nr_answers) ) {
 	    printf "WARNING - in \"%s\":\n\tquestion %d undefined --> use bonus!!\n",corrige,q > "/dev/stderr";
-	    nr_answers[q]=0;
-	    coeff[q]=1;
 	    bonus[q]=1;
+	    coeff[q]=1;
+	    good[q]=1;
+	    bad[q]=-.5;
+	    nr_answers[q]=0;
+	    nr_correct[q]=1; # prevent division by 0
 	    corr[q,0]=1;
 	}
     }
+    printf "%d questions loaded\n",max_question-min_question+1 > "/dev/stdout";
 
     # OpenOffice output
     # at this point, we suppose everything above correct
     colstart=4;
+    nr_questions=max_question-min_question+1;
     colname1=int2letter(colstart);
     colname2=int2letter(nr_questions+colstart-1);
 
     printf "student_name%cstudent_first_name%cstudent_id",OOFS,OOFS > ooffile;
-    for(q=1;q<=nr_questions;q++)
+    for(q=min_question;q<=max_question;q++)
 	printf "%c Q%3d",OOFS,q > ooffile;
     printf "%cTOTAL%crounded troncations\n",OOFS,OOFS > ooffile;
     ###### NEWLINE
@@ -127,7 +172,7 @@ BEGIN {
     printf "coefficients" > ooffile;
     for(q=2;q<=colstart-1;q++)
 	printf "%c",OOFS > ooffile;
-    for(q=1;q<=nr_questions;q++)
+    for(q=min_question;q<=max_question;q++)
 	printf "%c %f",OOFS,coeff[q] > ooffile;
     printf "%c=SUM($%s$2:$%s$2)%c0.1\n",OOFS,colname1,colname2,OOFS > ooffile;
     ###### NEWLINE
@@ -135,7 +180,7 @@ BEGIN {
     printf "bonification" > ooffile;
     for(q=2;q<=colstart-1;q++)
 	printf "%c",OOFS > ooffile;
-    for(q=1;q<=nr_questions;q++)
+    for(q=min_question;q<=max_question;q++)
 	printf "%c %f",OOFS,good[q] > ooffile;
     printf "%c=SUMPRODUCT($%s$2:$%s$2;$%s$3:$%s$3)",OOFS,colname1,colname2,colname1,colname2 > ooffile;
     printf "%cmax mark (without bonus)\n",OOFS > ooffile;
@@ -144,7 +189,7 @@ BEGIN {
     printf "malus" > ooffile;
     for(q=2;q<=colstart-1;q++)
 	printf "%c",OOFS > ooffile;
-    for(q=1;q<=nr_questions;q++)
+    for(q=min_question;q<=max_question;q++)
 	printf "%c %f",OOFS,bad[q] > ooffile;
     printf "%c=SUMPRODUCT($%s$2:$%s$2;$%s$4:$%s$4;$%s$7:$%s$7;1/$%s$6:$%s$6)-SUMPRODUCT($%s$2:$%s$2;$%s$4:$%s$4;$%s$6:$%s$6;1/$%s$6:$%s$6)",OOFS,colname1,colname2,colname1,colname2,colname1,colname2,colname1,colname2,colname1,colname2,colname1,colname2,colname1,colname2,colname1,colname2 > ooffile;
     printf "%cmin mark (without bonus)\n",OOFS > ooffile;
@@ -153,7 +198,7 @@ BEGIN {
     printf "bonus (gift)" > ooffile
     for(q=2;q<=colstart-1;q++)
 	printf "%c",OOFS > ooffile;
-    for(q=1;q<=nr_questions;q++)
+    for(q=min_question;q<=max_question;q++)
 	printf "%c %4d",OOFS,bonus[q] > ooffile;
     printf "%c=SUM($%s$5:$%s$5)\n",OOFS,colname1,colname2 > ooffile;
     ###### NEWLINE
@@ -161,7 +206,7 @@ BEGIN {
     printf "nr_expected_answers" > ooffile;
     for(q=2;q<=colstart-1;q++)
 	printf "%c",OOFS > ooffile;
-    for(q=1;q<=nr_questions;q++)
+    for(q=min_question;q<=max_question;q++)
 	printf "%c %4d",OOFS,nr_correct[q] > ooffile;
     printf "%c=SUM(%s6:%s6)\n",OOFS,colname1,colname2 > ooffile;
     ###### NEWLINE
@@ -169,8 +214,11 @@ BEGIN {
     printf "nr_max_answers" > ooffile;
     for(q=2;q<=colstart-1;q++)
 	printf "%c",OOFS > ooffile;
-    for(q=1;q<=nr_questions;q++)
-	printf "%c %4d",OOFS,nr_answers[q] > ooffile;
+    for(q=min_question;q<=max_question;q++)
+	if(nr_answers[q]==999999 || nr_answers[q]==0)
+	    printf "%c=NA()",OOFS > ooffile;
+	else
+	    printf "%c %4d",OOFS,nr_answers[q] > ooffile;
     printf "%c=SUM(%s7:%s7)\n\n",OOFS,colname1,colname2 > ooffile;
     ###### NEWLINE - NEWLINE
 
@@ -188,9 +236,9 @@ $1!~"Code" {
     absent[$1]=0;
     printf "%s%c%s",stutab[$1],OOFS,$1 > ooffile;   # remind that stutab[s] has two fields
 
-    for(q=1;q<nr_questions+1;q++) {
+    for(q=min_question;q<=max_question;q++) {
 
-	corresponding_field=q+1;
+	corresponding_field=q-min_question+2;
 	gsub("R","",$corresponding_field);
 	
 	nans=split($corresponding_field,tab,"\\");
@@ -216,7 +264,7 @@ $1!~"Code" {
 	    ticks[q,-1]++;
 	
 	# OpenOffice output
-	currentcol=int2letter(colstart+q-1);
+	currentcol=int2letter(colstart+q-min_question);
 	printf "%c=IF(%s$5=0;(%s$3*%d+%s$4*%d)/%s$6;%s$5)",OOFS,currentcol,currentcol,questugood,currentcol,questubad,currentcol,currentcol > ooffile;
     }
 
@@ -233,7 +281,7 @@ END {
     for(s in stutab)
 	if(absent[s]==1) {
 	    printf "%s%c%s",stutab[s],OOFS,s > ooffile;   # stutab[s] has two fields!!
-	    for(q=1;q<=nr_questions;q++)
+	    for(q=min_question;q<=max_question;q++)
 		printf "%c\"ABS\"",OOFS > ooffile;
 	    printf "%cABS%cABS\n",OOFS,OOFS > ooffile;
 	    line++;
@@ -297,7 +345,7 @@ END {
     printf "perfects" > ooffile;
     for(q=2;q<=colstart-1;q++)
 	printf "%c",OOFS > ooffile;
-    for(q=1;q<=nr_questions;q++)
+    for(q=min_question;q<=max_question;q++)
 	printf "%c%d",OOFS,ticks[q,-1] > ooffile;
     printf "\n" > ooffile;
     line++;
@@ -305,7 +353,7 @@ END {
     printf "no answer" > ooffile;
     for(q=2;q<=colstart-1;q++)
 	printf "%c",OOFS > ooffile;
-    for(q=1;q<=nr_questions;q++)
+    for(q=min_question;q<=max_question;q++)
 	printf "%c%d",OOFS,ticks[q,0] > ooffile;
     printf "\n" > ooffile;
     line++;
@@ -315,7 +363,7 @@ END {
 	printf "answer %d",r > ooffile;
 	for(q=2;q<=colstart-1;q++)
 	    printf "%c",OOFS > ooffile;
-	for(q=1;q<=nr_questions;q++)
+	for(q=min_question;q<=max_question;q++)
 	    if(r<=nr_answers[q])
 		printf "%c%d",OOFS,ticks[q,r] > ooffile;
 	    else
