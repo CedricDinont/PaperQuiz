@@ -362,7 +362,7 @@ float seuil_filtre,taux;
 
 //parametres de la fonction
 
-seuil=240;
+seuil=200;
 taillex=File->w;
 tailley=File->h;
 margex=(int)(1.08*taillex/21+0.5);
