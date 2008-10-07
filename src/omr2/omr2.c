@@ -391,6 +391,8 @@ printf("\n image de taille %d * %d\n",taillex,tailley);
 	if(test!=0)
 	{
 		File=rotozoomSurfaceXY(File, 180, 1.0,1.0, 1);
+		taillex=File->w;
+		tailley=File->h;
 		if(BinarisationImage(File,seuil)==0)
 			return(5);
 		File_data=CopyImageTablo(File);
@@ -706,6 +708,13 @@ int nb_colonne,nb_ligne;
 	}
 //affichage(qcm,Screen,0,0);
 //attendreTouche(); 
+	if(initSDL()==0) 
+		return(5); 
+
+  	if(initVideoMode(x,y)==0) 
+		return(5);
+
+  	initCouleurs(Screen); 
 
 	if((code_erreur=Lecture_Image(qcm,file,filetxt,nb_ligne,nb_colonne))!=0)
 	{
