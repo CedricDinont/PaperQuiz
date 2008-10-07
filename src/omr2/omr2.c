@@ -304,6 +304,45 @@ data=(int*)calloc(x*y,sizeof(int));
 return(data);
 }
 
+int TestImage(int *File_data,int taillex,int tailley)		
+{
+short *filt,dx,dy,tfx,tfy;
+int ii,jj,k,margex,margey;
+int ftmp,val,seuil,abs,coord;
+
+margex=(int)(1.08*taillex/21+0.5);
+margey=(int)(tailley/29.7+0.5);
+
+if(taillex>3000)
+	filt=DefinitionFiltre(250,&tfx,&tfy);
+else if ((taillex>1200)&&(taillex<3000))
+	filt=DefinitionFiltre(150,&tfx,&tfy);
+
+seuil=tfx*tfy*0.1;
+
+	dx=tfx/2; 
+	dy=tfy/2;
+	k=0;
+	val=0;
+	coord=(margey*0.7);
+	abs=margex;
+	for (jj=-dy; jj<=dy; jj++)
+	{
+		for (ii=-dx; ii<=dx; ii++)
+		{
+			ftmp=filt[k];
+			val+=*(File_data+(coord+jj)*taillex+abs+ii)*ftmp;
+			k++;
+		}
+	}
+if(filt!=NULL) free(filt); 
+
+if(val<seuil)
+	return(0);
+else
+	return(1);
+}
+
 int Lecture_Image(SDL_Surface *File,char *file,char *file_txt,int nb_ligne,int nb_colonne)
 {
 int seuil,compteur;
@@ -317,7 +356,7 @@ int *ligneh,*ligneb,*xp,*yp;
 float *a1,*b1,*a2,*b2,inter;
 short *filt,dx,dy,tfx,tfy;
 int ftmp,val;
-int abs,coor;
+int abs,coor,test;
 int ii,jj,indice;
 float seuil_filtre,taux;
 
@@ -343,11 +382,21 @@ printf("\n image de taille %d * %d\n",taillex,tailley);
 		return(5);		//faire une fonction binarise qui retourne un fichier de data directement
 	printf("\n Binarisation end\n");
 	
-	affichage(File,Screen,0,0);
+	//affichage(File,Screen,0,0);
 	
 	File_data=CopyImageTablo(File);
 //	printf("\n Copy end\n");
-		
+	
+	test=TestImage(File_data,taillex,tailley);
+	if(test!=0)
+	{
+		File=rotozoomSurfaceXY(File, 180, 1.0,1.0, 1);
+		if(BinarisationImage(File,seuil)==0)
+			return(5);
+		File_data=CopyImageTablo(File);
+	}
+	affichage(File,Screen,0,0);
+	
 	if ((stream = fopen(file_txt,"w")) == NULL)
 	{
 		printf("\n Erreur : probleme d'ouverure de fichier %s\n",file_txt);
@@ -626,13 +675,13 @@ int nb_colonne,nb_ligne;
 		nb_colonne=atoi(argv[5]);
 	}else
 	{
-		printf("\n USAGE : ./qcm file_bmp.bmp save.bmp save.txt nb_ligne nb_colonne\n");	
+		printf("\n USAGE : ./qcm file_jpg.jpg save.bmp save.txt nb_ligne nb_colonne\n");	
 		return(1);
 	}
 
 
    //recuperation taille images
-	if((qcm=SDL_LoadBMP(image))==NULL)
+	if((qcm=IMG_Load(image))==NULL)
 	{
 		printf("\n Erreur d'ouverture fichier : %s\n",image);
 		return(4);
@@ -649,6 +698,12 @@ int nb_colonne,nb_ligne;
 
   	initCouleurs(Screen); 
      	
+	if(x>y)
+	{
+		qcm=rotozoomSurfaceXY(qcm,90,1.0,1.0,1);
+		x=qcm->w;
+		y=qcm->h;
+	}
 //affichage(qcm,Screen,0,0);
 //attendreTouche(); 
 

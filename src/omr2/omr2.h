@@ -19,11 +19,14 @@
  ***************************************************************************/
 
 #include <SDL/SDL.h>  
+#include <SDL/SDL_rotozoom.h>
+#include <SDL/SDL_image.h> 
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>	//fonction sleep
 #include <string.h>
 #include <math.h>
+#include "filtre.h"
 
 // Surfaces 
 SDL_Surface *Screen;
@@ -63,4 +66,4 @@ void ligneVerticale(SDL_Surface*,int,int,int,Uint32);
 void ligneHorizontale(SDL_Surface*,int,int,int,Uint32);
 
 
-#include "filtre.h"
+
