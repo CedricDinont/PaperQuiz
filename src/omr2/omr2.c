@@ -343,9 +343,9 @@ else
 	return(1);
 }
 
-int Lecture_Image(SDL_Surface *File,char *file,char *file_txt,int nb_ligne,int nb_colonne)
+int Lecture_Image(SDL_Surface *File,char *file,char *file_txt,int nb_ligne,int nb_colonne,int seuil)
 {
-int seuil,compteur;
+int compteur;
 int i,j,k,m;
 int taillex,tailley;
 int margex,margey;
@@ -362,7 +362,7 @@ float seuil_filtre,taux;
 
 //parametres de la fonction
 
-seuil=200;
+//seuil=200;
 taillex=File->w;
 tailley=File->h;
 margex=(int)(1.08*taillex/21+0.5);
@@ -665,19 +665,20 @@ int main(int argc,char *argv[])
 int x,y,code_erreur;
 char *image,*file,*filetxt;
 SDL_Surface *qcm;
-int nb_colonne,nb_ligne;
+int nb_colonne,nb_ligne,seuil;
 
 
-	if(argc>5)
+	if(argc>6)
 	{
 		image=argv[1];
 		file=argv[2];
 		filetxt=argv[3];
 		nb_ligne=atoi(argv[4]);
 		nb_colonne=atoi(argv[5]);
+		seuil=atoi(argv[6]);
 	}else
 	{
-		printf("\n USAGE : ./qcm file_jpg.jpg save.bmp save.txt nb_ligne nb_colonne\n");	
+		printf("\n USAGE : ./qcm file_jpg.jpg save.bmp save.txt nb_ligne nb_colonne seuil\n");	
 		return(1);
 	}
 
@@ -716,7 +717,7 @@ int nb_colonne,nb_ligne;
 
   	initCouleurs(Screen); 
 
-	if((code_erreur=Lecture_Image(qcm,file,filetxt,nb_ligne,nb_colonne))!=0)
+	if((code_erreur=Lecture_Image(qcm,file,filetxt,nb_ligne,nb_colonne,seuil))!=0)
 	{
 		SDL_Quit();
 		return(code_erreur);
