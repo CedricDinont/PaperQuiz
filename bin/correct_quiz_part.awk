@@ -1,4 +1,4 @@
-# normal usage: awk -f ../correcteur_quiz_part.awk brut.txt
+ # normal usage: awk -f ../correcteur_quiz_part.awk brut.txt
 
 function int2letter(a,   b) {
     if(a==0) 
@@ -51,12 +51,12 @@ BEGIN {
 #   import correction
     max_found_questions=0;
     min_found_questions=999999;
-    nr_fields_corr=7; # there should be 7 fields in file corrige, but keep it as a parameter...
+    nr_fields_expected=7; # there should be 7 fields in file corrige, but additional fields may be found...
     inputline=0; # trace inputline for warning outputs...
 #   format: question_nr;nb_possible_answers;correct_answers(eg.R1\R5);bonif;malus;coef;bonus
     while(getline<corrige>0) {
 	inputline++;
-	if($1!~"#" && NF==nr_fields_corr) {
+	if($1!~"#" && NF>=nr_fields_expected) {
 	    
 	    if($1 in nr_answers) {
 		# already seen!!!
@@ -97,9 +97,17 @@ BEGIN {
 		if(bonus[$1]==0)
 		    bonus[$1]=$7;
 	    }
-	} else if($1!~"#" && NF!=nr_fields_corr && NF>0)
-	    # Wrong number of fields!!!
-	    printf "WARNING - in \"%s\" line %d:\n\tWrong number of fields (found %d instead of %d) --> question ignored!!\n",corrige,inputline,NF,nr_fields_corr > "/dev/stderr";
+	    
+	    if(NF>max_nr_fields)
+		max_nr_fields=NF;
+
+	    for(af=nr_fields_expected+1;af<=NF;af++) {
+		# Additional fields
+		add_fields[$1,af]=$af;
+	    }
+	} else if($1!~"#" && NF!=nr_fields_expected && NF>0)
+	    # Not enough fields!!!
+	    printf "WARNING - in \"%s\" line %d:\n\tWrong number of fields (found %d, at least %d expected) --> question ignored!!\n",corrige,inputline,NF,nr_fields_expected > "/dev/stderr";
     }
     close(corrige);
 
@@ -166,7 +174,10 @@ BEGIN {
     printf "student_name%cstudent_first_name%cstudent_id",OOFS,OOFS > ooffile;
     for(q=min_question;q<=max_question;q++)
 	printf "%c Q%3d",OOFS,q > ooffile;
-    printf "%cTOTAL%crounded troncations\n",OOFS,OOFS > ooffile;
+    printf "%cTOTAL%crounded troncations%c%cdetail",OOFS,OOFS,OOFS,OOFS > ooffile;
+    for(q=min_question;q<=max_question;q++)
+	printf "%c=%s1",OOFS,int2letter(colstart+q-min_question) > ooffile;
+    printf "\n" > ooffile;
     ###### NEWLINE
 
     printf "coefficients" > ooffile;
@@ -219,11 +230,22 @@ BEGIN {
 	    printf "%c=NA()",OOFS > ooffile;
 	else
 	    printf "%c %4d",OOFS,nr_answers[q] > ooffile;
-    printf "%c=SUM(%s7:%s7)\n\n",OOFS,colname1,colname2 > ooffile;
-    ###### NEWLINE - NEWLINE
+    printf "%c=SUM(%s7:%s7)\n",OOFS,colname1,colname2 > ooffile;
+    ###### NEWLINE
 
-    line=9; # first student line !
-    first_stuline=line;
+    for(af=nr_fields_expected+1;af<=max_nr_fields;af++) {
+	printf "additional_field_%d",af-nr_fields_expected > ooffile;
+	for(q=2;q<=colstart-1;q++)
+	    printf "%c",OOFS > ooffile;
+	for(q=min_question;q<=max_question;q++)
+	    printf "%c%s",OOFS,add_fields[q,af] > ooffile;
+	printf "\n" > ooffile;
+    }
+    printf "\n\n" > ooffile;
+    ###### NEWLINE - NEWLINE - NEWLINE
+
+    first_stuline=10+max_nr_fields-nr_fields_expected; # first student line !
+    line=first_stuline;
 }
 
 #-------------------------------------------------------------------------------------------------------------
@@ -239,6 +261,7 @@ $1!~"Code" {
     for(q=min_question;q<=max_question;q++) {
 
 	corresponding_field=q-min_question+2;
+	strg[q]=$corresponding_field;
 	gsub("R","",$corresponding_field);
 	
 	nans=split($corresponding_field,tab,"\\");
@@ -269,7 +292,11 @@ $1!~"Code" {
     }
 
     printf "%c=20*SUMPRODUCT($%s$2:$%s$2;$%s%d:$%s%d)/$%s$3",OOFS,colname1,colname2,colname1,line,colname2,line,int2letter(colstart+nr_questions) > ooffile;
-    printf "%c=MAX(0;ROUNDUP($%s%d/$%s$2)*$%s$2)\n",OOFS,int2letter(colstart+nr_questions),line,int2letter(colstart+nr_questions+1),int2letter(colstart+nr_questions+1) > ooffile;
+    printf "%c=MAX(0;ROUNDUP($%s%d/$%s$2)*$%s$2)",OOFS,int2letter(colstart+nr_questions),line,int2letter(colstart+nr_questions+1),int2letter(colstart+nr_questions+1) > ooffile;
+    printf "%c%c",OOFS,OOFS > ooffile;
+    for(q=min_question;q<=max_question;q++)
+	printf "%c%s",OOFS,strg[q] > ooffile;
+    printf "\n" > ooffile;
     line++;
     ###### NEWLINE
 }
