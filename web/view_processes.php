@@ -7,13 +7,13 @@ $quiz = Quiz::getQuizById($_GET['quiz-id']);
 ?>
 <html>
 <head>
-        <title>Processus actifs</title>
+        <title>Processus terminés</title>
 </head>
 <body>
 <?php
 $processes=Processus::getAllProcesses($quiz);
 foreach ($processes as $pid => $processus) {
-  echo "<a href=\"".$processus->getPid()."\">".$processus->getPid()."</a><br>";
+  echo "<a href=\"view_process_progress.php?quiz-id=".$quiz->getId()."&pid=".$processus->getPid()."\">".$processus->getPid()."</a><br>";
 }
 ?>
 <br>

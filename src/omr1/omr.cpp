@@ -110,7 +110,7 @@ void writeImages(char* name, Image& image, Image& correctedImage) {
 
 int main(int argc, char** argv) {
   
-  if (argc < 14) {
+  if (argc < 16) {
     usage();
     exit(1);
   }
@@ -130,6 +130,9 @@ int main(int argc, char** argv) {
   int bottomMarksMaxPercentage = atoi(argv[11]);
   int rightMarksMinPercentage = atoi(argv[12]);
   int rightMarksMaxPercentage = atoi(argv[13]);
+
+  int binarizationThreshold = atoi(argv[14]);
+  double answerThreshold = atof(argv[15]);
 
   list<MarkInfo*> topMarks, bottomMarks, leftMarks, rightMarks;
 
@@ -153,7 +156,7 @@ int main(int argc, char** argv) {
   cout << "Needed height for marks: " << neededHeightForMarks << endl;
 
   cout << "Preparing image." << endl;
-  image.threshold(63000);
+  image.threshold(binarizationThreshold);
   
   cout << "Searching for marks." << endl;
 
@@ -240,24 +243,16 @@ int main(int argc, char** argv) {
 
       average = computeAverage(image, i, j);
       cout << average << " ";
-      if (average < 0.5) {
+      if (average < answerThreshold) {
 	cout << "1 ";
 	outputFile << "1 ";
 	correctedImage.strokeColor(Color("green"));
 	correctedImage.draw(DrawableArc(i - r, j - r, i + r, j + r, 0, 360));
       }
       else {
-        if (average < 0.7) {
-	  cout << "? ";
-	  outputFile << "? ";
-	  correctedImage.strokeColor(Color("red"));
-	  correctedImage.draw(DrawableArc(i - r, j - r, i + r, j + r, 0, 360));
-	  error = true;
-	} else {
-	  cout << "0 ";
-	  outputFile << "0 ";
-	}
-      } 
+	cout << "0 ";
+	outputFile << "0 ";
+      }
     }
     cout << endl;
     outputFile << endl;

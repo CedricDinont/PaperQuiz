@@ -39,6 +39,9 @@ Que voulez-vous faire sur le quiz
 <a href="create_students_file_from_scans_infos.php?quiz-id=<?php echo $_GET['quiz-id'] ?>">Générer le fichier d'informations sur les étudiants à partir des pages scannées</a>
 </li>
 <li>
+<a href="chosse_standard_students_file.php?quiz-id=<?php echo $_GET['quiz-id'] ?>">Choisir un fichier d'informations sur les étudiants standard</a> (Fonctionnalité pas encore disponible)
+</li>
+<li>
 <a href="correct_quiz.php?quiz-id=<?php echo $_GET['quiz-id'] ?>">Corriger l'épreuve</a>
 </li>
 <li>
@@ -51,10 +54,10 @@ Que voulez-vous faire sur le quiz
 <a href="rename_quiz.php?quiz-id=<?php echo $_GET['quiz-id'] ?>">Renommer le quiz</a> (Fonctionnalité pas encore disponible)
 </li>
 <li>
-<a href="remove_quiz.php?quiz-id=<?php echo $_GET['quiz-id'] ?>">Supprimer le quiz</a> (Fonctionnalité pas encore disponible)
+<a href="remove_quiz.php?quiz-id=<?php echo $_GET['quiz-id'] ?>">Supprimer le quiz</a>
 </li>
 <li>
-<a href="view_processes.php?quiz-id=<?php echo $_GET['quiz-id'] ?>">Voir les processus terminés</a> (Fonctionnalité pas encore disponible)
+<a href="view_processes.php?quiz-id=<?php echo $_GET['quiz-id'] ?>">Voir les processus terminés</a>
 </li>
 <li>
 <a href="view_process_progress.php?quiz-id=<?php echo $quiz->getId() ?>">Voir la progression du processus courant</a>

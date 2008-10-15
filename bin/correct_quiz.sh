@@ -29,7 +29,7 @@ NR == 3 { print $1 } ' ${CORNERS_FILE}`
 FIRST_FREE_LINE=`awk 'BEGIN { FS=" " }
 NR == 4 { print $1 } ' ${CORNERS_FILE}`
 
-  ${SCRIPT_DIR}/convert_csv_to_oofile.sh  `pwd`/${CORRECTION_MARK_FILE}  `pwd`/${OOFILE} "${CHART_CORNERS}" "${LAST_COLUMN}" "${AVERAGE}" "${FIRST_FREE_LINE}" 
+  ${SCRIPT_DIR}/convert_csv_to_oofile.sh  ${CORRECTION_MARK_FILE}  ${OOFILE} "${CHART_CORNERS}" "${LAST_COLUMN}" "${AVERAGE}" "${FIRST_FREE_LINE}" 
 
 #  if [ -f ${CORRECTION_FILE} ]
 #  then

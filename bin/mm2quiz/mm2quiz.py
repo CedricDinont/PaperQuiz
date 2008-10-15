@@ -94,7 +94,7 @@ class Mm2S5:
   def convert(self, slideshow):
     """ Convert self.et_in to a HTML as a list of lines in S5 format """
 
-    self._grab_meta()
+    """  self._grab_meta() """
 
     lines = []
     answers = []
@@ -172,14 +172,13 @@ class Mm2S5:
 
 
   def _doAnswers(self, answers, page, countPage, title):
-    """  answers.append('%s\n' % title) """
     answers.append('%s;' % (countPage))
-    children = page.find('node').getchildren()
+    children = page.find('node').findall('node')
     answers.append('%d;' % len(children))
     a = []
     self._doTag(a, page, 0)
     answers.append("\\".join(a))
-    answers.append(';1;-0.5,1;0\n')
+    answers.append(';1;-0.5;1;0\n')
 
 
   def _doTag(self, answers, line, answer):
@@ -229,7 +228,7 @@ class Mm2S5:
         ret['ok_question'] = "ans"
       elif type == 'button_cancel':
         ret['skip'] = True
-      elif type == 'full-1':
+      elif type == 'licq':
         ret['ol'] = True
 
     # Special case, if the first node starts with <

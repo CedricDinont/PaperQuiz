@@ -25,21 +25,24 @@ do
     echo -n "OMR ${file}...  "
 
     echo -n "1 "
-    # image nb_vert nb_horz mark_width mark height min_top max_top min_left max_left min_bottom max_bottom min_right max_right
-    ${SCRIPT_DIR}/omr1 ${file}    10 45    2 10    1 6    2 9    94  98     91 98  >> ${OMR_LOG_FILE} 
+    # image nb_vert nb_horz mark_width mark height min_top max_top min_left max_left min_bottom max_bottom min_right max_right binarization_threshold answer_threshold
+    ${SCRIPT_DIR}/omr1 ${file}    10 45    2 10    1 6    2 9    94  98     91 98  55000  0.5 >> ${OMR_LOG_FILE} 
     if (( $? != 0 ))
     then
        ERROR="true"
     fi
 
     echo -n "2 "
-    convert ${file} -rotate 270 -type TrueColor ${file}.bmp
+    # convert ${file} -rotate 270 -type TrueColor ${file}.bmp
     WHOAMI=`whoami`
     if [ "$WHOAMI" = "apache" ]
     then
 	cd /home/apache
+	export DISPLAY=:0
+	export HOME=/home/apache
     fi
-    xvfb-run -a ${SCRIPT_DIR}/omr2 ${file}.bmp ${file}.output.bmp ${file}.omr2_data 45 10 >> ${OMR_LOG_FILE}
+    # image_in image_out data_out nb_vert nb_horz binarization threshold
+    xvfb-run -a ${SCRIPT_DIR}/omr2 ${file} ${file}.output.bmp ${file}.omr2_data 45 10 200 >> ${OMR_LOG_FILE}
     if (( $? != 0 ))
     then
        ERROR="true"
