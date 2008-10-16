@@ -5,6 +5,7 @@ source ${SCRIPT_DIR}/quiz_common.sh
 
 export LANG=C
 
+QUIZ_PART_NB=0
 for QUIZ_PART in ${QUIZ_PARTS} 
 do
   echo "Correcting ${QUIZ_PART}."
@@ -18,7 +19,7 @@ do
   OOFILE=${QUIZ_DIR}/correction/${QUIZ_NAME}.${QUIZ_PART}.ods
   CORNERS_FILE=${QUIZ_DIR}/correction/${QUIZ_PART}.corners
 
-  awk -f ${SCRIPT_DIR}/correct_quiz_part.awk -v students="${STUDENTS_FILE}" -v corrige="${MARKING_FILE}" -v ooffile="${CORRECTION_MARK_FILE}" -v cornersfile="${CORNERS_FILE}" ${STUDENTS_ANSWERS_FILE}
+  awk -f ${SCRIPT_DIR}/correct_quiz_part.awk -v students="${STUDENTS_FILE}" -v corrige="${MARKING_FILE}" -v ooffile="${CORRECTION_MARK_FILE}" -v cornersfile="${CORNERS_FILE}" -v min_question="${QUIZ_PARTS_MIN_QUESTIONS[$QUIZ_PART_NB]}" -v max_question="${QUIZ_PARTS_MAX_QUESTIONS[$QUIZ_PART_NB]}" ${STUDENTS_ANSWERS_FILE} 
 
 CHART_CORNERS=`awk 'BEGIN { FS=" " }
 NR == 1 { print $1 } ' ${CORNERS_FILE}`
@@ -37,6 +38,8 @@ NR == 4 { print $1 } ' ${CORNERS_FILE}`
 #  fi
 
   echo ""
+
+  QUIZ_PART_NB=$((${QUIZ_PART_NB} + 1))
 
 done
 

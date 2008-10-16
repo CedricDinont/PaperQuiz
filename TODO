@@ -10,6 +10,7 @@
   - Ecrire create_marking_templates.sh
   - Prendre en compte les fichier .mmr_data dans prepare_correction.sh
   - Créer le fichier students de manière automatique
+  - Détecter l'utilisation mutliple d'un login
 
 * mm2quiz :
   - Exporter en Latex plutôt qu'en HTML
