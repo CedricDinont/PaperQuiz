@@ -45,6 +45,7 @@ BEGIN {
 	absent[a[3]]=1; # a priori absent...
 	stutab[a[3]]=sprintf("%s%c%s",a[1],OOFS,a[2]);
 	# a[3] might be a string like "P45079"
+	nr_students++;
     }
     close(students);
 
@@ -74,6 +75,7 @@ BEGIN {
 		if($2>max_nr_answers)
 		    max_nr_answers=$2;
 		
+		expected_ans[$1]=$3;
 		nr_correct[$1]=split($3,a,"\\");
 		# nr_correct[q] (nr of correct answers at question "q") is used to compute mark
 		if(nr_correct[$1]==0) {
@@ -174,7 +176,7 @@ BEGIN {
     printf "student_name%cstudent_first_name%cstudent_id",OOFS,OOFS > ooffile;
     for(q=min_question;q<=max_question;q++)
 	printf "%c Q%3d",OOFS,q > ooffile;
-    printf "%cTOTAL%crounded troncations%c%cdetail",OOFS,OOFS,OOFS,OOFS > ooffile;
+    printf "%cTOTAL%crounded troncations%crank%c%cdetail",OOFS,OOFS,OOFS,OOFS,OOFS > ooffile;
     for(q=min_question;q<=max_question;q++)
 	printf "%c=%s1",OOFS,int2letter(colstart+q-min_question) > ooffile;
     printf "\n" > ooffile;
@@ -241,11 +243,19 @@ BEGIN {
 	    printf "%c%s",OOFS,add_fields[q,af] > ooffile;
 	printf "\n" > ooffile;
     }
-    printf "\n\n" > ooffile;
+    printf "\n" > ooffile;
     ###### NEWLINE - NEWLINE - NEWLINE
 
     first_stuline=10+max_nr_fields-nr_fields_expected; # first student line !
     line=first_stuline;
+    coltot=int2letter(colstart+nr_questions+1);
+
+    for(q=1;q<=colstart+nr_questions+3;q++)
+	printf "%c",OOFS > ooffile;
+    printf "expected_answers",OOFS > ooffile;
+    for(q=min_question;q<=max_question;q++)
+	printf "%c%s",OOFS,expected_ans[q] > ooffile;
+    printf "\n" > ooffile;
 }
 
 #-------------------------------------------------------------------------------------------------------------
@@ -292,7 +302,9 @@ $1!~"Code" {
     }
 
     printf "%c=20*SUMPRODUCT($%s$2:$%s$2;$%s%d:$%s%d)/$%s$3",OOFS,colname1,colname2,colname1,line,colname2,line,int2letter(colstart+nr_questions) > ooffile;
-    printf "%c=MAX(0;ROUNDUP($%s%d/$%s$2)*$%s$2)",OOFS,int2letter(colstart+nr_questions),line,int2letter(colstart+nr_questions+1),int2letter(colstart+nr_questions+1) > ooffile;
+    printf "%c=MAX(0;ROUNDUP($%s%d/$%s$2)*$%s$2)",OOFS,int2letter(colstart+nr_questions),line,coltot,coltot > ooffile;
+    printf "%c=RANK(%s%d;%s$%d:%s$%d)",OOFS,coltot,line,coltot,first_stuline,coltot,first_stuline+nr_students-1 > ooffile;
+
     printf "%c%c",OOFS,OOFS > ooffile;
     for(q=min_question;q<=max_question;q++)
 	printf "%c%s",OOFS,strg[q] > ooffile;
@@ -439,8 +451,8 @@ END {
     ###### NEWLINE
 
     printf "$A$%d:$%s$%d chartcorners\n",line-3,int2letter(1+1000-int(1000-20/binlength)),line-2 > cornersfile;
-    printf "$%s$%d:$%s$%d lastcolumn\n",int2letter(colstart+nr_questions+1),first_stuline,int2letter(colstart+nr_questions+1),last_stuline+5 > cornersfile;
-    printf "$%s$%d average\n",int2letter(colstart+nr_questions+1),last_stuline+2 > cornersfile;
+    printf "$%s$%d:$%s$%d lastcolumn\n",coltot,first_stuline,coltot,last_stuline+5 > cornersfile;
+    printf "$%s$%d average\n",coltot,last_stuline+2 > cornersfile;
     printf "$A$%d firstfreeline\n",line+1 > cornersfile;
 
 }
