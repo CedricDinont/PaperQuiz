@@ -18,6 +18,7 @@
 <html>
 <head>
         <title>Visualisation des sorties du processus</title>
+        <link rel="stylesheet" type="text/css" href="style/quiz.css" />
 <?php 
   if ($hasToRefreshPage) { ?>
 	<meta http-equiv="refresh" content="5">

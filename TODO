@@ -1,16 +1,11 @@
-* Fiche de réponses :
-  - Voir pour imprimer en gris clair le tour des cases
-
 * OMR1 :
   - Prendre en compte la marque de rotation pour la rotation de l'image
   - Vérifier le cas où il y a une ligne verticale dans le calcul de l'intersection des deux droites
 
 * Scripts :
-  - Ecrire omr_errors_resolved.sh
   - Ecrire create_marking_templates.sh
   - Prendre en compte les fichier .mmr_data dans prepare_correction.sh
-  - Créer le fichier students de manière automatique
-  - Détecter l'utilisation mutliple d'un login
+  - Détecter l'utilisation multiple d'un login
 
 * mm2quiz :
   - Exporter en Latex plutôt qu'en HTML

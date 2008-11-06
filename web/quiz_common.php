@@ -1,9 +1,19 @@
 <?php
 
+require_once('config.php');
+
 function doMainMenu() {
 	global $quiz;
 
-	echo "<div class=\"MainMenu\"><a href=\"index.php\">Retour au menu principal</a> - <a href=\"quiz_workflow.php?quiz-id=".$quiz->getId()."\">Retour au menu du quiz</a> - <a href=\"help.php?quiz-id=".$quiz->getId()."\">Aide</a></div>";
+	echo "<div class=\"MainMenu\"><a href=\"index.php\">Retour au menu principal</a>";
+	if (isset($quiz)) {
+	  echo " - <a href=\"quiz_workflow.php?quiz-id=".$quiz->getId()."\">Retour au menu du quiz</a>";
+	}
+	echo " - <a href=\"help.php";
+	if (isset($quiz)) {
+	  echo "?quiz-id=".$quiz->getId();
+	}
+	echo "\">Aide</a></div>";
 }
 
 ?>

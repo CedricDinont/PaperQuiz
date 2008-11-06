@@ -7,6 +7,7 @@
 <html>
 <head>
 	<title>Supprimer un quiz</title>
+        <link rel="stylesheet" type="text/css" href="style/quiz.css" />
 </head>
 <body>
 Fonctionnalité non disponible sur cette interface web.<br>

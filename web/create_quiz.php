@@ -1,22 +1,30 @@
 <?php
-	require_once('config.php');
+  require_once('quiz_common.php');
 ?>
 <html>
 <head>
         <title>Création d'un quiz</title>
+        <link rel="stylesheet" type="text/css" href="style/quiz.css" />
 </head>
 <body>
 <?php
-	if ($_POST['action'] == "create") {
+	if (isset($_POST['action']) && ($_POST['action'] == "create")) {
 		$quiz_name=$_POST['year']."_".$_POST['month']."_".$_POST['day']."-".$_POST['group']."-".$_POST['quiz-name'];
 		system($quiz_bin_dir."create_quiz.sh ".$quiz_name." &");
 	} else {
 ?>
-
+Veuillez renplir le formulaire suivant en respectant les règles suivantes :
+<ul>
+<li>La date est celle où les étdudiants font le quiz.</li>
+<li>Ne mettez aucun espace dans les champs. Les remplacer par des _.</li>
+<li>Le nom du groupe d'étudiants doit commencer par le nom de la promo suivi éventuellement du sous-groupe concerné séparés par un _ (ex.: CLIIR1, ou N4_Unix).</li>
+<li>L'intitulé doit permettre de reconnaître le sujet du quiz (ex. : TP1, DS).</li>
+</ul>
 <form action="create_quiz.php" method="post">
 <input type="hidden" name="action" value="create">
-	Jour : 
-	<select name="day">
+<table>
+<tr><td>Jour :</td><td> 
+	<select name="day" class="form_elem">
 		<option>01</option>
                 <option>02</option>
                 <option>03</option>
@@ -48,10 +56,9 @@
                 <option>29</option>
                 <option>30</option>
 		<option>31</option>
-	</select>
-	<br>
-	Mois : 
-	<select name="month">
+	</select></td>
+	</tr><tr><td>Mois : </td><td> 
+	<select name="month" class="form_elem">
                 <option value="01">Janvier</option>
                 <option value="02">Février</option>
 	        <option value="03">Mars</option>
@@ -64,22 +71,20 @@
                 <option value="10">Octobre</option>
                 <option value="11">Novembre</option>
                 <option value="12">Décembre</option>
-        </select>
-	<br>
-	Année : 
-	<select name="year">
+        </select></td>
+       </tr><tr><td>Année : </td><td> 
+	<select name="year" class="form_elem">
 		<option value="08">2008</option>
 		<option value="09">2009</option>
 		<option value="10">2010</option>
 		<option value="11">2011</option>
-	</select>
-	<br>
-	Nom du groupe d'étudiants concerné : <input type="text" name="group"><br>
-	Intitulé du quiz : <input type="text" name="quiz-name"><br>
-	<input type="submit" value="doCreateQuiz">
-	<input type="submit" value="cancelCreateQuiz" onclick="javascript:>
+	</select></td>
+</tr><tr><td>Groupe d'étudiants :</td><td> <input type="text" name="group" class="form_elem"></td>
+</tr><tr><td>Intitulé du quiz : </td><td><input type="text" name="quiz-name" class="form_elem"></td>
+</table>
+	<input type="submit" class="form_elem">
 </form>
-<?php
-}
-?>
+<?php }
+  doMainMenu() ?>
 </body>
+</html>

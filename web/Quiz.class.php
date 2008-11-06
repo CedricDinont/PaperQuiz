@@ -43,6 +43,7 @@ class Quiz {
 		  }
 		}
 		$d->close();
+		rsort($quizes);
 		return $quizes;
 	}
 
@@ -64,6 +65,23 @@ class Quiz {
 		return $this->getDir()."processes/";
 	}
 
+	public function getCorrectionDir() {
+		return $this->getDir()."correction/";
+	}
+
+	public function getOmrInputDir() {
+		return $this->getDir()."omr_input/";
+	}
+
+	public function getOmrOutputDir() {
+		return $this->getDir()."omr_output/";
+	}
+
+	public function getOmrErrorDir() {
+		return $this->getDir()."omr_errors/";
+	}
+
+
 	public function hasRunningProcess() {
 		$contents = file($this->getProcessesDir()."current_process");
 		if (($contents != FALSE) && ($contents[0] === "Running\n")) {
@@ -80,6 +98,10 @@ class Quiz {
 		} else {
 			return FALSE;
 		}
+	}
+
+	public function rename($new_name) {
+
 	}
 }
 

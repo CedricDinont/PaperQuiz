@@ -3,7 +3,7 @@
 SCRIPT_DIR=`dirname $0`
 source ${SCRIPT_DIR}/quiz_common.sh
 
-OMR_DATA_FILES=`ls ${QUIZ_DIR}/omr_output/*.omr1_data  2> /dev/null`
+IMAGE_FILES=`ls ${QUIZ_DIR}/omr_output/ 2> /dev/null | grep "^[^(jpg)]*jpg$"`
 
 QUIZ_PART_NB=0
 echo $QUIZ_PARTS
@@ -19,10 +19,20 @@ echo "Last question: ${QUIZ_PARTS_MAX_QUESTIONS[$QUIZ_PART_NB]}"
 
 echo -n "" > ${OUTPUT_FILE}
 
-for OMR_DATA_FILE in ${OMR_DATA_FILES}
+for IMAGE_FILE in ${IMAGE_FILES}
 do
+    if [ -e ${QUIZ_DIR}/omr_output/${IMAGE_FILE}.mmr_data ] 
+    then
+	OMR_DATA_FILE=${QUIZ_DIR}/omr_output/${IMAGE_FILE}.mmr_data
+    elif [ -e ${QUIZ_DIR}/omr_output/${IMAGE_FILE}.omr1_data ] 
+    then
+	OMR_DATA_FILE=${QUIZ_DIR}/omr_output/${IMAGE_FILE}.omr1_data    
+    else
+	OMR_DATA_FILE=${QUIZ_DIR}/omr_output/${IMAGE_FILE}.omr2_data    
+    fi
+    
     echo "    Parsing ${OMR_DATA_FILE}."
-    OUTPUT_TEXT=`awk  -v min=${QUIZ_PARTS_MIN_QUESTIONS[$QUIZ_PART_NB]} -v max=${QUIZ_PARTS_MAX_QUESTIONS[$QUIZ_PART_NB]} '
+    OUTPUT_TEXT=`awk  -v min=${QUIZ_PARTS_MIN_QUESTIONS[$QUIZ_PART_NB]} -v max=${QUIZ_PARTS_MAX_QUESTIONS[$QUIZ_PART_NB]} -v file=${OMR_DATA_FILE} '
 BEGIN {
   FS=" "
   login[1] = -1
@@ -36,7 +46,7 @@ NR <= 5 {
   for (i = 1; i <= NF; i = i + 1) {
      if ($i == "1") {
 	if (login[NR] != -1) {
-		print "Error: Two marks on line", NR > "/dev/stderr"
+		print "Error: Two marks on line ", NR, " in file ", file > "/dev/stderr"
 		exit 1
 	}
         login[NR] = i - 1
@@ -45,7 +55,7 @@ NR <= 5 {
 }
 NR == 5 {
     if ((login[1] == -1) || (login[2] == -1) || (login[3] == -1) || (login[4] == -1) || (login[4] == -1)) {
-	    print "Error: Incomplete login" > "/dev/stderr"
+	    print "Error: Incomplete login in file ", file > "/dev/stderr"
 	    exit 2
     }
   printf "p%d%d%d%d%d;", login[1], login[2], login[3], login[4], login[5]
