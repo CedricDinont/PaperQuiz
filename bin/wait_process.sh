@@ -15,7 +15,7 @@ ${PID}" > ${QUIZ_DIR}/processes/current_process
 
 while ps -p ${PID} > /dev/null
 do
-    sleep1
+    sleep 1
 done
 
 

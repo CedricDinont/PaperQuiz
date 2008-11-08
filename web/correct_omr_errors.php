@@ -120,7 +120,7 @@ if (isset($_POST['directory'])) {
 
 if ($action == "apply_changes") {
   saveMrFile($quiz->getDir().$current_dir.$_POST['image_file'].".mmr_data");
-  $last_line = system($quiz_bin_dir."omr_errors_resolved.sh ".$quiz->getName());
+  exec($quiz_bin_dir."omr_errors_resolved.sh ".$quiz->getName());
 }
 
 getImagesFromDir($quiz->getDir().$current_dir);

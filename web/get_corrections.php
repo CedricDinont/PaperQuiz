@@ -7,6 +7,7 @@
 <html>
 <head>
 	<title>Accès aux fichiers de résultats</title>
+        <link rel="stylesheet" type="text/css" href="style/quiz.css" />
 </head>
 <body>
 Fichiers de résultats pour le quiz <?php echo $quiz->getName() ?> :<br>

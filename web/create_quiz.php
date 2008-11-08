@@ -15,7 +15,7 @@
 ?>
 Veuillez renplir le formulaire suivant en respectant les règles suivantes :
 <ul>
-<li>La date est celle où les étdudiants font le quiz.</li>
+<li>La date est celle où les étudiants font le quiz.</li>
 <li>Ne mettez aucun espace dans les champs. Les remplacer par des _.</li>
 <li>Le nom du groupe d'étudiants doit commencer par le nom de la promo suivi éventuellement du sous-groupe concerné séparés par un _ (ex.: CLIIR1, ou N4_Unix).</li>
 <li>L'intitulé doit permettre de reconnaître le sujet du quiz (ex. : TP1, DS).</li>
