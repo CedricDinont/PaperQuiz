@@ -38,11 +38,11 @@ function doFilesMenu() {
   echo "<option value=\"remove\">Supprimer</option>";
   echo "</select><br>Répertoire destination : ";
   echo "<select class=\"form_elem\" name=\"dest_folder\">";
-  echo "<option value=\"omr_input/\">omr_input</option>";
-  echo "<option value=\"omr_output/\">omr_output</option>";
-  echo "<option value=\"omr_errors/\">omr_errors</option>";
-  echo "<option value=\"correction/\">correction</option>";
-  echo "<option value=\"./\">base</option>";
+  echo "<option value=\"omr_input\">omr_input</option>";
+  echo "<option value=\"omr_output\">omr_output</option>";
+  echo "<option value=\"omr_errors\">omr_errors</option>";
+  echo "<option value=\"correction\">correction</option>";
+  echo "<option value=\".\">base</option>";
   echo "</select><br>";
   echo "<input type=\"submit\" class=\"form_elem\" onclick=\"confirmAction(); return false;\">";
 }
@@ -57,11 +57,12 @@ function doFileOperation() {
     foreach ($_POST['files'] as $key => $file) {
       unlink($quiz->getDir().$file);
     }
-  } else if ($_POST['action'] == "move") {
-    echo "<span style=\"color: red\"><bold>Le déplacement de fichiers n'est pas encore implémenté.<bold></span><br>";
-    
+  } else if ($_POST['action'] == "move") {    
     foreach ($_POST['files'] as $key => $file) {
-      //rename($quiz->getDir().$file);
+      $elems = explode("/", $file);
+      $filename = $elems[count($elems) - 1];
+      $new_file = $quiz->getDir().$_POST['dest_folder']."/".$filename;
+      rename($quiz->getDir().$file, $new_file);
     }
   }
 }
