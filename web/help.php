@@ -106,6 +106,7 @@ A la fin de la correction, on archive le sujet du quiz avec les feuilles de rép
 <li>Classement des quiz dans différentes catégories pour pouvoir les retrouver plus facilement.</li>
 <li>Classement des processus d'un quiz dans l'ordre chronologique.</li>
 <li>Préparer ou modifier un corrigé en ligne.</li>
+<li>Modifier le fichier d'information sur les étudiants en ligne.</li>
 <li>Dans la page de correction des erreurs de reconnaissance des marques, permettre le déplacement de l'image par glisser-déposer plutôt que de forcer à utiliser les ascenseurs.</li>
 <li>Indiquer les prochaines étapes à réaliser dans la page du workflow d'un quiz.</li>
 <li>Permettre de déposer un fichier Open Office de résultats modifié manuellement pour archivage.</li>
