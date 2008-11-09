@@ -16,4 +16,11 @@ function doMainMenu() {
 	echo "\">Aide</a></div>";
 }
 
+function checkParentDirectoryInFilename($filename) {
+  if (strstr($filename, "..") != FALSE) {
+    echo "What are you trying to do?";
+    exit(0);
+  }
+}
+
 ?>

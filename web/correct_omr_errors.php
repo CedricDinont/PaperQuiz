@@ -106,6 +106,17 @@ function getImagesFromDir($dir) {
   sort($images);
 }
 
+function findIndexOfImage($wantedImage) {
+  global $images;
+
+  foreach ($images as $index => $image) {
+    if ($image == $wantedImage) {
+      return $index;
+    }
+  }
+  return -1;
+}
+
 if (isset($_POST['action'])) {
   $action = $_POST['action'];
 } else {
@@ -126,7 +137,30 @@ if ($action == "apply_changes") {
 getImagesFromDir($quiz->getDir().$current_dir);
 
 if (isset($_POST['image_file']) && ($action != "change_directory") && ($action != "apply_changes")) {
-   $current_image = $_POST['image_file'];
+  $lastImageIndex = findIndexOfImage($_POST['image_file']);
+  if ($action == "next_image") {
+    if ($lastImageIndex != -1) {
+      if (isset($images[$lastImageIndex + 1])) {
+	$current_image = $images[$lastImageIndex + 1];
+      } else {
+	$current_image = $_POST['image_file'];
+      }
+    } else {
+      $current_image = "";
+    }
+  } else if ($action == "previous_image") {
+    if ($lastImageIndex != -1) {
+      if (isset($images[$lastImageIndex - 1])) {
+	$current_image = $images[$lastImageIndex - 1];
+      } else {
+	$current_image = $_POST['image_file'];
+      }
+    } else {
+      $current_image = "";
+    } 
+  } else {
+    $current_image = $_POST['image_file'];
+  }
 } else {
   if (isset($images[0])) {
     $current_image = $images[0];
@@ -135,10 +169,14 @@ if (isset($_POST['image_file']) && ($action != "change_directory") && ($action !
   }
 }
 
-if (file_exists($quiz->getDir().$current_dir.$current_image.".mmr_data")) {
-  $mr_file_ext=".mmr_data";
+if ($action == "change_mr") {
+  $mr_file_ext = $_POST['mr_file'];
 } else {
-  $mr_file_ext=".omr1_data";
+  if (file_exists($quiz->getDir().$current_dir.$current_image.".mmr_data")) {
+    $mr_file_ext=".mmr_data";
+  } else {
+    $mr_file_ext=".omr1_data";
+  }
 }
 
 if ($current_image != "") {
@@ -189,19 +227,60 @@ function discardChanges() {
 }
 
 function nextImage() {
-
+  if (changed) {
+    alertChanged();
+  } else {
+    document.main_form.action.value="next_image";
+    document.main_form.submit();
+  }
 }
 
 function previousImage() {
-
+  if (changed) {
+    alertChanged();
+  } else {
+    document.main_form.action.value="previous_image";
+    document.main_form.submit();
+  }
 }
 
 function goToQuizMenu() {
   if (changed) {
-    alert("Vous avez fait des modifications sur les marques reconnues. Vous devez appliquer ou annuler les modifications avant de continuer.");
+    alertChanged();
   } else {
     window.location.href="quiz_workflow.php?quiz-id=<?php echo $quiz->getId(); ?>";
   }
+}
+
+function mrChanged() {
+  if (changed) {
+    alertChanged();
+  } else {
+    document.main_form.action.value='change_mr'; 
+    document.main_form.submit();
+  }
+}
+
+function imageChanged() {
+  if (changed) {
+    alertChanged();
+  } else {
+    document.main_form.action.value='change_image'; 
+    document.main_form.submit();
+  }
+}
+
+function directoryChanged() {
+  if (changed) {
+    alertChanged();
+  } else {
+    document.main_form.action.value='change_directory'; 
+    document.main_form.submit();
+  }
+}
+
+function alertChanged() {
+    alert("Vous avez fait des modifications sur les marques reconnues. Vous devez appliquer ou annuler les modifications avant de continuer.");
 }
 
 	  function init() {
@@ -224,16 +303,24 @@ function goToQuizMenu() {
   <button onclick="fitWidth(); return false;" class="form_elem">Fit width</button>
   <button onclick="zoomIn(); return false;" class="form_elem">Zoom in</button>
   <button onclick="zoomOut(); return false;" class="form_elem">Zoom out</button>
-  <select name="data_file" class="form_elem">
-     <option value="">Manuel</option>
-     <option value="">OMR1</option>
-    <option value="">OMR2</option>
+  <select name="mr_file" class="form_elem" onchange="mrChanged();">
+<?php 
+  if (file_exists($quiz->getDir().$current_dir.$current_image.".mmr_data")) {
+    echo "<option value=\".mmr_data\" ";
+    if ($mr_file_ext == ".omr1_data") {
+      echo "selected"; 
+    }
+    echo ">Manual</option>";
+  }
+?>
+<option value=".omr1_data" <?php if ($mr_file_ext == ".omr1_data") { echo "selected"; } ?> >OMR1</option>
+<option value=".omr2_data" <?php if ($mr_file_ext == ".omr2_data") { echo "selected"; } ?> >OMR2</option>
   </select>
   <button onclick="applyChanges(); return false;" class="form_elem">Apply</button>
  <button onclick="discardChanges(); return false;" class="form_elem">Discard</button>
   <button onclick="nextImage(); return false;" class="form_elem">Next image</button>
   <button onclick="previousImage(); return false;" class="form_elem">Previous image</button>
-  <select name="image_file" class="form_elem" onchange="document.main_form.submit();">
+  <select name="image_file" class="form_elem" onchange="imageChanged();">
 <?php 
 	    foreach ($images as $nb => $image) {
 	    echo "<option value=\"".$image."\" ";
@@ -245,15 +332,15 @@ function goToQuizMenu() {
 	    
 ?>
   </select>
-  <select name="directory" class="form_elem" onchange="document.main_form.action.value='change_directory'; document.main_form.submit();">
-	    <option value="omr_errors" <?php if ($current_dir == "omr_errors/") echo "selected"; ?>>Erreurs</option>
-     <option value="omr_output" <?php if ($current_dir != "omr_errors/") echo "selected"; ?>>Sortie</option>
+  <select name="directory" class="form_elem" onchange="directoryChanged();">
+	    <option value="omr_errors" <?php if ($current_dir == "omr_errors/") echo "selected"; ?>>Errors</option>
+     <option value="omr_output" <?php if ($current_dir != "omr_errors/") echo "selected"; ?>>Output</option>
   </select>
   <button onclick="goToQuizMenu(); return false;" class="form_elem">Quiz menu</button>
 <div id="image_div" name="image_div" style="border:Opx;margin:0px;width:65%; height:95%;background-color: #CCCCCC;
 	   display:block; overflow:auto;position:absolute; left:0px;top:25px;">
 	    <?php if ($current_image != "") { ?>
-<img id="image" name="image" src="view_file.php?quiz-id=<?php echo $quiz->getId(); ?>&filename=<?php echo $current_dir.$current_image."_corrected.jpg"; ?>">
+					      <img id="image" name="image" src="view_file.php?quiz-id=<?php echo $quiz->getId(); ?>&filename=<?php echo $current_dir.$current_image; if ($mr_file_ext == ".omr2_data") {echo "_corrected2.jpg";} else { echo "_corrected.jpg"; } ?>">
 					      <?php } else { echo "Aucune image dans ce répertoire."; }?>
 </div>
 

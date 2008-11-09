@@ -2,8 +2,8 @@ PROG=omr2
 OUTPUT_DIR=../../bin/
 
 CC=gcc
-CFLAGS = -g -O2 -Wall `sdl-config --cflags`
-LDFLAGS = `sdl-config --libs` -lm -lSDL -lSDL_image -lSDL_gfx
+CFLAGS=-O2 -Wall `sdl-config --cflags`
+LDFLAGS=`sdl-config --libs` -lm -lSDL -lSDL_image -lSDL_gfx
 
 all: ${PROG}
 

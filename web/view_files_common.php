@@ -58,8 +58,10 @@ function doFileOperation() {
       unlink($quiz->getDir().$file);
     }
   } else if ($_POST['action'] == "move") {
+    echo "<span style=\"color: red\"><bold>Le déplacement de fichiers n'est pas encore implémenté.<bold></span><br>";
+    
     foreach ($_POST['files'] as $key => $file) {
-      rename($quiz->getDir().$file);
+      //rename($quiz->getDir().$file);
     }
   }
 }

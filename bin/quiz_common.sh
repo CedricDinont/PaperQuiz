@@ -28,3 +28,4 @@ QUIZ_PARTS_MAX_QUESTIONS=( `awk 'BEGIN { FS=":" }
 NF==3 { printf "%s ", $3}' ${QUIZ_DIR}/quiz.conf` )
 
 fi
+

@@ -7,7 +7,7 @@ WHOAMI=`whoami`
 if [ "$WHOAMI" = "apache" ]
 then
     export HOME=/home/apache
-    export PATH=/usr/java/latest/bin/
+    export PATH=/usr/java/latest/bin/:$PATH
 fi
 
 java -cp ${SCRIPT_DIR}/mail/:${SCRIPT_DIR}/mail/mail.jar FetchMail ${QUIZ_DIR}/omr_input/

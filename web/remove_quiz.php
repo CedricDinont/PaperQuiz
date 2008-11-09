@@ -11,7 +11,7 @@
 </head>
 <body>
 Fonctionnalité non disponible sur cette interface web.<br>
-Demandez à Cédric Dinont pour supprimer un quiz.<br>
+	  Demandez à <?php echo $admin_name; ?> pour supprimer un quiz.<br>
 <br>
 <?php  doMainMenu() ?>
 </body>

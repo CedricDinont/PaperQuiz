@@ -11,12 +11,14 @@ $quiz = Quiz::getQuizById($_GET['quiz-id']);
         <link rel="stylesheet" type="text/css" href="style/quiz.css" />
 </head>
 <body>
+<ul>
 <?php
 $processes=Processus::getAllProcesses($quiz);
 foreach ($processes as $pid => $processus) {
-  echo "<a href=\"view_process_progress.php?quiz-id=".$quiz->getId()."&pid=".$processus->getPid()."\">".$processus->getCommand()." (PID ".$processus->getPid().")</a><br>";
+  echo "<li><a href=\"view_process_progress.php?quiz-id=".$quiz->getId()."&pid=".$processus->getPid()."\">".$processus->getCommand()." (PID ".$processus->getPid().")</a></li>";
 }
 ?>
+</ul>
 <br>
 <?php  doMainMenu() ?>
 </body>

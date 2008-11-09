@@ -2,6 +2,7 @@
 
 SCRIPT_DIR=`dirname $0`
 source ${SCRIPT_DIR}/quiz_common.sh
+source ${SCRIPT_DIR}/xvfb_common.sh
 
 INPUT_FILES=`ls ${QUIZ_DIR}/omr_input/*.jpg 2> /dev/null`
 
@@ -9,6 +10,17 @@ if [ "${INPUT_FILES}" = "" ]
 then
     echo "Error: No image in omr input directory."
     exit 1
+fi
+
+WHOAMI=`whoami`
+if [ "$WHOAMI" = "apache" ]
+then
+    find_free_servernum
+    cd /home/apache
+    Xvfb :${SERVERNUM} -screen scrn0 800x600x16 2> /dev/null &
+    XVFB_PID=$!
+    export DISPLAY=:${SERVERNUM}
+    export HOME=/home/apache
 fi
 
 OMR_LOG_FILE=${QUIZ_DIR}/omr.log
@@ -22,7 +34,9 @@ ERRORS="false"
 for file in ${INPUT_FILES} 
 do
     ERROR="false"
-    echo -n "OMR ${file}...  "
+    BACKSLASHED_INPUT_DIR=`echo "${QUIZ_DIR}/omr_input/" | sed 's/\//\\\\\//g'`
+    SHORT_FILE=`echo ${file} | sed "s/${BACKSLASHED_INPUT_DIR}//"`
+    echo -n "OMR ${SHORT_FILE}...  "
 
     echo -n "1 "
     # image nb_vert nb_horz mark_width mark height min_top max_top min_left max_left min_bottom max_bottom min_right max_right binarization_threshold answer_threshold
@@ -33,15 +47,8 @@ do
     fi
 
     echo -n "2 "
-    WHOAMI=`whoami`
-    if [ "$WHOAMI" = "apache" ]
-    then
-	cd /home/apache
-	export DISPLAY=:0
-	export HOME=/home/apache
-    fi
     # image_in image_out data_out nb_vert nb_horz binarization _hreshold
-    xvfb-run -a ${SCRIPT_DIR}/omr2 ${file} ${file}.output.bmp ${file}.omr2_data 45 10 210 >> ${OMR_LOG_FILE}
+    ${SCRIPT_DIR}/omr2 ${file} ${file}.output.bmp ${file}.omr2_data 45 10 210 >> ${OMR_LOG_FILE}
     if (( $? != 0 ))
     then
        ERROR="true"
@@ -70,6 +77,8 @@ do
     mv -f ${file} ${file}.omr*_data ${file}_corrected.jpg ${file}_corrected2.jpg ${file}_binarized.jpg ${OUTPUT_DIR} 2>&1 > /dev/null
     echo "=======================" >>  ${OMR_LOG_FILE}
 done
+
+kill ${XVFB_PID}
 
 echo -n "All done. "
 

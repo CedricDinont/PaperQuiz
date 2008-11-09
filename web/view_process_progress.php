@@ -4,12 +4,12 @@
 
 	$quiz = Quiz::getQuizById($_GET['quiz-id']);
 
-	if ($quiz->hasRunningProcess()) {
-	  $filename_base = "/tmp/".$quiz->getName();
-	  $hasToRefreshPage = TRUE;
-	} else if (isset($_GET['pid'])) {
+        if (isset($_GET['pid'])) {
 	  $filename_base = $quiz->getProcessesDir().$_GET['pid'];
 	  $hasToRefreshPage = FALSE;
+	} else if ($quiz->hasRunningProcess()) {
+	  $filename_base = "/tmp/".$quiz->getName();
+	  $hasToRefreshPage = TRUE;
 	} else {
 	  $filename_base = $quiz->getProcessesDir().$quiz->getLastProcessPid();
 	  $hasToRefreshPage = FALSE;
@@ -25,7 +25,7 @@
 <?php } ?>
 </head>
 <body>
-<table border="1" width="100%">
+<table width="100%">
 <tr>
 <?php 
 	  if ($hasToRefreshPage) {
@@ -35,8 +35,8 @@
 	  }
 ?>
 <br><br>
-	<td width="50%"><center>Sortie standard</center></td>
-	<td><center>Erreur standard</center></td>
+	<th width="50%"><center>Sortie standard</center></th>
+	<th><center>Erreur standard</center></th>
 </tr>
 <tr>
 	  <td style="font-size:80%"><?php echo implode('<br>', file($filename_base.".stdout")); ?>&nbsp;</td>

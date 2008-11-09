@@ -3,6 +3,7 @@
 	require_once('quiz_common.php');
 
         $quiz = Quiz::getQuizById($_GET['quiz-id']);
+        checkParentDirectoryInFilename($_GET['filename']);
 ?>
 <html>
 <head>

@@ -39,3 +39,16 @@ body {
     font-size : 16px;
     font-style : normal;
 }
+
+table {
+	border-collapse:collapse;
+}
+
+th, td {
+	border:1px solid #676462;
+	font-family : Arial, Helvetica, sans-serif;
+}
+
+th {
+	font-style : bold;
+}

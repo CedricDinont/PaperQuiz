@@ -3,6 +3,7 @@
 	require_once('quiz_common.php');
 
         $quiz = Quiz::getQuizById($_GET['quiz-id']);
+        checkParentDirectoryInFilename($_GET['filename']);
 
 function endsWith( $str, $sub ) {
   return (strcmp(substr( $str, strlen( $str ) - strlen( $sub ) ), $sub ) == 0);
