@@ -19,6 +19,7 @@ do
   OOFILE=${QUIZ_DIR}/correction/${QUIZ_NAME}.${QUIZ_PART}.ods
   CORNERS_FILE=${QUIZ_DIR}/correction/${QUIZ_PART}.corners
 
+  echo "    Creating .csv file."
   awk -f ${SCRIPT_DIR}/correct_quiz_part.awk -v students="${STUDENTS_FILE}" -v corrige="${MARKING_FILE}" -v ooffile="${CORRECTION_MARK_FILE}" -v cornersfile="${CORNERS_FILE}" -v min_question="${QUIZ_PARTS_MIN_QUESTIONS[$QUIZ_PART_NB]}" -v max_question="${QUIZ_PARTS_MAX_QUESTIONS[$QUIZ_PART_NB]}" ${STUDENTS_ANSWERS_FILE} 
 
 CHART_CORNERS=`awk 'BEGIN { FS=" " }
@@ -30,6 +31,7 @@ NR == 3 { print $1 } ' ${CORNERS_FILE}`
 FIRST_FREE_LINE=`awk 'BEGIN { FS=" " }
 NR == 4 { print $1 } ' ${CORNERS_FILE}`
 
+  echo "    Creating .ods file."
   ${SCRIPT_DIR}/convert_csv_to_oofile.sh  ${CORRECTION_MARK_FILE}  ${OOFILE} "${CHART_CORNERS}" "${LAST_COLUMN}" "${AVERAGE}" "${FIRST_FREE_LINE}" 
 
 #  if [ -f ${CORRECTION_FILE} ]

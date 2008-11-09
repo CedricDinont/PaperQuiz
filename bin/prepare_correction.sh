@@ -31,7 +31,9 @@ do
 	OMR_DATA_FILE=${QUIZ_DIR}/omr_output/${IMAGE_FILE}.omr2_data    
     fi
     
-    echo "    Parsing ${OMR_DATA_FILE}."
+    BACKSLASHED_OMR_OUTPUT_DIR=`echo "${QUIZ_DIR}/omr_output/" | sed 's/\//\\\\\//g'`
+    SHORT_FILE=`echo ${OMR_DATA_FILE} | sed "s/${BACKSLASHED_OMR_OUTPUT_DIR}//"`
+    echo "    Parsing ${SHORT_FILE}."
     OUTPUT_TEXT=`awk  -v min=${QUIZ_PARTS_MIN_QUESTIONS[$QUIZ_PART_NB]} -v max=${QUIZ_PARTS_MAX_QUESTIONS[$QUIZ_PART_NB]} -v file=${OMR_DATA_FILE} '
 BEGIN {
   FS=" "
