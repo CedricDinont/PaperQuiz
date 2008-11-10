@@ -96,7 +96,6 @@ A la fin de la correction, on archive le sujet du quiz avec les feuilles de rép
 <ul>
 <li>Par moments, lorsqu'on visualise la sortie d'un programme, une erreur s'affiche indiquant que des fichiers ne peuvent être ouverts. Il suffit de recharger la page pour que tout rentre dans l'ordre.</li>
 <li>Dans la page de correction des erreurs de reconnaissance des marques, le système de déplacement simultané des deux ascenceurs ne fonctionne pas bien. Le système de zoom ("fit width" et "fit height") ne fonctionne pas bien également.</li>
-<li>Si on tente de corriger un quiz n'ayant pas de fichier de correction, le serveur peut partir dans une boucle infinie qui accapare petit à petit toute la mémoire.</li>
 </ul>
 <br><br>
 <h1>Améliorations prévues de l'interface Web</h1>

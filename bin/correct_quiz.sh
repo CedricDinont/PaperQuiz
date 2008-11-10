@@ -19,6 +19,12 @@ do
   OOFILE=${QUIZ_DIR}/correction/${QUIZ_NAME}.${QUIZ_PART}.ods
   CORNERS_FILE=${QUIZ_DIR}/correction/${QUIZ_PART}.corners
 
+  if [ ! -e ${STUDENTS_ANSWERS_FILE} ] || [ ! -e ${MARKING_FILE} ] || [ ! -e ${STUDENTS_FILE} ] 
+  then
+	echo "Missing file. Can't correct ${QUIZ_PART}."
+	continue
+  fi
+
   echo "    Creating .csv file."
   awk -f ${SCRIPT_DIR}/correct_quiz_part.awk -v students="${STUDENTS_FILE}" -v corrige="${MARKING_FILE}" -v ooffile="${CORRECTION_MARK_FILE}" -v cornersfile="${CORNERS_FILE}" -v min_question="${QUIZ_PARTS_MIN_QUESTIONS[$QUIZ_PART_NB]}" -v max_question="${QUIZ_PARTS_MAX_QUESTIONS[$QUIZ_PART_NB]}" ${STUDENTS_ANSWERS_FILE} 
 
