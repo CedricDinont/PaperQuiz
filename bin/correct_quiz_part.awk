@@ -39,26 +39,37 @@ BEGIN {
 	# Do not use ";" since this sign is needed in OpenOffice functions (IF and so on)
 	OOFS=",";
 
+#-------------------------------------------------------------------------------------------------------------
 #   import student names
     while(getline<students>0) {
-	split($0,a," ");
+	
+	nfields=split($0,a,";");
+	if(nfields!=3)
+	    printf "WARNING - wrong number of fields in student file %s (found %d instead of 3). See line:\n\t%s\n", students,nfields,$0 > "/dev/stderr";
+
 	absent[a[3]]=1; # a priori absent...
 	stutab[a[3]]=sprintf("%s%c%s",a[1],OOFS,a[2]);
 	# a[3] might be a string like "P45079"
 	nr_students++;
     }
     close(students);
+    if(nr_students==0)
+	printf "WARNING - no students loaded from file %s\n",students > "/dev/stderr";
 
+#-------------------------------------------------------------------------------------------------------------
 #   import correction
     max_found_questions=0;
     min_found_questions=999999;
-    nr_fields_expected=7; # there should be 7 fields in file corrige, but additional fields may be found...
+#   there should be 7 fields in file corrige, but additional fields may be found...
+#   the first optional field is a bottom limit for the mark of each question
+    expected_nr_fields=7; 
     inputline=0; # trace inputline for warning outputs...
 #   format: question_nr;nb_possible_answers;correct_answers(eg.R1\R5);bonif;malus;coef;bonus
     while(getline<corrige>0) {
 	inputline++;
-	if($1!~"#" && NF>=nr_fields_expected) {
+	if($1!~"#" && NF>=expected_nr_fields) {
 	    
+	    gsub(" ","",$0); # remove spaces
 	    if($1 in nr_answers) {
 		# already seen!!!
 		printf "WARNING - in \"%s\" line %d:\n\tquestion %d already defined --> use bonus!!\n",corrige,inputline,$1 > "/dev/stderr";
@@ -83,12 +94,23 @@ BEGIN {
 		    nr_correct[$1]=1; # prevent division by 0
 		} else {
 		    for(r in a) {
-			gsub("R","",a[r]);
-			corr[$1,a[r]]=1;
-			# by default corr[x,y] is initialized at 0
-			if(a[r]>nr_answers[$1]) {
-			    printf "WARNING - in \"%s\" line %d question %d:\n\t response R%-2d out of range --> use bonus!!\n",corrige,inputline,$1,a[r] > "/dev/stderr";
-			    bonus[$1]=1;
+			if(a[r]~"X") {
+			    # Allowed "X" symbol represents forbidden answer
+			    gsub("X","",a[r]);
+			    forbidden[$1,a[r]]=1;
+			} else {
+			    if(a[r]~"O") {
+				gsub("O","",a[r]);
+				onlyone[$1]=1;
+			    }
+
+			    gsub("R","",a[r]);
+			    corr[$1,a[r]]=1;
+			    # by default corr[x,y] is initialized at 0
+			    if(a[r]>nr_answers[$1]) {
+				printf "WARNING - in \"%s\" line %d question %d:\n\t response R%-2d out of range --> use bonus!!\n",corrige,inputline,$1,a[r] > "/dev/stderr";
+				bonus[$1]=1;
+			    }
 			}
 		    }
 		}
@@ -103,16 +125,25 @@ BEGIN {
 	    if(NF>max_nr_fields)
 		max_nr_fields=NF;
 
-	    for(af=nr_fields_expected+1;af<=NF;af++) {
-		# Additional fields
+	    # Additional fields
+	    af=expected_nr_fields+1;
+	    if(af<=NF) {
+		bottom_limit[$1,1]=$af;
+		bottom_limit[$1,2]=1;
+	    }
+	    for(af=expected_nr_fields+2;af<=NF;af++) {
 		add_fields[$1,af]=$af;
 	    }
-	} else if($1!~"#" && NF!=nr_fields_expected && NF>0)
+	} else if($1!~"#" && NF!=expected_nr_fields && NF>0)
 	    # Not enough fields!!!
-	    printf "WARNING - in \"%s\" line %d:\n\tWrong number of fields (found %d, at least %d expected) --> question ignored!!\n",corrige,inputline,NF,nr_fields_expected > "/dev/stderr";
+	    printf "WARNING - in \"%s\" line %d:\n\tWrong number of fields (found %d, at least %d expected) --> question ignored!!\n",corrige,inputline,NF,expected_nr_fields > "/dev/stderr";
     }
     close(corrige);
+    if(inputline==0)
+	printf "WARNING - No question loaded from correction file %s\n",corrige > "/dev/stderr";
 
+
+#-------------------------------------------------------------------------------------------------------------
 #   check consistency of corrige: nr of questions should be equal to max_found_questions-min_found_questions+1
     if(min_question=="")
 	min_question=min_found_questions;
@@ -166,6 +197,7 @@ BEGIN {
     }
     printf "%d questions loaded\n",max_question-min_question+1 > "/dev/stdout";
 
+#-------------------------------------------------------------------------------------------------------------
     # OpenOffice output
     # at this point, we suppose everything above correct
     colstart=4;
@@ -235,8 +267,21 @@ BEGIN {
     printf "%c=SUM(%s7:%s7)\n",OOFS,colname1,colname2 > ooffile;
     ###### NEWLINE
 
-    for(af=nr_fields_expected+1;af<=max_nr_fields;af++) {
-	printf "additional_field_%d",af-nr_fields_expected > ooffile;
+    printf "bottom_limit_mark" > ooffile;
+    for(q=2;q<=colstart-1;q++)
+	printf "%c",OOFS > ooffile;
+    for(q=min_question;q<=max_question;q++) {
+	if(bottom_limit[q,2]!=1)
+	    printf "%c=%s4",OOFS,int2letter(colstart+q-min_question) > ooffile;
+	else
+	    printf "%c%f",OOFS,bottom_limit[q,1] > ooffile;
+    }
+    printf "\n" > ooffile;
+    ###### NEWLINE
+
+    # Other additional fields
+    for(af=expected_nr_fields+2;af<=max_nr_fields;af++) {
+	printf "additional_field_%d",af-expected_nr_fields-1 > ooffile;
 	for(q=2;q<=colstart-1;q++)
 	    printf "%c",OOFS > ooffile;
 	for(q=min_question;q<=max_question;q++)
@@ -246,12 +291,22 @@ BEGIN {
     printf "\n" > ooffile;
     ###### NEWLINE - NEWLINE - NEWLINE
 
-    first_stuline=10+max_nr_fields-nr_fields_expected; # first student line !
+    first_stuline=10+max_nr_fields-expected_nr_fields; # first student line ! Be careful that CORRECTION line has not been output yet
     line=first_stuline;
     coltot=int2letter(colstart+nr_questions+1);
 
-    for(q=1;q<=colstart+nr_questions+3;q++)
-	printf "%c",OOFS > ooffile;
+    printf "%s%c%s%c%s","CORRECTION",OOFS,"CORRECTION",OOFS,"00000" > ooffile;
+    for(q=min_question;q<=max_question;q++) {
+	currentcol=int2letter(colstart+q-min_question);
+	printf "%c=IF(%s$5=0;MAX((%s$3*%d+%s$4*%d)/%s$6;%s$8);%s$5)",OOFS,currentcol,currentcol,nr_correct[q],currentcol,0,currentcol,currentcol,currentcol > ooffile;
+    }
+
+    printf "%c=20*SUMPRODUCT($%s$2:$%s$2;$%s%d:$%s%d)/$%s$3",OOFS,colname1,colname2,colname1,line-1,colname2,line-1,int2letter(colstart+nr_questions) > ooffile;
+    printf "%c=MAX(0;ROUNDUP($%s%d/$%s$2)*$%s$2)",OOFS,int2letter(colstart+nr_questions),line-1,coltot,coltot > ooffile;
+    printf "%c%c%c",OOFS,OOFS,OOFS > ooffile;
+
+#    for(q=1;q<=colstart+nr_questions+3;q++) # 1 to 7+nr_q
+#	printf "%c",OOFS > ooffile;
     printf "expected_answers",OOFS > ooffile;
     for(q=min_question;q<=max_question;q++)
 	printf "%c%s",OOFS,expected_ans[q] > ooffile;
@@ -266,6 +321,10 @@ $1!~"Code" {
     # r=-1 stands for "perfect match"
 
     absent[$1]=0;
+    if( !($1 in stutab) ) {
+	stutab[$1]=sprintf("%s%c%s","_UNKNOWN",OOFS,"_UNKNOWN");
+	printf "WARNING - unknown student ID %d in student file %s\n\t\"RANK\" column has no more meaning\n",$1,students > "/dev/stderr";
+    }
     printf "%s%c%s",stutab[$1],OOFS,$1 > ooffile;   # remind that stutab[s] has two fields
 
     for(q=min_question;q<=max_question;q++) {
@@ -278,6 +337,8 @@ $1!~"Code" {
 
 	if(nans==0)
 	    ticks[q,0]++;
+	if(nans>1 && onlyone[q]==1)
+	    printf "WARNING - %s (%s) has unexpectedly answered multiple times at question %d\n",stutab[$1],$1,q > "/dev/stderr";
 
 	questugood=0;
 	questubad=0;
@@ -285,7 +346,9 @@ $1!~"Code" {
 	for(r in tab) {
 	    if(tab[r]>nr_answers[q])
 		printf "WARNING - student %s (%s) answered out of expected range [1,%d] at question %d\n",stutab[$1],$1,nr_answers[q],q > "/dev/stderr";
-	    
+	    if(forbidden[q,tab[r]]==1)
+		printf "WARNING - student %s (%s) answered a forbidden answer (%d) at question %d\n",stutab[$1],$1,tab[r],q > "/dev/stderr";
+
 	    if(corr[q,tab[r]]==1) # match!
 		questugood++;
 	    else if(corr[q,tab[r]]==0) # mismatch!
@@ -298,7 +361,8 @@ $1!~"Code" {
 	
 	# OpenOffice output
 	currentcol=int2letter(colstart+q-min_question);
-	printf "%c=IF(%s$5=0;(%s$3*%d+%s$4*%d)/%s$6;%s$5)",OOFS,currentcol,currentcol,questugood,currentcol,questubad,currentcol,currentcol > ooffile;
+	# special mode: not-less-than bottom limit mark
+	printf "%c=IF(%s$5=0;MAX((%s$3*%d+%s$4*%d)/%s$6;%s$8);%s$5)",OOFS,currentcol,currentcol,questugood,currentcol,questubad,currentcol,currentcol,currentcol > ooffile;
     }
 
     printf "%c=20*SUMPRODUCT($%s$2:$%s$2;$%s%d:$%s%d)/$%s$3",OOFS,colname1,colname2,colname1,line,colname2,line,int2letter(colstart+nr_questions) > ooffile;
@@ -324,7 +388,9 @@ END {
 		printf "%c\"ABS\"",OOFS > ooffile;
 	    printf "%cABS%cABS\n",OOFS,OOFS > ooffile;
 	    line++;
+	    nr_absents++;
 	}
+    printf "%d absent student(s)\n",nr_absents > "/dev/stdout";
     last_stuline=line-1;
     ###### NEWLINE
 
@@ -450,9 +516,12 @@ END {
     line++;
     ###### NEWLINE
 
+#-------------------------------------------------------------------------------------------------------------
+#   Output particular corners in particular file
     printf "$A$%d:$%s$%d chartcorners\n",line-3,int2letter(1+1000-int(1000-20/binlength)),line-2 > cornersfile;
     printf "$%s$%d:$%s$%d lastcolumn\n",coltot,first_stuline,coltot,last_stuline+5 > cornersfile;
     printf "$%s$%d average\n",coltot,last_stuline+2 > cornersfile;
     printf "$A$%d firstfreeline\n",line+1 > cornersfile;
+    printf "$A$%d:$%s$%d studentsdata\n",first_stuline,int2letter(colstart+2*nr_questions+4),last_stuline > cornersfile;
 
 }
