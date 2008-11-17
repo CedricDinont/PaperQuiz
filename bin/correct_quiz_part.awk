@@ -85,76 +85,78 @@ BEGIN {
 #   format: question_nr;nb_possible_answers;correct_answers(eg.R1\R5);bonif;malus;coef;bonus
     while(getline<corrige>0) {
 	inputline++;
-	if($1!~"#" && NF>=expected_nr_fields) {
-	    
-	    gsub(" ","",$0); # remove spaces
-	    if($1 in nr_answers) {
-		# already seen!!!
-		printf "WARNING - in \"%s\" line %d:\n\tquestion %d already defined --> use bonus!!\n",corrige,inputline,$1 > "/dev/stderr";
-		bonus[$1]=1;
-		corr[$1,0]=1;
-	    } else {
-		# normal way
-		if($1>max_found_questions)
-		    max_found_questions=$1;
-		if($1<min_found_questions)
-		    min_found_questions=$1;
-
-		nr_answers[$1]=$2; # number of possible responses for question $1
-		if($2>max_nr_answers)
-		    max_nr_answers=$2;
+	if($1!=0) {
+	    if($1!~"#" && NF>=expected_nr_fields) {
 		
-		expected_ans[$1]=$3;
-		nr_correct[$1]=split($3,a,"\\");
-		# nr_correct[q] (nr of correct answers at question "q") is used to compute mark
-		if(nr_correct[$1]==0) {
-		    printf "WARNING - in \"%s\" line %d question %d:\n\t no correct response!!\n",corrige,inputline,$1 > "/dev/stderr";
-		    nr_correct[$1]=1; # prevent division by 0
+		gsub(" ","",$0); # remove spaces
+		if($1 in nr_answers) {
+		    # already seen!!!
+		    printf "WARNING - in \"%s\" line %d:\n\tquestion %d already defined --> use bonus!!\n",corrige,inputline,$1 > "/dev/stderr";
+		    bonus[$1]=1;
+		    corr[$1,0]=1;
 		} else {
-		    for(r in a) {
-			if(a[r]~"X") {
-			    # Allowed "X" symbol represents forbidden answer
-			    gsub("X","",a[r]);
-			    forbidden[$1,a[r]]=1;
-			} else {
-			    if(a[r]~"O") {
-				gsub("O","",a[r]);
-				onlyone[$1]=1;
-			    }
+		    # normal way
+		    if($1>max_found_questions)
+			max_found_questions=$1;
+		    if($1<min_found_questions)
+			min_found_questions=$1;
+		    
+		    nr_answers[$1]=$2; # number of possible responses for question $1
+		    if($2>max_nr_answers)
+			max_nr_answers=$2;
+		    
+		    expected_ans[$1]=$3;
+		    nr_correct[$1]=split($3,a,"\\");
+		    # nr_correct[q] (nr of correct answers at question "q") is used to compute mark
+		    if(nr_correct[$1]==0) {
+			printf "WARNING - in \"%s\" line %d question %d:\n\t no correct response!!\n",corrige,inputline,$1 > "/dev/stderr";
+			nr_correct[$1]=1; # prevent division by 0
+		    } else {
+			for(r in a) {
+			    if(a[r]~"X") {
+				# Allowed "X" symbol represents forbidden answer
+				gsub("X","",a[r]);
+				forbidden[$1,a[r]]=1;
+			    } else {
+				if(a[r]~"O") {
+				    gsub("O","",a[r]);
+				    onlyone[$1]=1;
+				}
 
-			    gsub("R","",a[r]);
-			    corr[$1,a[r]]=1;
-			    # by default corr[x,y] is initialized at 0
-			    if(a[r]>nr_answers[$1]) {
-				printf "WARNING - in \"%s\" line %d question %d:\n\t response R%-2d out of range --> use bonus!!\n",corrige,inputline,$1,a[r] > "/dev/stderr";
-				bonus[$1]=1;
+				gsub("R","",a[r]);
+				corr[$1,a[r]]=1;
+				# by default corr[x,y] is initialized at 0
+				if(a[r]>nr_answers[$1]) {
+				    printf "WARNING - in \"%s\" line %d question %d:\n\t response R%-2d out of range --> use bonus!!\n",corrige,inputline,$1,a[r] > "/dev/stderr";
+				    bonus[$1]=1;
+				}
 			    }
 			}
 		    }
+		    good[$1]=$4;
+		    bad[$1]=$5;
+		    coeff[$1]=$6;
+		    
+		    if(bonus[$1]==0)
+			bonus[$1]=$7;
 		}
-		good[$1]=$4;
-		bad[$1]=$5;
-		coeff[$1]=$6;
+		
+		if(NF>max_nr_fields)
+		    max_nr_fields=NF;
 
-		if(bonus[$1]==0)
-		    bonus[$1]=$7;
-	    }
-	    
-	    if(NF>max_nr_fields)
-		max_nr_fields=NF;
-
-	    # Additional fields
-	    af=expected_nr_fields+1;
-	    if(af<=NF) {
-		bottom_limit[$1,1]=$af;
-		bottom_limit[$1,2]=1;
-	    }
-	    for(af=expected_nr_fields+2;af<=NF;af++) {
-		add_fields[$1,af]=$af;
-	    }
-	} else if($1!~"#" && NF!=expected_nr_fields && NF>0)
-	    # Not enough fields!!!
-	    printf "WARNING - in \"%s\" line %d:\n\tWrong number of fields (found %d, at least %d expected) --> question ignored!!\n",corrige,inputline,NF,expected_nr_fields > "/dev/stderr";
+		# Additional fields
+		af=expected_nr_fields+1;
+		if(af<=NF) {
+		    bottom_limit[$1,1]=$af;
+		    bottom_limit[$1,2]=1;
+		}
+		for(af=expected_nr_fields+2;af<=NF;af++) {
+		    add_fields[$1,af]=$af;
+		}
+	    } else if($1!~"#" && NF!=expected_nr_fields && NF>0)
+		# Not enough fields!!!
+		printf "WARNING - in \"%s\" line %d:\n\tWrong number of fields (found %d, at least %d expected) --> question ignored!!\n",corrige,inputline,NF,expected_nr_fields > "/dev/stderr";
+	}
     }
     close(corrige);
     if(inputline==0)
