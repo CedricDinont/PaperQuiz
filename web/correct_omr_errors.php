@@ -6,19 +6,24 @@
 
 function generateQuestionsTable($minQuestion, $maxQuestion) {
   echo "<table border>
-   <tr><th>&nbsp;</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th></tr>";
+   <tr><th>&nbsp;</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th></tr>\n";
   for ($question = $minQuestion; $question <= $maxQuestion; $question++) {
-    echo "<tr><td>Q".$question."</td>";
+    echo "<tr><td>Q".$question."</td>\n";
     $offset_line = 5;
     if ($question > 40) {
       $offset_column = 5;
     } else {
       $offset_column = 0;
     }
-    for ($j = 0; $j < 5; $j++) {
-      generateCheckBoxCell((($question % 40) + $offset_line - 1) * 10 + $offset_column + $j);
+    if ($question > 40) {
+      $offset_question = $question - 40;
+    } else {
+      $offset_question = $question;
     }
-    echo"</tr>";
+    for ($j = 0; $j < 5; $j++) {
+      generateCheckBoxCell(($offset_question + $offset_line - 1) * 10 + $offset_column + $j);
+    }
+    echo"</tr>\n";
  }
  echo "</table>";
 }
@@ -28,13 +33,13 @@ function generateLoginTable($minDigit, $maxDigit) {
   for ($digit = $minDigit; $digit <= $maxDigit; $digit++) {
     echo "<th>".$digit."</th>";
   }
-  echo "</tr>";
+  echo "</tr>\n";
   for ($i = 1; $i <= 5; $i++) {
-    echo "<tr><td>C".$i."</td>";
+    echo "<tr><td>C".$i."</td>\n";
     for ($j = 0; $j < 5; $j++) {
       generateCheckBoxCell(($i - 1) * 10 + $minDigit + $j);
     }
-    echo "</tr>";
+    echo "</tr>\n";
   }
   echo "</table>";
 }
@@ -42,11 +47,11 @@ function generateLoginTable($minDigit, $maxDigit) {
 function generateCheckBoxCell($mr_data_nb) {
   global $mr_data;
  
-  echo "<td><input type=\"checkbox\" name=\"mr_data[".$mr_data_nb."]\" ";
+  echo "<td><input type=\"checkbox\" name=\"mr_data[".$mr_data_nb."]\"";
   if (isset($mr_data[$mr_data_nb]) && (strcmp($mr_data[$mr_data_nb], "1") == 0)) {
-    echo "checked";
+    echo " checked";
   }
-  echo " onchange=\"changed = true;\"></td>";
+  echo " onchange=\"changed = true;\"></td>\n";
 }
 
 function loadMrFile($filename) {
@@ -68,6 +73,8 @@ function loadMrFile($filename) {
 
 function saveMrFile($filename) {
    global $_POST;
+
+   print_r($_POST['mr_data']);
 
   $f = fopen($filename, "w");
   for ($i = 0; $i < 450; $i++) {
