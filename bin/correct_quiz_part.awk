@@ -292,7 +292,7 @@ BEGIN {
 	printf "%c",OOFS > ooffile;
     for(q=min_question;q<=max_question;q++) {
 	if(bottom_limit[q,2]!=1)
-	    printf "%c=%s4",OOFS,int2letter(colstart+q-min_question) > ooffile;
+	    printf "%c=-100",OOFS > ooffile;
 	else
 	    printf "%c%f",OOFS,bottom_limit[q,1] > ooffile;
     }
