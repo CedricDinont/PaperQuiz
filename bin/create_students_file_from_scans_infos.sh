@@ -14,7 +14,7 @@ for LOGIN in ${LOGINS}
 do
     NAME=`${SCRIPT_DIR}/get_student_name.sh ${LOGIN}`
     echo "${LOGIN} -> ${NAME}"
-    echo "${NAME} ${LOGIN}" >> ${STUDENTS_FILE}
+    echo "${NAME};${LOGIN}" >> ${STUDENTS_FILE}
 done
 
 echo "Done."

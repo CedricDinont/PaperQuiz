@@ -12,6 +12,7 @@ do
 echo "======================================="
 echo "Creating data for '${QUIZ_PART}'"
 
+NB_STUDENTS=0
 OUTPUT_FILE=${QUIZ_DIR}/correction/${QUIZ_PART}.students_answers
 
 echo "First question: ${QUIZ_PARTS_MIN_QUESTIONS[$QUIZ_PART_NB]}"
@@ -60,7 +61,12 @@ NR == 5 {
 	    print "Error: Incomplete login in file ", file > "/dev/stderr"
 	    exit 2
     }
-  printf "p%d%d%d%d%d;", login[1], login[2], login[3], login[4], login[5]
+  if (login[1] == 1) {
+    printf "f"
+  } else {
+    printf "p"
+  }
+  printf "%d%d%d%d%d;", login[1], login[2], login[3], login[4], login[5]
 }
 NR > 5 {
   for (i = 1; i <= NF; i = i + 1) {
@@ -102,11 +108,12 @@ then
     echo ${OUTPUT_TEXT} > ${QUIZ_DIR}/correction/${QUIZ_PART}.correction_answers
 else
     echo ${OUTPUT_TEXT} >> ${OUTPUT_FILE}
+    NB_STUDENTS=$((${NB_STUDENTS} + 1))
 fi
 
 done
 QUIZ_PART_NB=$((${QUIZ_PART_NB} + 1))
-
+echo ${NB_STUDENTS} > ${OUTPUT_FILE}.nb_students
 echo ""
 done
 

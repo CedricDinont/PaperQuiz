@@ -25,8 +25,16 @@ do
 	continue
   fi
 
+  if [ -e ${STUDENTS_ANSWERS_FILE}.nb_students ]
+  then
+    NB_STUDENTS=`cat ${STUDENTS_ANSWERS_FILE}.nb_students`
+    AWK_NR_STUDENTS_OPTION="-v nr_students=${NB_STUDENTS}"
+  else
+    AWK_NR_STUDENTS_OPTION=""
+  fi
+
   echo "    Creating .csv file."
-  awk -f ${SCRIPT_DIR}/correct_quiz_part.awk -v students="${STUDENTS_FILE}" -v corrige="${MARKING_FILE}" -v ooffile="${CORRECTION_MARK_FILE}" -v cornersfile="${CORNERS_FILE}" -v min_question="${QUIZ_PARTS_MIN_QUESTIONS[$QUIZ_PART_NB]}" -v max_question="${QUIZ_PARTS_MAX_QUESTIONS[$QUIZ_PART_NB]}" ${STUDENTS_ANSWERS_FILE} 
+  awk -f ${SCRIPT_DIR}/correct_quiz_part.awk -v students="${STUDENTS_FILE}" -v corrige="${MARKING_FILE}" -v ooffile="${CORRECTION_MARK_FILE}" -v cornersfile="${CORNERS_FILE}" -v min_question="${QUIZ_PARTS_MIN_QUESTIONS[$QUIZ_PART_NB]}" -v max_question="${QUIZ_PARTS_MAX_QUESTIONS[$QUIZ_PART_NB]}" ${AWK_NR_STUDENTS_OPTION} ${STUDENTS_ANSWERS_FILE} 
 
 CHART_CORNERS=`awk 'BEGIN { FS=" " }
 NR == 1 { print $1 } ' ${CORNERS_FILE}`
