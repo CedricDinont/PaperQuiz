@@ -141,36 +141,30 @@ if ($action == "apply_changes") {
 
 getImagesFromDir($quiz->getDir().$current_dir);
 
-if (isset($_POST['image_file']) && ($action != "change_directory") && ($action != "apply_changes")) {
+if (isset($images[0])) {
+  $current_image = $images[0];
+} else {
+  $current_image = "";
+}
+
+if (isset($_POST['image_file'])) {
   $lastImageIndex = findIndexOfImage($_POST['image_file']);
-  if ($action == "next_image") {
-    if ($lastImageIndex != -1) {
+  if ($lastImageIndex != -1) {
+    if ($action == "next_image") {
       if (isset($images[$lastImageIndex + 1])) {
 	$current_image = $images[$lastImageIndex + 1];
       } else {
 	$current_image = $_POST['image_file'];
       }
-    } else {
-      $current_image = "";
-    }
-  } else if ($action == "previous_image") {
-    if ($lastImageIndex != -1) {
+    } else if ($action == "previous_image") {
       if (isset($images[$lastImageIndex - 1])) {
 	$current_image = $images[$lastImageIndex - 1];
       } else {
 	$current_image = $_POST['image_file'];
-      }
+      } 
     } else {
-      $current_image = "";
+      $current_image = $_POST['image_file'];
     } 
-  } else {
-    $current_image = $_POST['image_file'];
-  }
-} else {
-  if (isset($images[0])) {
-    $current_image = $images[0];
-  } else {
-    $current_image = "";
   }
 }
 
