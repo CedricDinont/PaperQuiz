@@ -13,12 +13,20 @@ function int2letter(a,   b) {
     return s;
 }
 
+function abs(a) {
+    if(a<0)
+	return(-a);
+    else
+	return(a);
+}
+
 BEGIN {
     FS=";";
     if(students=="")
 	# file with students names
 	# format: LASTNAME firstname code
 	students="../students.txt";
+
     if(corrige=="")
 	# correction file
 	# format: question_number;number_of_possible_answers;expected_answers;bonif;malus;coefficient;bonus
@@ -26,14 +34,22 @@ BEGIN {
 	# comments are possible with the "#" character
 	# "bonus" are used for ill-posed questions
 	corrige="corrige.txt";
+
+    if(nr_students!="")
+	# If externally fixed, flag the situation by setting nr_students to its opposite
+	nr_students=-nr_students;
+
     if(ooffile=="")
 	# OpenOffice output file
 	ooffile="results.csv"
+
     if(binlength=="")
 	# bining length for marks statistics
 	binlength=2;
+
     if(cornersfile=="")
 	cornersfile="corners.txt";
+
     if(OOFS=="")
 	# OpenOffice separator
 	# Do not use ";" since this sign is needed in OpenOffice functions (IF and so on)
@@ -50,7 +66,9 @@ BEGIN {
 	absent[a[3]]=1; # a priori absent...
 	stutab[a[3]]=sprintf("%s%c%s",a[1],OOFS,a[2]);
 	# a[3] might be a string like "P45079"
-	nr_students++;
+	if(nr_students>=0)
+	    # if externally fixed, nr_students is negative
+	    nr_students++;
     }
     close(students);
     if(nr_students==0)
@@ -291,30 +309,34 @@ BEGIN {
     printf "\n" > ooffile;
     ###### NEWLINE - NEWLINE - NEWLINE
 
-    first_stuline=10+max_nr_fields-expected_nr_fields; # first student line ! Be careful that CORRECTION line has not been output yet
-    line=first_stuline;
+    first_stuline=10+1;  # first student line! "+1" stands for "bottom_limit" optional line
+    if(max_nr_fields>expected_nr_fields+1)
+	first_stuline=first_stuline+max_nr_fields-expected_nr_fields-1;
+
+    line=first_stuline-1;
     coltot=int2letter(colstart+nr_questions+1);
 
+    # output CORRECTION line
     printf "%s%c%s%c%s","CORRECTION",OOFS,"CORRECTION",OOFS,"00000" > ooffile;
     for(q=min_question;q<=max_question;q++) {
 	currentcol=int2letter(colstart+q-min_question);
 	printf "%c=IF(%s$5=0;MAX((%s$3*%d+%s$4*%d)/%s$6;%s$8);%s$5)",OOFS,currentcol,currentcol,nr_correct[q],currentcol,0,currentcol,currentcol,currentcol > ooffile;
     }
 
-    printf "%c=20*SUMPRODUCT($%s$2:$%s$2;$%s%d:$%s%d)/$%s$3",OOFS,colname1,colname2,colname1,line-1,colname2,line-1,int2letter(colstart+nr_questions) > ooffile;
-    printf "%c=MAX(0;ROUNDUP($%s%d/$%s$2)*$%s$2)",OOFS,int2letter(colstart+nr_questions),line-1,coltot,coltot > ooffile;
+    printf "%c=20*SUMPRODUCT($%s$2:$%s$2;$%s%d:$%s%d)/$%s$3",OOFS,colname1,colname2,colname1,line,colname2,line,int2letter(colstart+nr_questions) > ooffile;
+    printf "%c=MAX(0;ROUNDUP($%s%d/$%s$2)*$%s$2)",OOFS,int2letter(colstart+nr_questions),line,coltot,coltot > ooffile;
     printf "%c%c%c",OOFS,OOFS,OOFS > ooffile;
 
-#    for(q=1;q<=colstart+nr_questions+3;q++) # 1 to 7+nr_q
-#	printf "%c",OOFS > ooffile;
     printf "expected_answers",OOFS > ooffile;
     for(q=min_question;q<=max_question;q++)
 	printf "%c%s",OOFS,expected_ans[q] > ooffile;
     printf "\n" > ooffile;
+    line++;
+    ###### NEWLINE
 }
 
 #-------------------------------------------------------------------------------------------------------------
-$1!~"Code" {
+$1!~"Code" && $1!~"#" {
 
     # ticks[q,r] counts number of ticks for answer "r" at question "q";
     # r=0  stands for "no answer"
@@ -323,7 +345,11 @@ $1!~"Code" {
     absent[$1]=0;
     if( !($1 in stutab) ) {
 	stutab[$1]=sprintf("%s%c%s","_UNKNOWN",OOFS,"_UNKNOWN");
-	printf "WARNING - unknown student ID %d in student file %s\n\t\"RANK\" column has no more meaning\n",$1,students > "/dev/stderr";
+	printf "WARNING - unknown student ID %d in student file %s\n",$1,students > "/dev/stderr";
+	if(nr_students>0) {
+	    unknown=1; # FLAG this situation to warn ranking errors
+	    printf "\t\"RANK\" column has no more meaning\n" > "/dev/stderr";
+	}
     }
     printf "%s%c%s",stutab[$1],OOFS,$1 > ooffile;   # remind that stutab[s] has two fields
 
@@ -367,7 +393,10 @@ $1!~"Code" {
 
     printf "%c=20*SUMPRODUCT($%s$2:$%s$2;$%s%d:$%s%d)/$%s$3",OOFS,colname1,colname2,colname1,line,colname2,line,int2letter(colstart+nr_questions) > ooffile;
     printf "%c=MAX(0;ROUNDUP($%s%d/$%s$2)*$%s$2)",OOFS,int2letter(colstart+nr_questions),line,coltot,coltot > ooffile;
-    printf "%c=RANK(%s%d;%s$%d:%s$%d)",OOFS,coltot,line,coltot,first_stuline,coltot,first_stuline+nr_students-1 > ooffile;
+    if(unknown==1)
+	printf "%c=NA()",OOFS > ooffile;
+    else
+	printf "%c=RANK(%s%d;%s$%d:%s$%d)",OOFS,coltot,line,coltot,first_stuline,coltot,first_stuline+abs(nr_students)-1 > ooffile;
 
     printf "%c%c",OOFS,OOFS > ooffile;
     for(q=min_question;q<=max_question;q++)
