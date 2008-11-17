@@ -74,8 +74,6 @@ function loadMrFile($filename) {
 function saveMrFile($filename) {
    global $_POST;
 
-   print_r($_POST['mr_data']);
-
   $f = fopen($filename, "w");
   for ($i = 0; $i < 450; $i++) {
     if (isset($_POST['mr_data'][$i]))
