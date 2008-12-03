@@ -86,9 +86,13 @@ BEGIN {
     while(getline<corrige>0) {
 	inputline++;
 	if($1!=0) {
-	    if($1!~"#" && NF>=expected_nr_fields) {
+	    # There are now 3 mandatory fields required
+	    # Missing fields are filled with default values
+
+	    if($1!~"#" && NF>=3) {
 		
-		gsub(" ","",$0); # remove spaces
+		gsub(" ","",$0);  # remove spaces
+		gsub("\t","",$0); # remove tabs
 		if($1 in nr_answers) {
 		    # already seen!!!
 		    printf "WARNING - in \"%s\" line %d:\n\tquestion %d already defined --> use bonus!!\n",corrige,inputline,$1 > "/dev/stderr";
@@ -133,12 +137,27 @@ BEGIN {
 			    }
 			}
 		    }
-		    good[$1]=$4;
-		    bad[$1]=$5;
-		    coeff[$1]=$6;
+		    if(NF>=4)
+			good[$1]=$4;
+		    else
+			good[$1]=+1;
 		    
-		    if(bonus[$1]==0)
+		    if(NF>=5)
+			bad[$1]=$5;
+		    else
+			bad[$1]=-0.5;
+
+		    if(NF>=6)
+			coeff[$1]=$6;
+		    else
+			coeff[$1]=1;
+		    
+		    if(bonus[$1]==0 && NF>=7)
 			bonus[$1]=$7;
+
+		    if(NF<expected_nr_fields) {
+			printf "WARNING: line %3d of file %s - Set default values for question %d\n",inputline,corrige,$0 > "/dev/stderr";
+		    }
 		}
 		
 		if(NF>max_nr_fields)
@@ -153,9 +172,10 @@ BEGIN {
 		for(af=expected_nr_fields+2;af<=NF;af++) {
 		    add_fields[$1,af]=$af;
 		}
-	    } else if($1!~"#" && NF!=expected_nr_fields && NF>0)
-		# Not enough fields!!!
-		printf "WARNING - in \"%s\" line %d:\n\tWrong number of fields (found %d, at least %d expected) --> question ignored!!\n",corrige,inputline,NF,expected_nr_fields > "/dev/stderr";
+	    }
+	    #else if($1!~"#" && NF!=expected_nr_fields && NF>0)
+	    # Not enough fields!!!
+	    #printf "WARNING - in \"%s\" line %d:\n\tWrong number of fields (found %d, at least %d expected) --> question ignored!!\n",corrige,inputline,NF,expected_nr_fields > "/dev/stderr";
 	}
     }
     close(corrige);
@@ -393,7 +413,7 @@ $1!~"Code" && $1!~"#" {
 	printf "%c=IF(%s$5=0;MAX((%s$3*%d+%s$4*%d)/%s$6;%s$8);%s$5)",OOFS,currentcol,currentcol,questugood,currentcol,questubad,currentcol,currentcol,currentcol > ooffile;
     }
 
-    printf "%c=20*SUMPRODUCT($%s$2:$%s$2;$%s%d:$%s%d)/$%s$3",OOFS,colname1,colname2,colname1,line,colname2,line,int2letter(colstart+nr_questions) > ooffile;
+    printf "%c=%s$%d*SUMPRODUCT($%s$2:$%s$2;$%s%d:$%s%d)/$%s$3",OOFS,int2letter(nr_questions+colstart),first_stuline-1,colname1,colname2,colname1,line,colname2,line,int2letter(colstart+nr_questions) > ooffile;
     printf "%c=MAX(0;ROUNDUP($%s%d/$%s$2)*$%s$2)",OOFS,int2letter(colstart+nr_questions),line,coltot,coltot > ooffile;
     if(unknown==1)
 	printf "%c=NA()",OOFS > ooffile;
