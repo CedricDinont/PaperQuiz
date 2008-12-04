@@ -119,6 +119,7 @@ BEGIN {
 			for(r in a) {
 			    if(a[r]~"X") {
 				# Allowed "X" symbol represents forbidden answer
+				nr_correct[$1]--;
 				gsub("X","",a[r]);
 				forbidden[$1,a[r]]=1;
 			    } else {
