@@ -246,6 +246,13 @@ BEGIN {
     colname1=int2letter(colstart);
     colname2=int2letter(nr_questions+colstart-1);
 
+    first_stuline=12;  # first student line!
+    if(max_nr_fields>expected_nr_fields+1)
+	first_stuline=first_stuline+max_nr_fields-expected_nr_fields-1;
+
+    line=first_stuline-1;
+    coltot=int2letter(colstart+nr_questions+1);
+
     printf "student_name%cstudent_first_name%cstudent_id",OOFS,OOFS > ooffile;
     for(q=min_question;q<=max_question;q++)
 	printf "%c Q%3d",OOFS,q > ooffile;
@@ -320,6 +327,16 @@ BEGIN {
     printf "\n" > ooffile;
     ###### NEWLINE
 
+    printf "real_weight_of_question" > ooffile;
+    for(q=2;q<=colstart-1;q++)
+	printf "%c",OOFS > ooffile;
+    for(q=colstart;q<=nr_questions+colstart-1;q++) {
+	colname=int2letter(q);
+	printf "%c=%s$%d*%s$2/$%s$3",OOFS,int2letter(nr_questions+colstart),first_stuline-1,colname,int2letter(colstart+nr_questions) > ooffile;
+    }
+    printf "\n" > ooffile;
+    ###### NEWLINE
+
     # Other additional fields
     for(af=expected_nr_fields+2;af<=max_nr_fields;af++) {
 	printf "additional_field_%d",af-expected_nr_fields-1 > ooffile;
@@ -332,12 +349,7 @@ BEGIN {
     printf "\n" > ooffile;
     ###### NEWLINE - NEWLINE - NEWLINE
 
-    first_stuline=10+1;  # first student line! "+1" stands for "bottom_limit" optional line
-    if(max_nr_fields>expected_nr_fields+1)
-	first_stuline=first_stuline+max_nr_fields-expected_nr_fields-1;
 
-    line=first_stuline-1;
-    coltot=int2letter(colstart+nr_questions+1);
 
     # output CORRECTION line
     printf "%s%c%s%c%s","CORRECTION",OOFS,"CORRECTION",OOFS,"00000" > ooffile;
