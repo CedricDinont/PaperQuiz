@@ -270,7 +270,7 @@ BEGIN {
     printf "%c=SUM($%s$2:$%s$2)%c0.1\n",OOFS,colname1,colname2,OOFS > ooffile;
     ###### NEWLINE
 
-    printf "bonification" > ooffile;
+    printf "max_points_per_question" > ooffile;
     for(q=2;q<=colstart-1;q++)
 	printf "%c",OOFS > ooffile;
     for(q=min_question;q<=max_question;q++)
@@ -279,7 +279,7 @@ BEGIN {
     printf "%cmax mark (without bonus)\n",OOFS > ooffile;
     ###### NEWLINE
 
-    printf "malus" > ooffile;
+    printf "relative_min_points_per_question" > ooffile;
     for(q=2;q<=colstart-1;q++)
 	printf "%c",OOFS > ooffile;
     for(q=min_question;q<=max_question;q++)
@@ -315,7 +315,7 @@ BEGIN {
     printf "%c=SUM(%s7:%s7)\n",OOFS,colname1,colname2 > ooffile;
     ###### NEWLINE
 
-    printf "bottom_limit_mark" > ooffile;
+    printf "bottom_limit_mark_per_question" > ooffile;
     for(q=2;q<=colstart-1;q++)
 	printf "%c",OOFS > ooffile;
     for(q=min_question;q<=max_question;q++) {
@@ -327,14 +327,14 @@ BEGIN {
     printf "\n" > ooffile;
     ###### NEWLINE
 
-    printf "real_weight_of_question" > ooffile;
+    printf "question_real_weight_over_20" > ooffile;
     for(q=2;q<=colstart-1;q++)
 	printf "%c",OOFS > ooffile;
     for(q=colstart;q<=nr_questions+colstart-1;q++) {
 	colname=int2letter(q);
-	printf "%c=%s$%d*%s$2/$%s$3",OOFS,int2letter(nr_questions+colstart),first_stuline-1,colname,int2letter(colstart+nr_questions) > ooffile;
+	printf "%c=%s$3*%s$2*$%s$%d/$%s$3",OOFS,colname,colname,int2letter(nr_questions+colstart),first_stuline-1,int2letter(colstart+nr_questions) > ooffile;
     }
-    printf "\n" > ooffile;
+    printf "%c=SUM($%s$9:$%s$9)\n",OOFS,colname1,colname2 > ooffile;
     ###### NEWLINE
 
     # Other additional fields
@@ -405,19 +405,23 @@ $1!~"Code" && $1!~"#" {
 	questubad=0;
 
 	for(r in tab) {
+	    # Count tick for points only if it has sense:
 	    if(tab[r]>nr_answers[q])
 		printf "WARNING - student %s (%s) answered out of expected range [1,%d] at question %d\n",stutab[$1],$1,nr_answers[q],q > "/dev/stderr";
-	    if(forbidden[q,tab[r]]==1)
+	    else if(forbidden[q,tab[r]]==1)
 		printf "WARNING - student %s (%s) answered a forbidden answer (%d) at question %d\n",stutab[$1],$1,tab[r],q > "/dev/stderr";
 
-	    if(corr[q,tab[r]]==1) # match!
-		questugood++;
-	    else if(corr[q,tab[r]]==0) # mismatch!
-		questubad++;
+	    else
+		if(corr[q,tab[r]]==1) # match!
+		    questugood++;
+		else if(corr[q,tab[r]]==0) # mismatch!
+		    questubad++;
 
+	    # Count tick anyhow for statistics
 	    ticks[q,tab[r]]++;
 	}
 	if(questugood==nr_correct[q] && questubad==0)
+	    # Perfect!
 	    ticks[q,-1]++;
 	
 	# OpenOffice output
