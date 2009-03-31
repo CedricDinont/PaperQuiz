@@ -284,7 +284,7 @@ BEGIN {
 #-------------------------------------------------------------------------------------------------------------
     # OpenOffice output
     # at this point, we suppose everything above correct
-    colstart=4;
+    colstart=5;
     nr_questions=max_question-min_question+1;
     colname1=int2letter(colstart);
     colname2=int2letter(nr_questions+colstart-1+free_text_q);
@@ -297,7 +297,7 @@ BEGIN {
 
     line=first_stuline-1;
 
-    printf "student_name%cstudent_first_name%cstudent_id",OOFS,OOFS > ooffile;
+    printf "student_name%cstudent_first_name%cstudent_id%cRounded TOTAL",OOFS,OOFS,OOFS > ooffile;
     for(q=min_question;q<=max_question;q++)
 	printf "%c Q%3d",OOFS,q > ooffile;
     for(q=1;q<=free_text_q;q++)
@@ -419,7 +419,7 @@ BEGIN {
 
 
     # output CORRECTION line
-    printf "%s%c%s%c%s","CORRECTION",OOFS,"CORRECTION",OOFS,"00000" > ooffile;
+    printf "%s%c%s%c%s%c=$%s%d","CORRECTION",OOFS,"CORRECTION",OOFS,"00000",OOFS,coltot,line > ooffile;
     for(q=min_question;q<=max_question;q++) {
 	currentcol=int2letter(colstart+q-min_question);
 	printf "%c=IF(%s$5=0;MAX((%s$3*%d+%s$4*%d)/%s$6;%s$8);%s$5)",OOFS,currentcol,currentcol,nr_correct[q],currentcol,0,currentcol,currentcol,currentcol > ooffile;
@@ -453,11 +453,11 @@ $1!~"Code" && $1!~"#" {
 	stutab[$1]=sprintf("%s%c%s","_UNKNOWN",OOFS,"_UNKNOWN");
 	printf "WARNING - unknown student ID %d in student file %s\n",$1,students > "/dev/stderr";
 	if(nr_students>0) {
-	    unknown=1; # FLAG this situation to warn ranking errors
+	    unknown=1; # FLAG this situation to warn about ranking errors
 	    printf "\t\"RANK\" column has no more meaning\n" > "/dev/stderr";
 	}
     }
-    printf "%s%c%s",stutab[$1],OOFS,$1 > ooffile;   # remind that stutab[s] has two fields
+    printf "%s%c%s%c=$%s%d",stutab[$1],OOFS,$1,OOFS,coltot,line > ooffile;   # remember that stutab[s] has two fields
 
     for(q=min_question;q<=max_question;q++) {
 
@@ -545,6 +545,7 @@ END {
     printf "avg" > ooffile;
     for(q=2;q<=colstart-1;q++)
 	printf "%c",OOFS > ooffile;
+    printf "=$%s%d",coltot,line > ooffile;
     for(q=1;q<=nr_questions+free_text_q+2;q++) { # +2 for "TOTAL" statistics
 	colname=int2letter(colstart-1+q);
 	printf "%c=AVERAGE(%s$%d:%s$%d)",OOFS,colname,first_stuline,colname,last_stuline > ooffile;
@@ -557,6 +558,7 @@ END {
     printf "rms" > ooffile;
     for(q=2;q<=colstart-1;q++)
 	printf "%c",OOFS > ooffile;
+    printf "=$%s%d",coltot,line > ooffile;
     for(q=1;q<=nr_questions+free_text_q+2;q++) { # +2 for "TOTAL" statistics
 	colname=int2letter(colstart-1+q);
 	printf "%c=STDEV(%s$%d:%s$%d)",OOFS,colname,first_stuline,colname,last_stuline > ooffile;
@@ -569,6 +571,7 @@ END {
     printf "max" > ooffile;
     for(q=2;q<=colstart-1;q++)
 	printf "%c",OOFS > ooffile;
+    printf "=$%s%d",coltot,line > ooffile;
     for(q=1;q<=nr_questions+free_text_q+2;q++) { # +2 for "TOTAL" statistics
 	colname=int2letter(colstart-1+q);
 	printf "%c=MAX(%s$%d:%s$%d)",OOFS,colname,first_stuline,colname,last_stuline > ooffile;
@@ -581,6 +584,7 @@ END {
     printf "min" > ooffile;
     for(q=2;q<=colstart-1;q++)
 	printf "%c",OOFS > ooffile;
+    printf "=$%s%d",coltot,line > ooffile;
     for(q=1;q<=nr_questions+free_text_q+2;q++) { # +2 for "TOTAL" statistics
 	colname=int2letter(colstart-1+q);
 	printf "%c=MIN(%s$%d:%s$%d)",OOFS,colname,first_stuline,colname,last_stuline > ooffile;
