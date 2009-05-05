@@ -524,7 +524,7 @@ END {
     # output ABSENTS
     for(s in stutab)
 	if(absent[s]==1) {
-	    printf "%s%c%s",stutab[s],OOFS,s > ooffile;   # stutab[s] has two fields!!
+	    printf "%s%c%s%c=$%s%d",stutab[s],OOFS,s,OOFS,coltot,line > ooffile;   # stutab[s] has two fields!!
 	    for(q=min_question;q<=max_question;q++)
 		printf "%c\"ABS\"",OOFS > ooffile;
 	    for(q=1;q<=free_text_q;q++)
