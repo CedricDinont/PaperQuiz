@@ -701,12 +701,12 @@ int nb_colonne,nb_ligne,seuil;
 
   	initCouleurs(Screen); 
      	
-/*	if(x>y)
+	if(x>y)
 	{
 		qcm=rotozoomSurfaceXY(qcm,90,1.0,1.0,1);
 		x=qcm->w;
 		y=qcm->h;
-	} */
+	} 
 //affichage(qcm,Screen,0,0);
 //attendreTouche(); 
 	if(initSDL()==0) 
