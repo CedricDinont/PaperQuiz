@@ -291,7 +291,7 @@ BEGIN {
     coltot  =int2letter(nr_questions+colstart+free_text_q);
     coltotrounded=int2letter(nr_questions+colstart+1+free_text_q);
 
-    first_stuline=12;  # first student line!
+    first_stuline=13;  # first student line!
     if(max_nr_fields>expected_nr_fields+1)
 	first_stuline=first_stuline+max_nr_fields-expected_nr_fields-1;
 
@@ -423,6 +423,7 @@ BEGIN {
     for(q=1;q<=free_text_q;q++)
 	printf "%c",OOFS > ooffile;
     printf "%cTOTAL%cRounded TOTAL%crank\n",OOFS,OOFS,OOFS > ooffile;
+    ###### NEWLINE
 
 
     # output CORRECTION line
