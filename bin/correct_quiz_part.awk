@@ -465,7 +465,7 @@ $1!~"Code" && $1!~"#" {
 	    printf "\t\"RANK\" column has no more meaning\n" > "/dev/stderr";
 	}
     }
-    printf "%s%c%s%c=$%s%d",stutab[$1],OOFS,$1,OOFS,coltot,line > ooffile;   # remember that stutab[s] has two fields
+    printf "%s%c%s%c=$%s%d",stutab[$1],OOFS,$1,OOFS,coltotrounded,line > ooffile;   # remember that stutab[s] has two fields
 
     for(q=min_question;q<=max_question;q++) {
 
