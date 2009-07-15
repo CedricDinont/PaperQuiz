@@ -297,12 +297,13 @@ BEGIN {
 
     line=first_stuline-1;
 
-    printf "student_name%cstudent_first_name%cstudent_id%cRounded TOTAL",OOFS,OOFS,OOFS > ooffile;
+#   printf "student_name%cstudent_first_name%cstudent_id%cRounded TOTAL",OOFS,OOFS,OOFS > ooffile;
+    printf "%c%c%c",OOFS,OOFS,OOFS > ooffile;
     for(q=min_question;q<=max_question;q++)
 	printf "%c Q%3d",OOFS,q > ooffile;
     for(q=1;q<=free_text_q;q++)
 	printf "%c QT%3d",OOFS,q > ooffile;
-    printf "%cTOTAL%crounded troncations%crank%c%cdetail",OOFS,OOFS,OOFS,OOFS,OOFS > ooffile;
+    printf "%cTOTAL%crounding%c%c%cdetail",OOFS,OOFS,OOFS,OOFS,OOFS > ooffile;
     for(q=min_question;q<=max_question;q++)
 	printf "%c=%s1",OOFS,int2letter(colstart+q-min_question) > ooffile;
     printf "\n" > ooffile;
@@ -416,6 +417,12 @@ BEGIN {
     printf "\n" > ooffile;
     ###### NEWLINE - NEWLINE - NEWLINE
 
+    printf "student_name%cstudent_first_name%cstudent_id%cRounded TOTAL",OOFS,OOFS,OOFS > ooffile;
+    for(q=min_question;q<=max_question;q++)
+	printf "%c",OOFS > ooffile;
+    for(q=1;q<=free_text_q;q++)
+	printf "%c",OOFS > ooffile;
+    printf "%cTOTAL%cRounded TOTAL%crank\n",OOFS,OOFS,OOFS > ooffile;
 
 
     # output CORRECTION line
