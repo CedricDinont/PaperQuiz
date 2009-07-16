@@ -621,39 +621,80 @@ void tracerDroites(struct image *img,ListeZone *liste_haut,ListeZone *liste_droi
 	
 	// compteurs
 	int i,j;
-	for(i = 1;i<nb_haut;i++)
+	if(rotation == 0 || rotation == 180)
 	{
-		zone_haut = getZone(liste_haut,i);
-		zone_bas = getZone(liste_bas,i-1);
-		decg = (double)(zone_bas->deb - zone_haut->deb)/largeur;
-		decd = (double)(zone_bas->fin - zone_haut->fin)/largeur;
-		
-		for(j=0;j<largeur;j++)
+		for(i = 1;i<nb_gauche;i++)
 		{
-			hgx = j;
-			hgy = (zone_haut->deb + j*decg);
-			tracerPixel(img,rotation,hgx,hgy);
-			
-			hgx = j;
-			hgy = (zone_haut->fin + j*decd);
-			tracerPixel(img,rotation,hgx,hgy);
+			zone_haut = getZone(liste_gauche,i);
+			zone_bas = getZone(liste_droite,i-1);
+			decg = (double)(zone_bas->deb - zone_haut->deb)/hauteur;
+			decd = (double)(zone_bas->fin - zone_haut->fin)/hauteur;
+	
+			for(j=0;j<largeur;j++)
+			{
+				hgx = j;
+				hgy = (zone_haut->deb + j*decg);
+				tracerPixel(img,rotation,hgx,hgy);
+		
+				hgx = j;
+				hgy = (zone_haut->fin + j*decd);
+				tracerPixel(img,rotation,hgx,hgy);
+			}
+		}
+		for(j=1;j<nb_haut;j++)
+		{
+			zone_gauche = getZone(liste_haut,j);
+			zone_droite = getZone(liste_bas,j-1);
+			dech = (double)(zone_droite->deb - zone_gauche->deb)/largeur;
+			decb = (double)(zone_droite->fin - zone_gauche->fin)/largeur;
+			for(i=0;i<largeur;i++)
+			{
+				bgx = (dech * i + zone_gauche->deb);
+				bgy = i;
+				tracerPixel(img,rotation,bgx,bgy);
+		
+				bgx = (decb * i + zone_gauche->fin);
+				bgy = i;
+				tracerPixel(img,rotation,bgx,bgy);
+			}
 		}
 	}
-	for(j=1;j<nb_gauche;j++)
+	if(rotation == 90 || rotation == 270 )
 	{
-		zone_gauche = getZone(liste_gauche,j);
-		zone_droite = getZone(liste_droite,j-1);
-		dech = (double)(zone_droite->deb - zone_gauche->deb)/hauteur;
-		decb = (double)(zone_droite->fin - zone_gauche->fin)/hauteur;
-		for(i=0;i<largeur;i++)
+		for(i = 1;i<nb_haut;i++)
 		{
-			bgx = (dech * i + zone_gauche->deb);
-			bgy = i;
-			tracerPixel(img,rotation,bgx,bgy);
-			
-			bgx = (dech * i + zone_gauche->fin);
-			bgy = i;
-			tracerPixel(img,rotation,bgx,bgy);
+			zone_haut = getZone(liste_haut,i);
+			zone_bas = getZone(liste_bas,i-1);
+			decg = (double)(zone_bas->deb - zone_haut->deb)/largeur;
+			decd = (double)(zone_bas->fin - zone_haut->fin)/largeur;
+	
+			for(j=0;j<largeur;j++)
+			{
+				hgx = j;
+				hgy = (zone_haut->deb + j*decg);
+				tracerPixel(img,rotation,hgx,hgy);
+		
+				hgx = j;
+				hgy = (zone_haut->fin + j*decd);
+				tracerPixel(img,rotation,hgx,hgy);
+			}
+		}
+		for(j=1;j<nb_gauche;j++)
+		{
+			zone_gauche = getZone(liste_gauche,j);
+			zone_droite = getZone(liste_droite,j-1);
+			dech = (double)(zone_droite->deb - zone_gauche->deb)/hauteur;
+			decb = (double)(zone_droite->fin - zone_gauche->fin)/hauteur;
+			for(i=0;i<largeur;i++)
+			{
+				bgx = (dech * i + zone_gauche->deb);
+				bgy = i;
+				tracerPixel(img,rotation,bgx,bgy);
+		
+				bgx = (decb * i + zone_gauche->fin);
+				bgy = i;
+				tracerPixel(img,rotation,bgx,bgy);
+			}
 		}
 	}
 }

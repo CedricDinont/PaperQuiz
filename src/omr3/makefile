@@ -3,6 +3,7 @@ CFLAGS=-Wall -g
 OMR3:main.o image.o zone.o
 	gcc main.o image.o zone.o `sdl-config --libs` -lSDL_image -lSDL_gfx -O3 -o OMR3
 
+# -DDEBUG pour affichage
 main.o: main.c image.h zone.h
 	gcc ${CFLAGS} -c main.c
 
