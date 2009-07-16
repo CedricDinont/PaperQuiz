@@ -56,7 +56,7 @@ function showFile($dir, $file) {
     if(endsWith($file, ".log")){
     	$type = "log";
     }
-      echo "<li><input type_fichier=".$type." type=\"checkbox\" name=\"files[]\" value=\"".$dir.$file."\"><a href=\"".$page.".php?quiz-id=".$_GET['quiz-id']."&filename=".$dir.$file."\">".$file."</a></li>\n";
+    //echo "<li><input type_fichier=".$type." type=\"checkbox\" name=\"files[]\" value=\"".$dir.$file."\"><a href=\"".$page.".php?quiz-id=".$_GET['quiz-id']."&filename=".$dir.$file."\">".$file."</a></li>\n";
 }
 
 function doFilesMenu() {
