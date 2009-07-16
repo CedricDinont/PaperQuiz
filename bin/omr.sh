@@ -91,7 +91,7 @@ do
        echo "Difference between ${file}.omr2_data and ${file}.omr3_data." >> ${OMR_ERRORS_FILE}
     fi
 
-    if [ ${NB_DIFFS} -lt 2 ]
+    if [ ${NB_DIFFS} -lt 3 ]
     then
        echo "[OK]"
        OUTPUT_DIR=${QUIZ_DIR}/omr_output/

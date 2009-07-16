@@ -1,7 +1,6 @@
 * OMR :
   - Prendre en compte la marque de rotation pour la rotation de l'image
   - Vérifier le cas où il y a une ligne verticale dans le calcul de l'intersection des deux droites
-  - Intégrer OMR3
 
 * Scripts :
   - Gérer plusieurs serveurs Xvfb

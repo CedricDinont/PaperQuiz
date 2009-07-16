@@ -18,5 +18,5 @@ clean:
 	rm *.o omr3
 
 install: omr3
-        cp omr3 ${OUTPUT_DIR}
+	cp omr3 ${OUTPUT_DIR}
 

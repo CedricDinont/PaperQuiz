@@ -314,6 +314,7 @@ function alertChanged() {
 ?>
 <option value=".omr1_data" <?php if ($mr_file_ext == ".omr1_data") { echo "selected"; } ?> >OMR1</option>
 <option value=".omr2_data" <?php if ($mr_file_ext == ".omr2_data") { echo "selected"; } ?> >OMR2</option>
+<option value=".omr3_data" <?php if ($mr_file_ext == ".omr3_data") { echo "selected"; } ?> >OMR3</option>
   </select>
   <button onclick="applyChanges(); return false;" class="form_elem">Apply</button>
  <button onclick="discardChanges(); return false;" class="form_elem">Discard</button>
