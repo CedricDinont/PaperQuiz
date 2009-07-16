@@ -1,7 +1,11 @@
 <?php
 
 function endsWith( $str, $sub ) {
-  return (strcmp(substr( $str, strlen( $str ) - strlen( $sub ) ), $sub ) == 0);
+  return (strcmp(getEnd($str), $sub ) == 0);
+}
+
+function getEnd($str){
+	return substr( $str, strlen( $str ) - strlen( $sub ) );
 }
 
 function showDirFiles($dir) {
@@ -27,7 +31,32 @@ function showFile($dir, $file) {
     } else {
       $page = "view_file";
     }
-      echo "<li><input type=\"checkbox\" name=\"files[]\" value=\"".$dir.$file."\"><a href=\"".$page.".php?quiz-id=".$_GET['quiz-id']."&filename=".$dir.$file."\">".$file."</a></li>";
+    $type = "";
+    if(endsWith($file, "data")){
+    	$type = "data";
+    }
+    if(endsWith($file, ".txt")){
+    	$type = "txt";
+    }
+    if(endsWith($file, ".students")){
+    	$type = "students";
+    }
+    if(endsWith($file, ".csv")){
+    	$type = "csv";
+    }
+    if(endsWith($file, ".marking")){
+    	$type = "marking";
+    }
+    if(endsWith($file, ".corners")){
+    	$type = "corners";
+    }
+    if(endsWith($file, ".answers")){
+    	$type = "answers";
+    }
+    if(endsWith($file, ".log")){
+    	$type = "log";
+    }
+      echo "<li><input type_fichier=".$type." type=\"checkbox\" name=\"files[]\" value=\"".$dir.$file."\"><a href=\"".$page.".php?quiz-id=".$_GET['quiz-id']."&filename=".$dir.$file."\">".$file."</a></li>";
 }
 
 function doFilesMenu() {
