@@ -48,33 +48,60 @@ do
 
     echo -n "2 "
     # image_in image_out data_out nb_vert nb_horz binarization _hreshold
-    ${SCRIPT_DIR}/omr2 ${file} ${file}.output.bmp ${file}.omr2_data 45 10 210 >> ${OMR_LOG_FILE}
+    ${SCRIPT_DIR}/omr2 ${file} ${file}.output2.bmp ${file}.omr2_data 45 10 210 >> ${OMR_LOG_FILE}
     if (( $? != 0 ))
     then
        ERROR="true"
     fi
 
-    convert ${file}.output.bmp ${file}_corrected2.jpg
-    rm -f ${file}.bmp ${file}.output.bmp 2>&1 > /dev/null
+    convert ${file}.output2.bmp ${file}_corrected2.jpg
+    rm -f ${file}.output2.bmp 2>&1 > /dev/null
+
+    echo -n "3 "
+   # fichier à tester, image analyser, sortie binaire, nombre de bandes hauteur, nombre de bandes largeur, seuil
+    ${SCRIPT_DIR}/omr3 ${file} ${file}.output3.bmp ${file}.omr3_data 45 10 150 >> ${OMR_LOG_FILE}
+    if (( $? != 0 ))
+    then
+       ERROR="true"
+    fi
+
+    convert ${file}.output3.bmp ${file}_corrected3.jpg
+    rm -f ${file}.output3.bmp 2>&1 > /dev/null
+
+    NB_DIFFS=0
 
     diff ${file}.omr1_data ${file}.omr2_data 2>&1 > /dev/null
     if (( $? != 0 ))
     then
-       ERROR="true"
+       NB_DIFFS=$((${NB_DIFFS} + 1)) 
        echo "Difference between ${file}.omr1_data and ${file}.omr2_data." >> ${OMR_ERRORS_FILE}
     fi
 
-    if [ "${ERROR}" = "true" ]
+    diff ${file}.omr1_data ${file}.omr3_data 2>&1 > /dev/null
+    if (( $? != 0 ))
     then
+       NB_DIFFS=$((${NB_DIFFS} + 1)) 
+       echo "Difference between ${file}.omr1_data and ${file}.omr3_data." >> ${OMR_ERRORS_FILE}
+    fi
+    
+    diff ${file}.omr2_data ${file}.omr3_data 2>&1 > /dev/null
+    if (( $? != 0 ))
+    then
+       NB_DIFFS=$((${NB_DIFFS} + 1)) 
+       echo "Difference between ${file}.omr2_data and ${file}.omr3_data." >> ${OMR_ERRORS_FILE}
+    fi
+
+    if [ ${NB_DIFFS} -lt 2 ]
+    then
+       echo "[OK]"
+       OUTPUT_DIR=${QUIZ_DIR}/omr_output/
+    else
        ERRORS="true"
        echo "[ERROR]"
        OUTPUT_DIR=${QUIZ_DIR}/omr_errors/
-    else
-       echo "[OK]"
-       OUTPUT_DIR=${QUIZ_DIR}/omr_output/
     fi
 
-    mv -f ${file} ${file}.omr*_data ${file}_corrected.jpg ${file}_corrected2.jpg ${file}_binarized.jpg ${OUTPUT_DIR} 2>&1 > /dev/null
+    mv -f ${file} ${file}.omr*_data ${file}_corrected.jpg ${file}_corrected2.jpg ${file}_corrected3.jpg ${file}_binarized.jpg ${OUTPUT_DIR} 2>&1 > /dev/null
     echo "=======================" >>  ${OMR_LOG_FILE}
 done
 

@@ -1,4 +1,4 @@
-MAKE_DIRECTORIES=omr1 omr2
+MAKE_DIRECTORIES=omr1 omr2 omr3
 ANT_DIRECTORIES=mail
 
 all:

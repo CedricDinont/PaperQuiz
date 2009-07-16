@@ -1,7 +1,8 @@
-CFLAGS=-Wall -g
+CFLAGS=-Wall -g -DDEBUG
+OUTPUT_DIR=../../bin/
 
-OMR3:main.o image.o zone.o
-	gcc main.o image.o zone.o `sdl-config --libs` -lSDL_image -lSDL_gfx -O3 -o OMR3
+omr3:main.o image.o zone.o
+	gcc main.o image.o zone.o `sdl-config --libs` -lSDL_image -lSDL_gfx -O3 -o omr3
 
 # -DDEBUG pour affichage
 main.o: main.c image.h zone.h
@@ -14,4 +15,8 @@ zone.o: zone.c zone.h
 	gcc ${CFLAGS} -c zone.c
 
 clean:
-	rm *.o OMR3
+	rm *.o omr3
+
+install: omr3
+        cp omr3 ${OUTPUT_DIR}
+
