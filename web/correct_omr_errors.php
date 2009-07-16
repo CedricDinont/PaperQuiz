@@ -339,7 +339,7 @@ function alertChanged() {
 <div id="image_div" name="image_div" style="border:Opx;margin:0px;width:65%; height:95%;background-color: #CCCCCC;
 	   display:block; overflow:auto;position:absolute; left:0px;top:25px;">
 	    <?php if ($current_image != "") { ?>
-					      <img id="image" name="image" src="view_file.php?quiz-id=<?php echo $quiz->getId(); ?>&filename=<?php echo $current_dir.$current_image; if ($mr_file_ext == ".omr2_data") {echo "_corrected2.jpg";} else { echo "_corrected.jpg"; } ?>">
+					      <img id="image" name="image" src="view_file.php?quiz-id=<?php echo $quiz->getId(); ?>&filename=<?php echo $current_dir.$current_image; if ($mr_file_ext == ".omr2_data") {echo "_corrected2.jpg";} else if ($mr_file_ext == ".omr3_data") {echo "_corrected3.jpg";} else { echo "_corrected.jpg"; } ?>">
 					      <?php } else { echo "Aucune image dans ce répertoire."; }?>
 </div>
 
