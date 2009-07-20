@@ -5,7 +5,7 @@ CC=gcc
 CFLAGS=-O2 -Wall `sdl-config --cflags`
 LDFLAGS=`sdl-config --libs` -lm -lSDL -lSDL_image -lSDL_gfx
 
-all: ${PROG}
+all: install
 
 install: ${PROG}
 	cp ${PROG} ${OUTPUT_DIR}
