@@ -6,9 +6,11 @@ all:
 		make -C $${DIRECTORY} all; \
 	done
 	@for DIRECTORY in ${ANT_DIRECTORIES}; do \
+		# cd $${DIRECTORY}; \
 		pushd $${DIRECTORY}; \
 		ant all; \
 		popd; \
+		# cd ..; \
 	done;
 
 clean:

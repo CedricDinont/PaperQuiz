@@ -4,6 +4,8 @@ OUTPUT_DIR=../../bin/
 omr3:main.o image.o zone.o
 	gcc main.o image.o zone.o `sdl-config --libs` -lSDL_image -lSDL_gfx -O3 -o omr3
 
+all:install
+
 # -DDEBUG pour affichage
 main.o: main.c image.h zone.h
 	gcc ${CFLAGS} -c main.c
