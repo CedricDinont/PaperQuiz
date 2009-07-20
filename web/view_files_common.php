@@ -1,10 +1,10 @@
 <?php
 
 function endsWith( $str, $sub ) {
-  return (strcmp(getEnd($str), $sub ) == 0);
+  return (strcmp(getEnd($str,$sub), $sub ) == 0);
 }
 
-function getEnd($str){
+function getEnd($str, $sub ){
 	return substr( $str, strlen( $str ) - strlen( $sub ) );
 }
 
