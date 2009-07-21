@@ -122,7 +122,7 @@ function getFile($dir, $file) {
 }
 
 function showFileFromDescription($tab_file){
-	 echo "<li><input ";
+	 echo "<input ";
     if($tab_file["type_fichier"] != ""){
     	echo "type_fichier=\"".$tab_file["type_fichier"]."\" ";
     }
@@ -130,7 +130,7 @@ function showFileFromDescription($tab_file){
     	echo "fichier=\"".$tab_file["fichier"]."\" ";
     }
     echo "type=\"checkbox\" name=\"files[]\" value=\"".$tab_file["chemin"]."\"><a href=\"".$tab_file["page"].
-    ".php?quiz-id=".$tab_file["quiz-id"]."&filename=".$tab_file["chemin"]."\">".$tab_file["file"]."</a></li>\n";
+    ".php?quiz-id=".$tab_file["quiz-id"]."&filename=".$tab_file["chemin"]."\">".$tab_file["file"]."</a>\n";
 }
 
 

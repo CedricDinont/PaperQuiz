@@ -52,3 +52,22 @@ th, td {
 th {
 	font-style : bold;
 }
+
+input.selection{
+	color:#275d8f;
+	background-color: #c9d8e5;
+}
+
+#arborescence ul, #arborescence li{
+	text-align: left;
+	list-style-type: none;
+	list-style-image: none;
+}
+
+#arborescence ul {
+	background: url("../img/line.gif") repeat-y 0px 0px;
+}
+
+#arborescence ul.last {
+	background: none;
+}
