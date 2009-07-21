@@ -19,7 +19,7 @@
 <div>
 <h1>Fichiers du répertoire d'entrée</h1>
 <?php
-include("files_contol.php.inc");
+include("files_control.php.inc");
 ?>
 <ul>
 <?php
@@ -47,7 +47,7 @@ foreach($tab_files as $group){
 <div>
 <h1>Fichiers du répertoire de sortie</h1>
 <?php
-include("files_contol.php.inc");
+include("files_control.php.inc");
 ?>
 <ul>
 <?php
@@ -75,7 +75,7 @@ foreach($tab_files as $group){
 <div>
 <h1>Fichiers du répertoire d'erreur</h1>
 <?php
-include("files_contol.php.inc");
+include("files_control.php.inc");
 ?>
 <ul>
 <?php
