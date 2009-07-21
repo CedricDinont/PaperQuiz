@@ -788,15 +788,21 @@ int analyseCase(struct image *img,int rotation,int hgx,int hgy,int bdx,int bdy,i
 	int dec = 10;
 	if( nbpix > 0 && ( (double)compteur/(double)nbpix > proportion ) )
 	{
-		for(x = hgx-dec;x<bdx+dec;x++)
+		int ep=0;
+		int ep_max=5;
+		for(ep=0;ep<ep_max;ep++)
 		{
-			setpixel(img, x, hgy-dec, 0, 0, 255);
-			setpixel(img, x, bdy+dec, 0, 0, 255);
-		}
-		for(y = hgy-dec;y<bdy+dec;y++)
-		{
-			setpixel(img, hgx-dec, y, 0, 0, 255);
-			setpixel(img, bdx+dec, y, 0, 0, 255);
+			printf("coucou %d\n",ep);
+			for(x = hgx-dec+ep;x<bdx+dec-ep;x++)
+			{
+				setpixel(img, x, hgy-dec+ep, 0, 0, 255);
+				setpixel(img, x, bdy+dec-ep, 0, 0, 255);
+			}
+			for(y = hgy-dec+ep;y<bdy+dec-ep;y++)
+			{
+				setpixel(img, hgx-dec+ep, y, 0, 0, 255);
+				setpixel(img, bdx+dec-ep, y, 0, 0, 255);
+			}
 		}
 		return 1;
 	}
