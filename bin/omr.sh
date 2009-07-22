@@ -59,7 +59,7 @@ do
 
     echo -n "3 "
    # fichier à tester, image analyser, sortie binaire, nombre de bandes hauteur, nombre de bandes largeur, seuil
-    ${SCRIPT_DIR}/omr3 ${file} ${file}.output3.bmp ${file}.omr3_data 45 10 150 >> ${OMR_LOG_FILE}
+    ${SCRIPT_DIR}/omr3 ${file} ${file}.output3.bmp ${file}.omr3_data 45 10 150 hg >> ${OMR_LOG_FILE}
     if (( $? != 0 ))
     then
        ERROR="true"
