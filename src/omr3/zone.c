@@ -27,6 +27,36 @@ void ajouterZone(Zone *zone,ListeZone **liste)
 	*liste = prev;
 }
 
+void removeZone(ListeZone **liste,int i)
+{
+	int compteur = 0;
+	ListeZone* current = NULL;
+	ListeZone* previous = NULL;
+	ListeZone* it = *liste;
+	current = it;
+	while(it != NULL && compteur != i)
+	{
+		previous = current;
+		current = it;
+		it = it->next;
+		compteur++;
+	}
+	if(current != NULL && compteur == i)
+	{
+		// tête de liste
+		if(previous == NULL)
+		{
+			*liste = current->next;
+		}
+		else
+		{
+			previous->next = current->next;
+		}
+		destroyZone(current->zone);
+		free(current);
+	}
+}
+
 void printListeZone(ListeZone *liste)
 {
 	while(liste != NULL)

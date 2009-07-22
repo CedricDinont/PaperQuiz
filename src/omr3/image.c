@@ -520,7 +520,7 @@ int** analyse(struct image *img,ListeZone *liste_haut,ListeZone *liste_droite,Li
 	int nb_haut = nb_zones(liste_haut);
 	int nb_gauche = nb_zones(liste_gauche);
 	Zone *zone_gauche,*zone_droite,*zone_haut,*zone_bas;
-	int** resultats = creationResultats(nb_haut-1, nb_gauche-1);
+	int** resultats = creationResultats(nb_haut, nb_gauche);
 	
 	// image
 	int hauteur,largeur;
@@ -545,27 +545,21 @@ int** analyse(struct image *img,ListeZone *liste_haut,ListeZone *liste_droite,Li
 	
 	
 	// parcours largeur
-	for(i = 1;i<nb_haut;i++)
+	for(i = 0;i<nb_haut;i++)
 	{
 		// parcours hauteur
-		for(j=1;j<nb_gauche;j++)
+		for(j=0;j<nb_gauche;j++)
 		{
 			zone_haut = getZone(liste_haut,i);
 			zone_gauche = getZone(liste_gauche,j);
-			zone_bas = getZone(liste_bas,i-1);
-			zone_droite = getZone(liste_droite,j-1);
-			
-			/*
-			printf("--intersection pour (%d,%d)->(%d,%d) (%d,%d)->(%d,%d)\n",zone_haut->deb,zone_haut->fin,zone_bas->deb,zone_bas->fin,zone_gauche->deb,zone_gauche->fin,zone_droite->deb,zone_droite->fin);
-			*/
+			zone_bas = getZone(liste_bas,i);
+			zone_droite = getZone(liste_droite,j);
 			
 			decg = (double)(zone_bas->deb - zone_haut->deb)/largeur;
 			decd = (double)(zone_bas->fin - zone_haut->fin)/largeur;
 			
 			dech = (double)(zone_droite->deb - zone_gauche->deb)/hauteur;
 			decb = (double)(zone_droite->fin - zone_gauche->fin)/hauteur;
-			
-			//printf("decg=%f;decd=%f;dech=%f;decb=%f\n",decg,decd,dech,decb);
 			
 			hgx = (double)(dech * (double)zone_haut->deb + zone_gauche->deb)/(1.0-decg*dech);
 			hgy = (double)(decg * (double)zone_gauche->deb + zone_haut->deb)/(1.0-decg*dech);
@@ -579,17 +573,13 @@ int** analyse(struct image *img,ListeZone *liste_haut,ListeZone *liste_droite,Li
 			bdx = (double)(decb * (double)zone_haut->fin + zone_gauche->fin)/(1.0-decd*decb);
 			bdy = (double)(decd * (double)zone_gauche->fin + zone_haut->fin)/(1.0-decd*decb);
 			
-			//printf("-----------------------------------\n");
-			//printf("hg(%d,%d) hd(%d,%d) ",hgy,hgx,hdy,hdx);
-			//printf("bg(%d,%d) bd(%d,%d) ",bgy,bgx,bdy,bdx);
 			// case noircie
-			resultats[i-1][j-1] = analyseCase(img,rotation,hgy,hgx,bdy,bdx,230,0.6);
-			if(resultats[i-1][j-1] == 0)
+			resultats[i][j] = analyseCase(img,rotation,hgy,hgx,bdy,bdx,230,0.6);
+			if(resultats[i][j] == 0)
 			{
 				// croix ?
-				resultats[i-1][j-1] = analyseCase(img,rotation,hgy,hgx,bdy,bdx,160,0.25);
+				resultats[i][j] = analyseCase(img,rotation,hgy,hgx,bdy,bdx,160,0.25);
 			}
-			//printf("resultat %d\n",resultats[i-1][j-1]);
 		}
 	}
 	return resultats;
@@ -623,10 +613,10 @@ void tracerDroites(struct image *img,ListeZone *liste_haut,ListeZone *liste_droi
 	int i,j;
 	if(rotation == 0 || rotation == 180)
 	{
-		for(i = 1;i<nb_gauche;i++)
+		for(i = 0;i<nb_gauche;i++)
 		{
 			zone_haut = getZone(liste_gauche,i);
-			zone_bas = getZone(liste_droite,i-1);
+			zone_bas = getZone(liste_droite,i);
 			decg = (double)(zone_bas->deb - zone_haut->deb)/hauteur;
 			decd = (double)(zone_bas->fin - zone_haut->fin)/hauteur;
 	
@@ -641,10 +631,10 @@ void tracerDroites(struct image *img,ListeZone *liste_haut,ListeZone *liste_droi
 				tracerPixel(img,rotation,hgx,hgy);
 			}
 		}
-		for(j=1;j<nb_haut;j++)
+		for(j=0;j<nb_haut;j++)
 		{
 			zone_gauche = getZone(liste_haut,j);
-			zone_droite = getZone(liste_bas,j-1);
+			zone_droite = getZone(liste_bas,j);
 			dech = (double)(zone_droite->deb - zone_gauche->deb)/largeur;
 			decb = (double)(zone_droite->fin - zone_gauche->fin)/largeur;
 			for(i=0;i<largeur;i++)
@@ -661,10 +651,10 @@ void tracerDroites(struct image *img,ListeZone *liste_haut,ListeZone *liste_droi
 	}
 	if(rotation == 90 || rotation == 270 )
 	{
-		for(i = 1;i<nb_haut;i++)
+		for(i = 0;i<nb_haut;i++)
 		{
 			zone_haut = getZone(liste_haut,i);
-			zone_bas = getZone(liste_bas,i-1);
+			zone_bas = getZone(liste_bas,i);
 			decg = (double)(zone_bas->deb - zone_haut->deb)/largeur;
 			decd = (double)(zone_bas->fin - zone_haut->fin)/largeur;
 	
@@ -679,10 +669,10 @@ void tracerDroites(struct image *img,ListeZone *liste_haut,ListeZone *liste_droi
 				tracerPixel(img,rotation,hgx,hgy);
 			}
 		}
-		for(j=1;j<nb_gauche;j++)
+		for(j=0;j<nb_gauche;j++)
 		{
 			zone_gauche = getZone(liste_gauche,j);
-			zone_droite = getZone(liste_droite,j-1);
+			zone_droite = getZone(liste_droite,j);
 			dech = (double)(zone_droite->deb - zone_gauche->deb)/hauteur;
 			decb = (double)(zone_droite->fin - zone_gauche->fin)/hauteur;
 			for(i=0;i<largeur;i++)
@@ -792,7 +782,6 @@ int analyseCase(struct image *img,int rotation,int hgx,int hgy,int bdx,int bdy,i
 		int ep_max=5;
 		for(ep=0;ep<ep_max;ep++)
 		{
-			printf("coucou %d\n",ep);
 			for(x = hgx-dec+ep;x<bdx+dec-ep;x++)
 			{
 				setpixel(img, x, hgy-dec+ep, 0, 0, 255);

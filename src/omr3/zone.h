@@ -16,6 +16,7 @@ typedef struct ListeZone_
 	gestion ListeZone
 */
 void ajouterZone(Zone *zone,ListeZone **liste);
+void removeZone(ListeZone **liste,int i);
 void printListeZone(ListeZone *liste);
 void destroyListeZone(ListeZone **liste);
 void destroyZone(Zone *zone);
