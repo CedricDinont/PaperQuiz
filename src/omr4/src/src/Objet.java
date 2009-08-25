@@ -11,8 +11,8 @@ public class Objet {
 	public int jmin;
 	public int jmax;
 
-	public int icentre;
-	public int jcentre;
+	public double icentre;
+	public double jcentre;
 
 	public Objet() {
 		is = new LinkedList<Integer>();

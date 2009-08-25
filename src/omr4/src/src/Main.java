@@ -164,7 +164,7 @@ public class Main {
 	 */
 	public static void find(int debx, int finx, int deby, int finy,
 			LinkedList<Objet> objets, LinkedList<Objet> liste) {
-		int coinx = 0, coiny = 0;
+		double coinx = 0, coiny = 0;
 		int taille = objets.size();
 		int compteur = 0;
 		while (compteur < taille) {
@@ -204,8 +204,11 @@ public class Main {
 	public static String str_orientation = "hg";
 	public static int orientation = 0;
 	public static int seuil_coin = 3000;
-	public static int seuil_reperes = 1000;
-	public static int seuil_marques = 250;
+	public static int seuil_reperes = 1500;
+	public static int seuil_marques = 200;
+	
+	public static int dmin_repere = 16;
+	public static int dmax_repere = 22;
 
 	public static double exploration = 2;
 	public static double pourcentage_coin = 0.50;
@@ -297,7 +300,11 @@ public class Main {
 					objet.imax = imax;
 					objet.jmin = jmin;
 					objet.jmax = jmax;
-					reperes.addLast(objet);
+					// encore un filtre sur l'écriture
+					double d = objet.distance();
+					if ( d > dmin_repere && d < dmax_repere) {
+						reperes.addLast(objet);
+					}
 				} else if (objeti.size() > seuil_marques) {
 					Objet objet = new Objet();
 					objet.is = objeti;
@@ -335,11 +342,12 @@ public class Main {
 		displayObjets(coins, "coin retenu");
 
 		System.out.println("Reperes " + reperes.size());
+		displayObjets(reperes, "");
 		System.out.println("Marques " + marques.size());
 
 		// détermination de la rotation
 		int rotation = -1;
-		int coinx = 0, coiny = 0;
+		double coinx = 0, coiny = 0;
 
 		// préparation au positionnement du coin
 		if (str_orientation == "hg") {
@@ -401,7 +409,7 @@ public class Main {
 		int trouve = 0;
 
 		// repere les marques horizontales et verticales
-		if (rotation >= 0 && reperes.size() == 110) {
+		if (rotation >= 0 ) {
 
 			System.out.println("Rotation listes repères");
 			applyRotation(rotation, reperes);
@@ -466,6 +474,13 @@ public class Main {
 			img = ImgUtils.rotateImg(rotation, img);
 			width = img.getWidth();
 			height = img.getHeight();
+			
+			for (Objet repere : reperes) {
+				int gx = (int) repere.icentre;
+				int gy = (int) repere.jcentre;
+				ImgUtils.drawSquare(gx - 5, gx + 5, gy - 5, gy + 5, img,
+						Color.YELLOW);
+			}
 
 			System.out.println("Image corrigée");
 			System.out.println("hauteur=" + height + " __ largeur=" + width);
@@ -513,16 +528,12 @@ public class Main {
 			int compteurv = 0;
 			while (compteurv < taillev) {
 				Objet repere_h = liste_haut.removeFirst();
-				int hx = repere_h.icentre;
-				int hy = repere_h.jcentre;
-				ImgUtils.drawSquare(hx - 5, hx + 5, hy - 5, hy + 5, img,
-						Color.YELLOW);
+				double hx = repere_h.icentre;
+				double hy = repere_h.jcentre;
 
 				Objet repere_b = liste_bas.removeFirst();
-				int bx = repere_b.icentre;
-				int by = repere_b.jcentre;
-				ImgUtils.drawSquare(bx - 5, bx + 5, by - 5, by + 5, img,
-						Color.YELLOW);
+				double bx = repere_b.icentre;
+				double by = repere_b.jcentre;
 
 				double av = (double) (hy - by) / (hx - bx);
 				double bv = (double) (hx * by - hy * bx) / (hx - bx);
@@ -533,16 +544,12 @@ public class Main {
 				Iterator<Objet> it_d = liste_droite.iterator();
 				while (compteurh < tailleh) {
 					Objet repere_g = it_g.next();
-					int gx = repere_g.icentre;
-					int gy = repere_g.jcentre;
-					ImgUtils.drawSquare(gx - 5, gx + 5, gy - 5, gy + 5, img,
-							Color.YELLOW);
+					double gx = repere_g.icentre;
+					double gy = repere_g.jcentre;
 
 					Objet repere_d = it_d.next();
-					int dx = repere_d.icentre;
-					int dy = repere_d.jcentre;
-					ImgUtils.drawSquare(dx - 5, dx + 5, dy - 5, dy + 5, img,
-							Color.YELLOW);
+					double dx = repere_d.icentre;
+					double dy = repere_d.jcentre;
 
 					double ah = (double) (gy - dy) / (gx - dx);
 					double bh = (double) (gx * dy - gy * dx) / (gx - dx);
@@ -616,5 +623,9 @@ public class Main {
 
 		long tfin = System.currentTimeMillis();
 		System.out.println("temps " + ((double) (tfin - tdeb) / 1000)+"s");
+		if(trouve == 0){
+			System.err.println("Aucune marque");
+			System.exit(1);
+		}
 	}
 }
