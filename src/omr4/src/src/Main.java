@@ -5,11 +5,9 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.Writer;
 import java.util.Collections;
 import java.util.Comparator;
@@ -183,10 +181,10 @@ public class Main {
 		}
 	}
 
-	public static String path = "/home/francois/projets/omr3/";
-	public static String image = "/home/francois/projets/omr3/test2.jpg";
+	public static String image_in = "/home/francois/projets/omr3/test2.jpg";
 	public static String image_out = "/home/francois/projets/omr3/test2_corrected.jpg";
-
+	public static String data_out = "/home/francois/projets/omr3/omr4_correction";
+	
 	public static int seuil = 200;
 	public static boolean[][] pix;
 	public static Paire<LinkedList<Integer>, LinkedList<Integer>> pixels;
@@ -211,7 +209,6 @@ public class Main {
 
 	public static double exploration = 2;
 	public static double pourcentage_coin = 0.50;
-	public static double scale = 0.35;
 
 	/**
 	 * c'est parti
@@ -219,16 +216,33 @@ public class Main {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		if(args.length != 5){
+			System.err.println("image_in: quizz à analyser");
+			System.err.println("image_out: image de sortie");
+			System.err.println("data_out: fichier de sortie avec les marques reconnues");
+			System.err.println("seuil_base: 200 conseillé, seuil entre 0 (fort) et 255 (faible) pour la reconnaissances des marques\n");
+			System.err.println("position_repere: position du repère, hg->haut gauche, hd->haut droite, bg->bas gauche, bd->bas droite");
+			System.exit(1);
+		}
+		
+		System.out.println("Récupération des arguments");
+		Main.image_in = args[0];
+		Main.image_out = args[1];
+		Main.data_out = args[2];
+		Main.seuil = Integer.valueOf(args[3]);
+		Main.str_orientation = args[4];
+		
 		// calcul du temps d'exécution
 		long tdeb = System.currentTimeMillis();
 
+		System.out.println("Chargement de l'image");
 		// récupération d'un buffer représentant l'image
-		WritableRaster img = Main.loadRaster(Main.image);
+		WritableRaster img = Main.loadRaster(Main.image_in);
 		// détermination de sa taille
 		width = img.getWidth();
 		height = img.getHeight();
 
-		// étude des pixels de l'image
+		System.out.println("étude des pixels de l'image");
 		int[] rgb = new int[4];
 		pix = new boolean[width][height];
 		pixels = new Paire<LinkedList<Integer>, LinkedList<Integer>>(
@@ -248,8 +262,8 @@ public class Main {
 		}
 
 		// caractéristiques de l'image
-		System.out.println("pixels " + width + ";" + height + " "
-				+ (width * height) + " " + pixels.getFirst().size());
+		System.out.println("pixels w" + width + ";h" + height + " nbpixels"
+				+ (width * height) + " elems" + pixels.getFirst().size());
 
 		LinkedList<Objet> coins = new LinkedList<Objet>();
 		LinkedList<Objet> reperes = new LinkedList<Objet>();
@@ -298,20 +312,27 @@ public class Main {
 		}
 
 		// données sur les éléments repérés
-		System.out.println("Coins " + coins.size());
-		displayObjets(coins, "coin");
+		System.out.println("Analyse coins " + coins.size());
 		Objet coinmin = null;
-		double dmin = 1000000;
-		for (Objet coin : coins) {
-			double d = coin.distance();
-			if (d < dmin) {
-				dmin = d;
-				coinmin = coin;
+		if (coins.size() > 1) {
+			double dmin = 1000000;
+			for (Objet coin : coins) {
+				double d = coin.distance();
+				if (d < dmin) {
+					dmin = d;
+					coinmin = coin;
+				}
 			}
+			coins.clear();
+		} else if (coins.size() == 1) {
+			coinmin = coins.getFirst();
+		} else {
+			System.err.println("Pas de coin");
+			System.exit(1);
 		}
 		coins.clear();
 		coins.add(coinmin);
-		displayObjets(coins, "coin");
+		displayObjets(coins, "coin retenu");
 
 		System.out.println("Reperes " + reperes.size());
 		System.out.println("Marques " + marques.size());
@@ -333,8 +354,9 @@ public class Main {
 		if (str_orientation == "hd") {
 			orientation = 3;
 		}
-
+	
 		if (coins.size() == 1) {
+			System.out.println("Recherche de la rotation à effectuer");
 			Objet coin = coins.getFirst();
 			coin.getCentre();
 			coinx = coin.icentre;
@@ -381,6 +403,7 @@ public class Main {
 		// repere les marques horizontales et verticales
 		if (rotation >= 0 && reperes.size() == 110) {
 
+			System.out.println("Rotation listes repères");
 			applyRotation(rotation, reperes);
 			simplifyToCentre(reperes);
 
@@ -400,7 +423,8 @@ public class Main {
 			Objet coin = coins.getFirst();
 			coinx = coin.icentre;
 			coiny = coin.jcentre;
-			System.out.println("coin " + coinx + ";" + coiny);
+			System.out.println("Position coin avant rotation " + coinx + ";"
+					+ coiny);
 
 			applyRotation(rotation, coins);
 			simplifyToCentre(coins);
@@ -408,8 +432,11 @@ public class Main {
 			// coin.getCentre();
 			coinx = coin.icentre;
 			coiny = coin.jcentre;
-			System.out.println("coin " + coinx + ";" + coiny);
+			System.out.println("Position coin après rotation" + coinx + ";"
+					+ coiny);
 
+			System.out
+					.println("Determination des listes de repères gauche droite haut bas");
 			if (liste_h.size() == 90) {
 				for (Objet repere : liste_h) {
 					repere.getCentre();
@@ -435,13 +462,17 @@ public class Main {
 			System.out.println("liste_haut " + liste_haut.size());
 			System.out.println("liste_bas " + liste_bas.size());
 
+			System.out.println("Rotation Image");
 			img = ImgUtils.rotateImg(rotation, img);
 			width = img.getWidth();
 			height = img.getHeight();
 
+			System.out.println("Image corrigée");
 			System.out.println("hauteur=" + height + " __ largeur=" + width);
 
 			// tri des listes
+			System.out
+					.println("Tri des listes de repères suivant leur position");
 			Comparator<Objet> comp_h = new Comparator<Objet>() {
 				public int compare(Objet o1, Objet o2) {
 					if (o1.jcentre < o2.jcentre) {
@@ -477,6 +508,7 @@ public class Main {
 				}
 			}
 
+			System.out.println("Recherche des marques aux intersections");
 			int taillev = liste_haut.size();
 			int compteurv = 0;
 			while (compteurv < taillev) {
@@ -484,18 +516,16 @@ public class Main {
 				int hx = repere_h.icentre;
 				int hy = repere_h.jcentre;
 				ImgUtils.drawSquare(hx - 5, hx + 5, hy - 5, hy + 5, img,
-						Color.BLUE);
+						Color.YELLOW);
 
 				Objet repere_b = liste_bas.removeFirst();
 				int bx = repere_b.icentre;
 				int by = repere_b.jcentre;
 				ImgUtils.drawSquare(bx - 5, bx + 5, by - 5, by + 5, img,
-						Color.BLUE);
+						Color.YELLOW);
 
 				double av = (double) (hy - by) / (hx - bx);
 				double bv = (double) (hx * by - hy * bx) / (hx - bx);
-
-				System.out.println("(" + hx + ";" + hy + ")");
 
 				int tailleh = liste_gauche.size();
 				int compteurh = 0;
@@ -506,13 +536,13 @@ public class Main {
 					int gx = repere_g.icentre;
 					int gy = repere_g.jcentre;
 					ImgUtils.drawSquare(gx - 5, gx + 5, gy - 5, gy + 5, img,
-							Color.BLUE);
+							Color.YELLOW);
 
 					Objet repere_d = it_d.next();
 					int dx = repere_d.icentre;
 					int dy = repere_d.jcentre;
 					ImgUtils.drawSquare(dx - 5, dx + 5, dy - 5, dy + 5, img,
-							Color.BLUE);
+							Color.YELLOW);
 
 					double ah = (double) (gy - dy) / (gx - dx);
 					double bh = (double) (gx * dy - gy * dx) / (gx - dx);
@@ -521,7 +551,7 @@ public class Main {
 					int y = (int) (av * (bh - bv) / (av - ah) + bv);
 					ImgUtils.drawSquare(x - 2, x + 2, y - 2, y + 2, img,
 							Color.GREEN);
-					System.out.println("(" + x + ";" + y + ")");
+					System.out.print("(" + x + ";" + y + ") ");
 
 					int taille_marques = marques.size();
 					int compteur = 0;
@@ -536,6 +566,7 @@ public class Main {
 									img, Color.RED);
 							trouve++;
 							taille_marques--;
+							System.out.print("<--[Marque repérée]   ");
 						} else {
 							marques.addLast(objet);
 						}
@@ -543,43 +574,47 @@ public class Main {
 					}
 					compteurh++;
 				}
+				System.out.println("");
 				compteurv++;
 			}
-		}
-		if (resultats != null) {
-			System.out.println("Nombre de marques " + trouve);
 
-			System.out.println("Ecriture du fichier de correction");
-			// écriture du fichier binaire
-			try {
-				Writer writer = new FileWriter(path+"correctionOMR4.txt", false);
+			if (resultats != null) {
+				System.out.println("Nombre de marques repérées = " + trouve);
 
-				int taillev = liste_haut.size();
-				int tailleh = liste_gauche.size();
-				for (int compteurv = 0; compteurv < taillev; compteurv++) {
-					String str = "";
+				System.out.println("Ecriture du fichier de correction");
+				// écriture du fichier binaire
+				try {
+					Writer writer = new FileWriter(data_out,
+							false);
+					int tailleh = liste_gauche.size();
 					for (int compteurh = 0; compteurh < tailleh; compteurh++) {
-						str += (resultats[compteurv][compteurh]) ? "1" : "0";
+						String str = "";
+						for (compteurv = 0; compteurv < taillev; compteurv++) {
+							str += (resultats[compteurv][compteurh]) ? "1"
+									: "0";
+						}
+						System.out.println(str);
+						writer.write(str + '\n');
 					}
-					writer.write(str, 0, str.length());
+					writer.flush();
+				} catch (IOException e1) {
+					e1.printStackTrace();
 				}
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
 
-			System.out.println("Conversion de l'image corrigée en jpg");
-			// écriture de l'image corrigée en jpeg
-			try {
-				BufferedImage bufferedImage = new BufferedImage(width, height,
-						BufferedImage.TYPE_INT_RGB);
-				bufferedImage.setData(img);
-				ImageIO.write(bufferedImage, "JPEG", new File(image_out));
-			} catch (Exception e) {
-				e.printStackTrace();
+				System.out.println("Conversion de l'image corrigée en jpg");
+				// écriture de l'image corrigée en jpeg
+				try {
+					BufferedImage bufferedImage = new BufferedImage(width,
+							height, BufferedImage.TYPE_INT_RGB);
+					bufferedImage.setData(img);
+					ImageIO.write(bufferedImage, "JPEG", new File(image_out));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 		}
 
 		long tfin = System.currentTimeMillis();
-		System.out.println("temps " + ((double) (tfin - tdeb) / 1000));
+		System.out.println("temps " + ((double) (tfin - tdeb) / 1000)+"s");
 	}
 }

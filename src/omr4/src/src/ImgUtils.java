@@ -3,6 +3,7 @@ package src;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
+import java.util.LinkedList;
 
 public class ImgUtils {
 	/**
@@ -28,7 +29,7 @@ public class ImgUtils {
 			}
 		}
 	}
-	
+
 	/**
 	 * effectue une rotation de n*Pi/2 de l'image indiquée
 	 * 
