@@ -355,11 +355,11 @@ marques
 		nb_haut = nb_zones(liste_haut);
 		nb_gauche = nb_zones(liste_gauche);
 #if DEBUG
-		printResultats(resultats,nb_haut-1,nb_gauche-1);
+		printResultats(resultats,nb_haut,nb_gauche);
 		printf("Sauvegarde des résultats\n");
 #endif
-		printResultatsFichier(resultats,nb_haut-1,nb_gauche-1,data_out);
-		liberationResultats(resultats,nb_haut-1);
+		printResultatsFichier(resultats,nb_haut,nb_gauche,data_out);
+		liberationResultats(resultats,nb_haut);
 		free(resultats);
 #if DEBUG
 		printf("Rotation de l'image\n");

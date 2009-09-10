@@ -829,7 +829,7 @@ void printResultats(int **resultats,int hauteur, int largeur)
 	int i,j;
 	printf("Résultats--------\n");
 	printf("\t");
-	for(i=0;i<hauteur;i++)
+	for(i=1;i<=hauteur;i++)
 	{
 		printf("%d  ",i);
 	}
