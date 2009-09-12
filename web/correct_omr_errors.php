@@ -57,13 +57,20 @@ function generateCheckBoxCell($mr_data_nb) {
 function loadMrFile($filename) {
   global $mr_data;
 
+  if (! file_exists($filename)) {
+    return;
+  }
+
   $lines = file($filename);
+
+  if ($lines == FALSE) {
+    return;
+  }
+
   $n = 0;
   foreach ($lines as $line_nb => $line) {
     $line_data = explode(" ", $line);
-    // echo count($line_data);
     unset($line_data[count($line_data) - 1]);
-    //echo count($line_data);
     foreach ($line_data as $key => $value) {
       if (isset($value))
 	$mr_data[$n++] = $value;
@@ -173,8 +180,14 @@ if ($action == "change_mr") {
 } else {
   if (file_exists($quiz->getDir().$current_dir.$current_image.".mmr_data")) {
     $mr_file_ext=".mmr_data";
-  } else {
+  } else if (file_exists($quiz->getDir().$current_dir.$current_image.".omr1_data")) {
     $mr_file_ext=".omr1_data";
+  } else if (file_exists($quiz->getDir().$current_dir.$current_image.".omr2_data")) {
+    $mr_file_ext=".omr2_data";
+  } else if (file_exists($quiz->getDir().$current_dir.$current_image.".omr3_data")) {
+    $mr_file_ext=".omr3_data";
+  } else {
+   $mr_file_ext=".omr1_data";
   }
 }
 
