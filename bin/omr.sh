@@ -32,7 +32,7 @@ touch ${OMR_LOG_FILE}
 ERRORS="false"
 
 for file in ${INPUT_FILES} 
-do
+do 
     ERROR="false"
     BACKSLASHED_INPUT_DIR=`echo "${QUIZ_DIR}/omr_input/" | sed 's/\//\\\\\//g'`
     SHORT_FILE=`echo ${file} | sed "s/${BACKSLASHED_INPUT_DIR}//"`
@@ -70,10 +70,15 @@ do
 
     NB_DIFFS=0
 
+	 DIFF[0]="false"
+	 DIFF[1]="false"
+	 DIFF[2]="false"
+	 
     diff ${file}.omr1_data ${file}.omr2_data 2>&1 > /dev/null
     if (( $? != 0 ))
     then
-       NB_DIFFS=$((${NB_DIFFS} + 1)) 
+       NB_DIFFS=$((${NB_DIFFS} + 1))
+       DIFF[0]="true"
        echo "Difference between ${file}.omr1_data and ${file}.omr2_data." >> ${OMR_ERRORS_FILE}
     fi
 
@@ -81,6 +86,7 @@ do
     if (( $? != 0 ))
     then
        NB_DIFFS=$((${NB_DIFFS} + 1)) 
+       DIFF[1]="true"
        echo "Difference between ${file}.omr1_data and ${file}.omr3_data." >> ${OMR_ERRORS_FILE}
     fi
     
@@ -88,12 +94,19 @@ do
     if (( $? != 0 ))
     then
        NB_DIFFS=$((${NB_DIFFS} + 1)) 
+       DIFF[2]="true"
        echo "Difference between ${file}.omr2_data and ${file}.omr3_data." >> ${OMR_ERRORS_FILE}
     fi
 
     if [ ${NB_DIFFS} -lt 3 ]
     then
        echo "[OK]"
+       if ( "${DIFF[0]}" = "false" || "${DIFF[1]}" = "false" )
+		 then
+				less ${file}.omr1_data > ${file}.omr_data
+		 else
+		 		less ${file}.omr2_data > ${file}.omr_data
+		 fi
        OUTPUT_DIR=${QUIZ_DIR}/omr_output/
     else
        ERRORS="true"

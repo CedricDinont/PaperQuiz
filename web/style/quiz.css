@@ -64,6 +64,11 @@ input.selection{
 	list-style-image: none;
 }
 
+#arborescence div.liste_fichier{
+	margin-left: 25px;
+	background-color: #d9e0e7;
+}
+
 #arborescence ul {
 	background: url("../img/line.gif") repeat-y 0px 0px;
 }

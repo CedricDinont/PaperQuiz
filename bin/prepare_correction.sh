@@ -25,11 +25,11 @@ do
     if [ -e ${QUIZ_DIR}/omr_output/${IMAGE_FILE}.mmr_data ] 
     then
 	OMR_DATA_FILE=${QUIZ_DIR}/omr_output/${IMAGE_FILE}.mmr_data
-    elif [ -e ${QUIZ_DIR}/omr_output/${IMAGE_FILE}.omr1_data ] 
+    elif [ -e ${QUIZ_DIR}/omr_output/${IMAGE_FILE}.omr_data ] 
     then
-	OMR_DATA_FILE=${QUIZ_DIR}/omr_output/${IMAGE_FILE}.omr1_data    
+	OMR_DATA_FILE=${QUIZ_DIR}/omr_output/${IMAGE_FILE}.omr_data    
     else
-	OMR_DATA_FILE=${QUIZ_DIR}/omr_output/${IMAGE_FILE}.omr2_data    
+	OMR_DATA_FILE=${QUIZ_DIR}/omr_output/${IMAGE_FILE}.omr1_data    
     fi
     
     BACKSLASHED_OMR_OUTPUT_DIR=`echo "${QUIZ_DIR}/omr_output/" | sed 's/\//\\\\\//g'`

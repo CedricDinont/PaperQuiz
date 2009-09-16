@@ -8,38 +8,41 @@
         
    function displaydir($dir)
    {
-   	echo "<ul>";
-		$tab_files = getDirFiles($dir);
-		$nb_group = sizeof($tab_files);
-		$count_group = 0;
-		foreach($tab_files as $group){
-			echo "<li>";
-			echo "<input class=\"selection\" type=\"button\" onClick=\"doSimpleinSection(this.parentNode,true);\" value=\"tous\"></input>";
-			echo "<input class=\"selection\" type=\"button\" onClick=\"doSimpleinSection(this.parentNode,false);\" value=\"aucun\"></input>";
-			$count_group++;
-			if($count_group==$nb_group){
-				echo "<ul class=\"last\">";
-			} else {
-				echo "<ul>";
-			}
-			$count = 0;
-			$taille = sizeof($group);
-			foreach($group as $tab_file){
-				$count++;
+   	$tab_files = getDirFiles($dir);
+			if(sizeof($tab_files)>0)
+			{
+			echo "<ul>";
+			$nb_group = sizeof($tab_files);
+			$count_group = 0;
+			foreach($tab_files as $group){
 				echo "<li>";
-				if($count == $taille){
-					echo "<img src=\"img/joinbottom.gif\"/>";
+				echo "<input class=\"selection\" type=\"button\" onClick=\"doSimpleinSection(this.parentNode,true);\" value=\"tous\"></input>";
+				echo "<input class=\"selection\" type=\"button\" onClick=\"doSimpleinSection(this.parentNode,false);\" value=\"aucun\"></input>";
+				$count_group++;
+				if($count_group==$nb_group){
+					echo "<ul class=\"last\">";
 				} else {
-					echo "<img src=\"img/join.gif\"/>";
+					echo "<ul>";
 				}
-				if($tab_file != null && $tab_file["file"] != null){
-					showFileFromDescription($tab_file);
+				$count = 0;
+				$taille = sizeof($group);
+				foreach($group as $tab_file){
+					$count++;
+					echo "<li>";
+					if($count == $taille){
+						echo "<img src=\"img/joinbottom.gif\"/>";
+					} else {
+						echo "<img src=\"img/join.gif\"/>";
+					}
+					if($tab_file != null && $tab_file["file"] != null){
+						showFileFromDescription($tab_file);
+					}
 				}
+				echo "</ul>";
+				echo "</li>";
 			}
 			echo "</ul>";
-			echo "</li>";
 		}
-		echo "</ul>";
    }
 ?>
 <html>
@@ -56,31 +59,46 @@
 <h1>Fichiers du répertoire d'entrée</h1>
 <?php
 include("files_control.php.inc");
+?>
+<div class="liste_fichier">
+<?php
 displaydir($quiz->getOmrInputDir());
 ?>
 </div>
+</div>
 
-<div>
+<div id="arborescence">
 <h1>Fichiers du répertoire de sortie</h1>
 <?php
 include("files_control.php.inc");
+?>
+<div class="liste_fichier">
+<?php
 displaydir($quiz->getOmrOutputDir());
 ?>
 </div>
+</div>
+
 
 <div id="arborescence">
 <h1>Fichiers du répertoire d'erreur</h1>
 <?php
 include("files_control.php.inc");
+?>
+<div class="liste_fichier">
+<?php
 displaydir($quiz->getOmrErrorDir());
 ?>
 </div>
+</div>
 
-<div>
+<div id="arborescence">
 <h1>Autres fichiers</h1>
+<div class="liste_fichier">
 <ul>
 <?php showFile("./", "omr.log"); ?>
 </ul>
+</div>
 </div>
 
 <br><br>
