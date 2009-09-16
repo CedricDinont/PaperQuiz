@@ -6,10 +6,7 @@
   - Gérer plusieurs serveurs Xvfb
   - Ecrire create_marking_templates.sh
   - Détecter l'utilisation multiple d'un login
-  - Changer le format du fichier students pour prendre en compte les espaces dans les noms de famille
-  - Supprimer warnings OpenOffice
   - Tri des processus terminés par ordre chronologique
-  - Revoir organisation colonnes dans fichier OpenOffice
   - Gérer mails volumineux
 
 * mm2quiz :

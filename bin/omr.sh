@@ -54,8 +54,11 @@ do
        ERROR="true"
     fi
 
-    convert ${file}.output2.bmp ${file}_corrected2.jpg
-    rm -f ${file}.output2.bmp 2>&1 > /dev/null
+    if [ -f ${file}.output2.bmp ]
+    then
+	convert ${file}.output2.bmp ${file}_corrected2.jpg
+    	rm -f ${file}.output2.bmp 2>&1 > /dev/null
+    fi
 
     echo -n "3 "
    # fichier à tester, image analyser, sortie binaire, nombre de bandes hauteur, nombre de bandes largeur, seuil
@@ -65,8 +68,11 @@ do
        ERROR="true"
     fi
 
-    convert ${file}.output3.bmp ${file}_corrected3.jpg
-    rm -f ${file}.output3.bmp 2>&1 > /dev/null
+    if [ -f ${file}.output3.bmp ]
+    then
+	convert ${file}.output3.bmp ${file}_corrected3.jpg
+    	rm -f ${file}.output3.bmp 2>&1 > /dev/null
+    fi
 
     NB_DIFFS=0
 
@@ -74,7 +80,7 @@ do
 	 DIFF[1]="false"
 	 DIFF[2]="false"
 	 
-    diff ${file}.omr1_data ${file}.omr2_data 2>&1 > /dev/null
+    diff -N ${file}.omr1_data ${file}.omr2_data > /dev/null 2 >&1
     if (( $? != 0 ))
     then
        NB_DIFFS=$((${NB_DIFFS} + 1))
@@ -82,7 +88,7 @@ do
        echo "Difference between ${file}.omr1_data and ${file}.omr2_data." >> ${OMR_ERRORS_FILE}
     fi
 
-    diff ${file}.omr1_data ${file}.omr3_data 2>&1 > /dev/null
+    diff -N ${file}.omr1_data ${file}.omr3_data > /dev/null 2>&1
     if (( $? != 0 ))
     then
        NB_DIFFS=$((${NB_DIFFS} + 1)) 
@@ -90,7 +96,7 @@ do
        echo "Difference between ${file}.omr1_data and ${file}.omr3_data." >> ${OMR_ERRORS_FILE}
     fi
     
-    diff ${file}.omr2_data ${file}.omr3_data 2>&1 > /dev/null
+    diff -N ${file}.omr2_data ${file}.omr3_data > /dev/null 2>&1
     if (( $? != 0 ))
     then
        NB_DIFFS=$((${NB_DIFFS} + 1)) 
@@ -114,7 +120,7 @@ do
        OUTPUT_DIR=${QUIZ_DIR}/omr_errors/
     fi
 
-    mv -f ${file} ${file}.omr*_data ${file}_corrected.jpg ${file}_corrected2.jpg ${file}_corrected3.jpg ${file}_binarized.jpg ${OUTPUT_DIR} 2>&1 > /dev/null
+    mv -f ${file} ${file}.omr*_data ${file}_corrected*.jpg ${file}_binarized.jpg ${OUTPUT_DIR} > /dev/null 2>&1
     echo "=======================" >>  ${OMR_LOG_FILE}
 done
 
@@ -124,9 +130,10 @@ echo -n "All done. "
 
 if [ "${ERRORS}" = "true" ]
 then
-    echo "There were errors. Resolve them in ${QUIZ_NAME}/omr_errors/ directory and call omr_errors_resolved.sh before continuing with prepare_correction.sh."
+    echo "THERE WERE ERRORS."
     exit 2
 else
     echo "There were no error."
     exit 0
 fi
+

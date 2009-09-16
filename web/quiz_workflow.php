@@ -60,11 +60,15 @@ Que voulez-vous faire sur le quiz
 <!--  <li>
 <a href="modify_marking.php?quiz-id=<?php echo $_GET['quiz-id'] ?>">Préparer ou modifier un corrigé en ligne</a> 
 </li> -->
+<li>Fichier d'informations sur les étudiants
+<ul>
 <li>
 <a href="create_students_file_from_scans_infos.php?quiz-id=<?php echo $_GET['quiz-id'] ?>">Générer le fichier d'informations sur les étudiants à partir des pages scannées</a>
 </li>
 <li>
 <a href="select_standard_students_file.php?quiz-id=<?php echo $_GET['quiz-id'] ?>">Choisir un fichier d'informations sur les étudiants standard</a>
+</li>
+</ul>
 </li>
 <li>
 <a href="correct_quiz.php?quiz-id=<?php echo $_GET['quiz-id'] ?>">Corriger l'épreuve</a>
