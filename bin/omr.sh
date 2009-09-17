@@ -107,7 +107,7 @@ do
     if [ ${NB_DIFFS} -lt 3 ]
     then
        echo "[OK]"
-       if ( "${DIFF[0]}" = "false" || "${DIFF[1]}" = "false" )
+       if [ "${DIFF[0]}" == "false" -o "${DIFF[1]}" == "false" ]
 		 then
 				less ${file}.omr1_data > ${file}.omr_data
 		 else
