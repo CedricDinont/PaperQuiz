@@ -80,7 +80,7 @@ do
 	 DIFF[1]="false"
 	 DIFF[2]="false"
 	 
-    diff -N ${file}.omr1_data ${file}.omr2_data > /dev/null 2 >&1
+    diff -N ${file}.omr1_data ${file}.omr2_data > /dev/null 2>&1
     if (( $? != 0 ))
     then
        NB_DIFFS=$((${NB_DIFFS} + 1))
