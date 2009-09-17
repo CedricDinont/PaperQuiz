@@ -28,8 +28,13 @@ do
     elif [ -e ${QUIZ_DIR}/omr_output/${IMAGE_FILE}.omr_data ] 
     then
 	OMR_DATA_FILE=${QUIZ_DIR}/omr_output/${IMAGE_FILE}.omr_data    
-    else
+    elif [ -e ${QUIZ_DIR}/omr_output/${IMAGE_FILE}.omr1_data ]
+    then
+	echo "Error: No mmr_data or omr_data file found for ${IMAGE_FILE}. Failing back to omr1_data to continue." >2
 	OMR_DATA_FILE=${QUIZ_DIR}/omr_output/${IMAGE_FILE}.omr1_data    
+    else
+       echo "Error: No mr_data found for ${IMAGE_FILE}."
+       exit -1
     fi
     
     BACKSLASHED_OMR_OUTPUT_DIR=`echo "${QUIZ_DIR}/omr_output/" | sed 's/\//\\\\\//g'`

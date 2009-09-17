@@ -76,16 +76,16 @@ do
 
     NB_DIFFS=0
 
-	 DIFF[0]="false"
-	 DIFF[1]="false"
-	 DIFF[2]="false"
+    DIFF[0]="false"
+    DIFF[1]="false"
+    DIFF[2]="false"
 	 
     diff -N ${file}.omr1_data ${file}.omr2_data > /dev/null 2>&1
     if (( $? != 0 ))
     then
        NB_DIFFS=$((${NB_DIFFS} + 1))
        DIFF[0]="true"
-       echo "Difference between ${file}.omr1_data and ${file}.omr2_data." >> ${OMR_ERRORS_FILE}
+       echo "Warning: Difference between omr1 and omr2 results for ${SHORT_FILE}." | tee -a ${OMR_ERRORS_FILE} ${OMR_LOG_FILE} 1>&2
     fi
 
     diff -N ${file}.omr1_data ${file}.omr3_data > /dev/null 2>&1
@@ -93,7 +93,7 @@ do
     then
        NB_DIFFS=$((${NB_DIFFS} + 1)) 
        DIFF[1]="true"
-       echo "Difference between ${file}.omr1_data and ${file}.omr3_data." >> ${OMR_ERRORS_FILE}
+       echo "Warning: Difference between omr1 and omr3 results for ${SHORT_FILE}." | tee -a ${OMR_ERRORS_FILE} ${OMR_LOG_FILE} 1>&2
     fi
     
     diff -N ${file}.omr2_data ${file}.omr3_data > /dev/null 2>&1
@@ -101,23 +101,30 @@ do
     then
        NB_DIFFS=$((${NB_DIFFS} + 1)) 
        DIFF[2]="true"
-       echo "Difference between ${file}.omr2_data and ${file}.omr3_data." >> ${OMR_ERRORS_FILE}
+       echo "Warning: Difference between omr2 and omr3 results for ${SHORT_FILE}." | tee -a ${OMR_ERRORS_FILE} ${OMR_LOG_FILE} 1>&2
     fi
 
     if [ ${NB_DIFFS} -lt 3 ]
     then
        echo "[OK]"
-       if [ "${DIFF[0]}" == "false" -o "${DIFF[1]}" == "false" ]
-		 then
-				less ${file}.omr1_data > ${file}.omr_data
-		 else
-		 		less ${file}.omr2_data > ${file}.omr_data
-		 fi
        OUTPUT_DIR=${QUIZ_DIR}/omr_output/
+       if [ ${NB_DIFFS} -gt 0 ]
+       then
+           echo "Hint: ${SHORT_FILE} OMR data finally considered as correct." | tee -a ${OMR_ERRORS_FILE} ${OMR_LOG_FILE} 1>&2
+       fi
+       if [ "${DIFF[0]}" == "false" -o "${DIFF[1]}" == "false" ]
+       then
+	   echo "Copying omr1_data to omr_data." >> ${OMR_LOG_FILE}
+           cp ${file}.omr1_data ${file}.omr_data
+       else
+           echo "Copying omr2_data to omr_data." >> ${OMR_LOG_FILE}
+           cp ${file}.omr2_data ${file}.omr_data
+       fi
     else
        ERRORS="true"
        echo "[ERROR]"
        OUTPUT_DIR=${QUIZ_DIR}/omr_errors/
+       echo "ERROR: Too much differences between OMR results for ${SHORT_FILE}." | tee -a ${OMR_ERRORS_FILE} ${OMR_LOG_FILE} 1>&2
     fi
 
     mv -f ${file} ${file}.omr*_data ${file}_corrected*.jpg ${file}_binarized.jpg ${OUTPUT_DIR} > /dev/null 2>&1
