@@ -61,18 +61,23 @@ public class Main {
 		objeti.addLast(i);
 		objetj.addLast(j);
 		// le pixel a été visité
-		pix[i][j] = false;
+		visited[i][j] = true;
 
 		// jeu de test sur le voisinage
-		boolean[] test = new boolean[4];
+		boolean[] test = new boolean[8];
 		test[0] = exists(i - 1, j);
 		test[1] = exists(i + 1, j);
 		test[2] = exists(i, j - 1);
 		test[3] = exists(i, j + 1);
 
+		test[4] = exists(i - 1, j - 1);
+		test[5] = exists(i + 1, j + 1);
+		test[6] = exists(i + 1, j - 1);
+		test[7] = exists(i - 1, j + 1);
+
 		// on regarde combien de voisins existent
 		int compteur = 0;
-		for (int k = 0; k < 4; k++) {
+		for (int k = 0; k < 8; k++) {
 			if (test[k]) {
 				compteur++;
 			}
@@ -80,17 +85,29 @@ public class Main {
 
 		// si on en a suffisamment c'est parti
 		if (compteur >= exploration) {
-			if (test[0]) {
+			if (test[0] && !visited[i - 1][j]) {
 				explore(i - 1, j);
 			}
-			if (test[1]) {
+			if (test[1] && !visited[i + 1][j]) {
 				explore(i + 1, j);
 			}
-			if (test[2]) {
+			if (test[2] && !visited[i][j - 1]) {
 				explore(i, j - 1);
 			}
-			if (test[3]) {
+			if (test[3] && !visited[i][j + 1]) {
 				explore(i, j + 1);
+			}
+			if (test[4] && !visited[i - 1][j - 1]) {
+				explore(i - 1, j - 1);
+			}
+			if (test[5] && !visited[i + 1][j + 1]) {
+				explore(i + 1, j + 1);
+			}
+			if (test[6] && !visited[i + 1][j - 1]) {
+				explore(i + 1, j - 1);
+			}
+			if (test[7] && !visited[i - 1][j + 1]) {
+				explore(i - 1, j + 1);
 			}
 		}
 	}
@@ -103,8 +120,12 @@ public class Main {
 	 * @return
 	 */
 	public static boolean exists(int nexti, int nextj) {
+		return inImg(nexti,nextj) && pix[nexti][nextj];
+	}
+	
+	public static boolean inImg(int nexti, int nextj){
 		return (marge <= nexti && nexti < width - marge && marge <= nextj
-				&& nextj < height - marge && pix[nexti][nextj]);
+				&& nextj < height - marge);
 	}
 
 	/**
@@ -184,9 +205,10 @@ public class Main {
 	public static String image_in = "/home/francois/projets/omr3/test2.jpg";
 	public static String image_out = "/home/francois/projets/omr3/test2_corrected.jpg";
 	public static String data_out = "/home/francois/projets/omr3/omr4_correction";
-	
+
 	public static int seuil = 200;
 	public static boolean[][] pix;
+	public static boolean[][] visited;
 	public static Paire<LinkedList<Integer>, LinkedList<Integer>> pixels;
 
 	public static int width;
@@ -203,14 +225,14 @@ public class Main {
 
 	public static String str_orientation = "hg";
 	public static int orientation = 0;
-	public static int seuil_coin = 3000;
-	public static int seuil_reperes = 1500;
+	public static int seuil_coin = 2000;
+	public static int seuil_reperes = 1000;
 	public static int seuil_marques = 200;
-	
+
 	public static int dmin_repere = 16;
 	public static int dmax_repere = 22;
 
-	public static double exploration = 2;
+	public static double exploration = 5;
 	public static double pourcentage_coin = 0.50;
 
 	/**
@@ -219,22 +241,25 @@ public class Main {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		if(args.length != 5){
+		if (args.length != 5) {
 			System.err.println("image_in: quizz à analyser");
 			System.err.println("image_out: image de sortie");
-			System.err.println("data_out: fichier de sortie avec les marques reconnues");
-			System.err.println("seuil_base: 200 conseillé, seuil entre 0 (fort) et 255 (faible) pour la reconnaissances des marques\n");
-			System.err.println("position_repere: position du repère, hg->haut gauche, hd->haut droite, bg->bas gauche, bd->bas droite");
+			System.err
+					.println("data_out: fichier de sortie avec les marques reconnues");
+			System.err
+					.println("seuil_base: 200 conseillé, seuil entre 0 (fort) et 255 (faible) pour la reconnaissances des marques\n");
+			System.err
+					.println("position_repere: position du repère, hg->haut gauche, hd->haut droite, bg->bas gauche, bd->bas droite");
 			System.exit(1);
 		}
-		
+
 		System.out.println("Récupération des arguments");
 		Main.image_in = args[0];
 		Main.image_out = args[1];
 		Main.data_out = args[2];
 		Main.seuil = Integer.valueOf(args[3]);
 		Main.str_orientation = args[4];
-		
+
 		// calcul du temps d'exécution
 		long tdeb = System.currentTimeMillis();
 
@@ -248,6 +273,8 @@ public class Main {
 		System.out.println("étude des pixels de l'image");
 		int[] rgb = new int[4];
 		pix = new boolean[width][height];
+		visited = new boolean[width][height];
+		
 		pixels = new Paire<LinkedList<Integer>, LinkedList<Integer>>(
 				new LinkedList<Integer>(), new LinkedList<Integer>());
 		for (int i = marge; i < width - marge; i++) {
@@ -261,6 +288,7 @@ public class Main {
 				} else {
 					pix[i][j] = false;
 				}
+				visited[i][j] = false;
 			}
 		}
 
@@ -302,7 +330,7 @@ public class Main {
 					objet.jmax = jmax;
 					// encore un filtre sur l'écriture
 					double d = objet.distance();
-					if ( d > dmin_repere && d < dmax_repere) {
+					if (d > dmin_repere && d < dmax_repere) {
 						reperes.addLast(objet);
 					}
 				} else if (objeti.size() > seuil_marques) {
@@ -362,7 +390,7 @@ public class Main {
 		if (str_orientation == "hd") {
 			orientation = 3;
 		}
-	
+
 		if (coins.size() == 1) {
 			System.out.println("Recherche de la rotation à effectuer");
 			Objet coin = coins.getFirst();
@@ -409,7 +437,7 @@ public class Main {
 		int trouve = 0;
 
 		// repere les marques horizontales et verticales
-		if (rotation >= 0 ) {
+		if (rotation >= 0) {
 
 			System.out.println("Rotation listes repères");
 			applyRotation(rotation, reperes);
@@ -474,12 +502,19 @@ public class Main {
 			img = ImgUtils.rotateImg(rotation, img);
 			width = img.getWidth();
 			height = img.getHeight();
-			
+
 			for (Objet repere : reperes) {
 				int gx = (int) repere.icentre;
 				int gy = (int) repere.jcentre;
 				ImgUtils.drawSquare(gx - 5, gx + 5, gy - 5, gy + 5, img,
 						Color.YELLOW);
+			}
+
+			for (Objet marque : marques) {
+				int gx = (int) marque.icentre;
+				int gy = (int) marque.jcentre;
+				ImgUtils.drawSquare(gx - 5, gx + 5, gy - 5, gy + 5, img,
+						Color.CYAN);
 			}
 
 			System.out.println("Image corrigée");
@@ -591,8 +626,7 @@ public class Main {
 				System.out.println("Ecriture du fichier de correction");
 				// écriture du fichier binaire
 				try {
-					Writer writer = new FileWriter(data_out,
-							false);
+					Writer writer = new FileWriter(data_out, false);
 					int tailleh = liste_gauche.size();
 					for (int compteurh = 0; compteurh < tailleh; compteurh++) {
 						String str = "";
@@ -622,8 +656,8 @@ public class Main {
 		}
 
 		long tfin = System.currentTimeMillis();
-		System.out.println("temps " + ((double) (tfin - tdeb) / 1000)+"s");
-		if(trouve == 0){
+		System.out.println("temps " + ((double) (tfin - tdeb) / 1000) + "s");
+		if (trouve == 0) {
 			System.err.println("Aucune marque");
 			System.exit(1);
 		}

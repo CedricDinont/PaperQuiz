@@ -25,7 +25,9 @@ public class ImgUtils {
 		iArray[3] = color.getAlpha();
 		for (int i = debx; i < finx; i++) {
 			for (int j = deby; j < finy; j++) {
-				img.setPixel(i, j, iArray);
+				if (Main.inImg(i, j)) {
+					img.setPixel(i, j, iArray);
+				}
 			}
 		}
 	}

@@ -24,4 +24,7 @@
 				</manifest>
 			</jar>	
 		</target>
+		
+		<target name="all" depends="create_jar_omr4">
+		</target>
 </project>
