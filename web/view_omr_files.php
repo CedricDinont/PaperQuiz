@@ -16,6 +16,8 @@
 			$count_group = 0;
 			foreach($tab_files as $group){
 				echo "<li>";
+				$count = 0;
+				$taille = sizeof($group);
 				if(sizeof($group)>1)
 				{
 					echo "<input class=\"selection\" type=\"button\" onClick=\"doSimpleinSection(this.parentNode,true);\" value=\"tous\"></input>";
@@ -26,8 +28,7 @@
 					} else {
 						echo "<ul>";
 					}
-					$count = 0;
-					$taille = sizeof($group);
+
 					foreach($group as $tab_file){
 						$count++;
 						echo "<li>";
