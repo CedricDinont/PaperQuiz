@@ -135,19 +135,42 @@ function showFileFromDescription($tab_file){
 
 
 function doFilesMenu() {
-  echo "<script>function confirmAction() { if (confirm(\"Voulez-vous vraiment réaliser cette opération ?\")) { document.file_operations_form.submit(); } }  </script>";
+  echo "<script>function confirmAction() { if (confirm(\"Voulez-vous vraiment réaliser cette opération ?\")) { document.file_operations_form.submit(); } }";
+  echo "function onActionChange() {
+     selectedAction = document.getElementById(\"action\").options.selectedIndex;
+     if (selectedAction == 0) {
+     	document.getElementById(\"dest_quiz_div\").style.display = \"none\";
+     	document.getElementById(\"dest_folder_div\").style.display = \"block\";
+     } else if (selectedAction == 1) {
+        document.getElementById(\"dest_quiz_div\").style.display = \"block\";
+     	document.getElementById(\"dest_folder_div\").style.display = \"block\";   
+     } else {
+        document.getElementById(\"dest_quiz_div\").style.display = \"none\";
+     	document.getElementById(\"dest_folder_div\").style.display = \"none\"; 
+     }
+   }";
+  echo "</script>";
   echo "Avec les fichiers choisis: ";
-  echo "<select class=\"form_elem\" name=\"action\">";
+  echo "<select id=\"action\" class=\"form_elem\" name=\"action\" onchange=\"onActionChange();\">";
   echo "<option value=\"move\">Déplacer dans un autre répertoire</option>";
+  echo "<option value=\"move_to_another_quiz\">Déplacer dans un autre quiz</option>";
   echo "<option value=\"remove\">Supprimer</option>";
-  echo "</select><br>Répertoire destination : ";
-  echo "<select class=\"form_elem\" name=\"dest_folder\">";
+  echo "</select>";
+  echo "<br><div id=\"dest_quiz_div\" style=\"display: none;\">Quiz destination : ";
+  echo "<select id=\"dest_quiz\" class=\"form_elem\" name=\"dest_quiz\">";
+  $quizes=Quiz::getAllQuizes();
+  foreach ($quizes as $quiz_name => $quiz) {
+    echo "<option value=\"".$quiz->getId()."\">".$quiz->getName()."</option>";
+  }
+  echo "</select></div>";
+  echo "<div id=\"dest_folder_div\" style=\"display: block;\">Répertoire destination : ";
+  echo "<select id=\"dest_folder\" class=\"form_elem\" name=\"dest_folder\">";
   echo "<option value=\"omr_input\">omr_input</option>";
   echo "<option value=\"omr_output\">omr_output</option>";
   echo "<option value=\"omr_errors\">omr_errors</option>";
   echo "<option value=\"correction\">correction</option>";
-  echo "<option value=\".\">base</option>";
-  echo "</select><br>";
+// echo "<option value=\".\">base</option>";
+  echo "</select></div><br>";
   echo "<input type=\"submit\" class=\"form_elem\" onclick=\"confirmAction(); return false;\">";
 }
 
@@ -161,11 +184,16 @@ function doFileOperation() {
     foreach ($_POST['files'] as $key => $file) {
       unlink($quiz->getDir().$file);
     }
-  } else if ($_POST['action'] == "move") {    
+  } else if (($_POST['action'] == "move") || ($_POST['action'] == "move_to_another_quiz")) {
+    if ($_POST['action'] == "move") {
+      $dest_folder = $quiz->getDir().$_POST['dest_folder'];
+    } else {
+      $dest_folder = Quiz::getQuizById($_POST['dest_quiz'])->getDir().$_POST['dest_folder'];
+    }
     foreach ($_POST['files'] as $key => $file) {
       $elems = explode("/", $file);
       $filename = $elems[count($elems) - 1];
-      $new_file = $quiz->getDir().$_POST['dest_folder']."/".$filename;
+      $new_file = $dest_folder."/".$filename;
       rename($quiz->getDir().$file, $new_file);
     }
   }
