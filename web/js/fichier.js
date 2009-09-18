@@ -18,6 +18,24 @@ function invertAllinSection(elem){
 
 /*
 explore le document à partir de la node spécifiée
+recherche toutes les checkbox et inverse son status
+*/
+function selectUntilSelectedinSection(elem){
+	var xpathResult = document.evaluate(".//input", elem, null, XPathResult.ANY_TYPE, null);
+	try {
+  		var thisNode = xpathResult.iterateNext();
+	   while (thisNode && !thisNode.checked) {
+	     thisNode.checked = !thisNode.checked;
+		  thisNode = xpathResult.iterateNext();
+	   }
+	}
+	catch (e) {
+	   dump( 'Erreur :'+e);
+	}
+}
+
+/*
+explore le document à partir de la node spécifiée
 recherche toutes les checkbox et les met à l'état spécifié
 */
 function doSimpleinSection(elem,flag){

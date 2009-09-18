@@ -16,29 +16,47 @@
 			$count_group = 0;
 			foreach($tab_files as $group){
 				echo "<li>";
-				echo "<input class=\"selection\" type=\"button\" onClick=\"doSimpleinSection(this.parentNode,true);\" value=\"tous\"></input>";
-				echo "<input class=\"selection\" type=\"button\" onClick=\"doSimpleinSection(this.parentNode,false);\" value=\"aucun\"></input>";
-				$count_group++;
-				if($count_group==$nb_group){
-					echo "<ul class=\"last\">";
-				} else {
-					echo "<ul>";
-				}
-				$count = 0;
-				$taille = sizeof($group);
-				foreach($group as $tab_file){
-					$count++;
-					echo "<li>";
-					if($count == $taille){
-						echo "<img src=\"img/joinbottom.gif\"/>";
+				if(sizeof($group)>1)
+				{
+					echo "<input class=\"selection\" type=\"button\" onClick=\"doSimpleinSection(this.parentNode,true);\" value=\"tous\"></input>";
+					echo "<input class=\"selection\" type=\"button\" onClick=\"doSimpleinSection(this.parentNode,false);\" value=\"aucun\"></input>";
+					$count_group++;
+					if($count_group==$nb_group){
+						echo "<ul class=\"last\">";
 					} else {
-						echo "<img src=\"img/join.gif\"/>";
+						echo "<ul>";
 					}
-					if($tab_file != null && $tab_file["file"] != null){
-						showFileFromDescription($tab_file);
+					$count = 0;
+					$taille = sizeof($group);
+					foreach($group as $tab_file){
+						$count++;
+						echo "<li>";
+						if($count == $taille){
+							echo "<img src=\"img/joinbottom.gif\"/>";
+						} else {
+							echo "<img src=\"img/join.gif\"/>";
+						}
+						if($tab_file != null && $tab_file["file"] != null){
+							showFileFromDescription($tab_file);
+						}
+						echo "</li>";
+					}
+					echo "</ul>";
+				}
+				else
+				{
+					foreach($group as $tab_file){
+						$count++;
+						if($count == $taille){
+							echo "<img src=\"img/joinbottom.gif\"/>";
+						} else {
+							echo "<img src=\"img/join.gif\"/>";
+						}
+						if($tab_file != null && $tab_file["file"] != null){
+							showFileFromDescription($tab_file);
+						}
 					}
 				}
-				echo "</ul>";
 				echo "</li>";
 			}
 			echo "</ul>";
