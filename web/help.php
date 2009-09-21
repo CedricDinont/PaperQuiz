@@ -36,7 +36,7 @@ Procéder ainsi permet de retrouver facilement un ancien quiz. Les fichiers de c
   La première chose à faire est de configurer le nombre de questions pour chaque matière. Pour cela, cliquer sur "Configurer le quiz".
 Dans la page qui s'affiche, entrer le nom de chaque matière ainsi que les numéros des questions de début et de fin de chaque matière sur la feuille de réponses.
 Après validation, la configuration est mémorisée dans le fichier quiz.conf du répertoire du quiz.<br><br>
-Ensuite, il est possible de déposer les corrigés pour les différentes matières configurées précédemment. Pour cela, cliquer sur "Déposer un corrigé". Sélectionner sur votre disque les fichiers à envoyer. Chaque matière doit avoir son propre fichier de correction, qui doit respecter un format particulier (voir Cédric Dinont pour plus de détails). Il est possible d'envoyer un ou plusieurs fichiers à la fois. Les fichiers sont renommés ainsi sur le serveur : "nom_matière.marking".
+Ensuite, il est possible de déposer les corrigés pour les différentes matières configurées précédemment. Pour cela, cliquer sur "Déposer un corrigé". Sélectionner sur votre disque les fichiers à envoyer. Chaque matière doit avoir son propre fichier de correction, qui doit respecter <a href="marking_file_format.php">un format particulier</a>. Il est possible d'envoyer un ou plusieurs fichiers à la fois. Les fichiers sont renommés ainsi sur le serveur : "nom_matière.marking".
 <br>
 <br>
   La dernière étape de la configuration consiste à créer le fichier donnant les informations sur les étudiants concernés par le quiz. Ce fichier donne la correspondance entre les logins et les noms des étudiants. Il existe deux manières de réaliser cela :
@@ -103,7 +103,6 @@ A la fin de la correction, on archive le sujet du quiz avec les feuilles de rép
 <li>Dans la page de création d'un quiz : mettre un sélecteur de date en JavaScript.</li>
 <li>Utiliser de l'Ajax dans la page qui affiche les sorties des processus pour que ce soit plus fluide.</li>
 <li>Classement des quiz dans différentes catégories pour pouvoir les retrouver plus facilement.</li>
-<li>Classement des processus d'un quiz dans l'ordre chronologique.</li>
 <li>Préparer ou modifier un corrigé en ligne.</li>
 <li>Modifier le fichier d'information sur les étudiants en ligne.</li>
 <li>Dans la page de correction des erreurs de reconnaissance des marques, permettre le déplacement de l'image par glisser-déposer plutôt que de forcer à utiliser les ascenseurs.</li>
