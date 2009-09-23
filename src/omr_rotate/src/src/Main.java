@@ -6,12 +6,9 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Writer;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.LinkedList;
 
 import javax.imageio.ImageIO;
@@ -436,6 +433,7 @@ public class Main {
 		// repere les marques horizontales et verticales
 		if (rotation >= 0) {
 			// sans rotation
+			System.out.println("orientation="+rotation);
 
 			System.out.println("Rotation listes repères");
 			applyRotation(rotation, reperes);
@@ -469,9 +467,9 @@ public class Main {
 			System.out.println("Position coin après rotation " + coinx + ";"
 					+ coiny);
 
-			System.out.println("Rotation coins à effacer");
-			applyRotation(rotation, coins_delete);
-			simplifyToCentre(coins_delete);
+//			System.out.println("Rotation coins à effacer");
+//			applyRotation(rotation, coins_delete);
+//			simplifyToCentre(coins_delete);
 
 			System.out
 					.println("Determination des listes de repères gauche droite haut bas");
@@ -500,8 +498,10 @@ public class Main {
 			System.out.println("liste_haut " + liste_haut.size());
 			System.out.println("liste_bas " + liste_bas.size());
 
-			System.out.println("Rotation Image");
-			img = ImgUtils.rotateImg(rotation, img);
+			System.out.println("Correction Image");
+			// on efface les trucs génants
+			ImgUtils.colorObjet(coins_delete, img, Color.WHITE);
+//			img = ImgUtils.rotateImg(rotation, img);
 			width = img.getWidth();
 			height = img.getHeight();
 			System.out.println("nouvelles dimensions w=" + width + " h="
@@ -528,8 +528,7 @@ public class Main {
 //				ImgUtils.drawSquare(gx - 5, gx + 5, gy - 5, gy + 5, img,
 //						Color.PINK);
 //			}
-			// on efface les trucs génants
-			ImgUtils.colorObjet(coins_delete, img, Color.WHITE);
+
 
 			System.out.println("Image corrigée");
 			System.out.println("hauteur=" + height + " __ largeur=" + width);
@@ -580,7 +579,12 @@ public class Main {
 				alpha = Math.signum((bas.icentre - haut.icentre))
 						* Math.acos((bas.jcentre - haut.jcentre) / hyp);
 				System.out.println("hy=" + hyp);
-				System.out.println("alpha=" + alpha * 180 / Math.PI);
+				System.out.println("alpha=" + ((alpha * 180 / Math.PI)-rotation*90));
+			}
+			else
+			{
+				System.err.println("Problème repères: impossible de calculer alpha");
+				System.exit(1);
 			}
 
 			System.out.println("Conversion de l'image corrigée en jpg");
@@ -593,6 +597,11 @@ public class Main {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+		}
+		else
+		{
+			System.err.println("Problème marque: impossible de déterminer orientation");
+			System.exit(1);
 		}
 
 		long tfin = System.currentTimeMillis();
