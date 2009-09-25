@@ -156,9 +156,9 @@ BEGIN {
 		    if(bonus[$1]==0 && NF>=7)
 			bonus[$1]=$7;
 
-		    if(NF<expected_nr_fields) {
-			printf "WARNING: line %3d of file %s - Set default values for question %d\n",inputline,corrige,$0 > "/dev/stderr";
-		    }
+#		    if(NF<expected_nr_fields) {
+#			printf "WARNING: line %3d of file %s - Set default values for question %d\n",inputline,corrige,$0 > "/dev/stderr";
+#		    }
 		}
 		
 		if(NF>max_nr_fields)
