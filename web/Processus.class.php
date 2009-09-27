@@ -104,7 +104,7 @@ class Processus {
 	  }
 	  
 	  $p = Processus::createBackgroundProcess($q, $quiz_bin_dir.$script." ".$q->getName());
-//	  sleep(1); // Pour éviter d'avoir une erreur indiquant que les fichiers de log ne sont pas encore créés. TODO: A remplacer par quelque chose de mieux.
+	  sleep(1); // Pour éviter d'avoir une erreur indiquant que les fichiers de log ne sont pas encore créés. TODO: A remplacer par quelque chose de mieux.
 	  echo "<html><head><title>Redirection vers la visualisation de la sortie du processus</title>";
 	  echo "<meta http-equiv=\"REFRESH\" content=\"0; URL=./view_process_progress.php?quiz-id=".$quiz_id."\">";
           echo "</head><body>Redirection</body></html>";

@@ -62,8 +62,7 @@ function showFile($dir, $file) {
     }
     
     $types=array("data",".txt",".students",".csv",".marking",".corners",".answers",".log");
-    $types_fic = array(".jpg",".jpg.mmr_data",".jpg.omr_data",".jpg.omr1_data",".jpg.omr2_data",".jpg.omr3_data",".jpg_binarized.jpg",".jpg_corrected.jpg"
-    ,".jpg_corrected2.jpg",".jpg_corrected3.jpg");
+    $types_fic = array(".jpg", ".jpg.rotated.jpg", ".jpg.mmr_data",".jpg.omr_data",".jpg.omr1_data",".jpg.omr2_data",".jpg.omr3_data",".jpg_binarized.jpg",".jpg_corrected.jpg",".jpg_corrected2.jpg",".jpg_corrected3.jpg");
     
     $type = "";
     foreach($types as $test)
@@ -98,9 +97,9 @@ function getFile($dir, $file) {
       $page = "view_file";
     }
     
-    $types=array(".jpg",".jpg.omr_data",".jpg.omr1_data",".jpg.omr2_data",".jpg.omr3_data",".jpg_binarized.jpg",".jpg_corrected.jpg"
+    $types=array(".jpg", ".jpg.rotated.jpg",".jpg.omr_data",".jpg.omr1_data",".jpg.omr2_data",".jpg.omr3_data",".jpg_binarized.jpg",".jpg_corrected.jpg"
     ,".jpg_corrected2.jpg",".jpg_corrected3.jpg",".txt",".students",".csv",".marking",".corners",".answers",".log");
-    $types_fic = array(".jpg",".jpg.mmr_data",".jpg.omr_data",".jpg.omr1_data",".jpg.omr2_data",".jpg.omr3_data",".jpg_binarized.jpg",".jpg_corrected.jpg"
+    $types_fic = array(".jpg",".jpg.rotated.jpg",".jpg.mmr_data",".jpg.omr_data",".jpg.omr1_data",".jpg.omr2_data",".jpg.omr3_data",".jpg_binarized.jpg",".jpg_corrected.jpg"
     ,".jpg_corrected2.jpg",".jpg_corrected3.jpg");
     
     $type = "";

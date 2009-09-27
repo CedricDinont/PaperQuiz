@@ -10,7 +10,7 @@ then
     export PATH=/usr/java/latest/bin/:$PATH
 fi
 
-java -cp ${SCRIPT_DIR}/mail/:${SCRIPT_DIR}/mail/mail.jar FetchMail ${QUIZ_DIR}/omr_input/
+java -Xmx512m -cp ${SCRIPT_DIR}/mail/:${SCRIPT_DIR}/mail/mail.jar FetchMail ${QUIZ_DIR}/omr_input/
 
 if (( $? != 0 )) 
 then

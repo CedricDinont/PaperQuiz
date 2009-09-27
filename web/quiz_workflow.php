@@ -30,21 +30,30 @@ Que voulez-vous faire sur le quiz
 </li>
 </ul>
 </li>
-
+<br />
 
 <li>Reconnaissance des marques
 <ul>
 <li>
-<a href="fetch_mails.php?quiz-id=<?php echo $_GET['quiz-id'] ?>">Récupérer les images scannées sur le mail qcm.isen@gmail.com</a>
+Récupérer les images scannées <a href="fetch_mails.php?quiz-id=<?php echo $_GET['quiz-id'] ?>">sur le mail qcm.isen@gmail.com</a> / <a href="get_ftp_files.php?quiz-id=<?php echo $_GET['quiz-id'] ?>">sur le FTP de dev.isen.fr</a>
 </li>
 <li>
-<a href="omr.php?quiz-id=<?php echo $_GET['quiz-id'] ?>">Lancer la reconnaissance des marques</a>
+Traitements sur les images scannées
+<ul>
+	<li>
+		<a href="correct_images_rotation.php?quiz-id=<?php echo $_GET['quiz-id'] ?>">Corriger la rotation des images</a> / <a href="omr.php?quiz-id=<?php echo $_GET['quiz-id'] ?>">Lancer la reconnaissance des marques</a>
+	</li>
+	<li>
+		<a href="rotate_and_omr.php?quiz-id=<?php echo $_GET['quiz-id'] ?>">Corriger la rotation et reconnaître les marques en une seule étape</a>
+	</li>
+</ul>
 </li>
 <li>
 <a href="correct_omr_errors.php?quiz-id=<?php echo $_GET['quiz-id'] ?>">Corriger les erreurs de reconnaissance</a>
 </li>
 </ul>
 </li>
+<br />
 
 <li>Correction
 <ul>
@@ -78,6 +87,7 @@ Que voulez-vous faire sur le quiz
 </li> -->
 </ul>
 </li>
+<br />
 
 <li>Processus
 <ul>
@@ -89,7 +99,7 @@ Que voulez-vous faire sur le quiz
 </li>
 </ul>
 </li>
-
+<br />
 
 <li>Fichiers
 <ul>

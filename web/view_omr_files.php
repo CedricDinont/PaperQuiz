@@ -116,6 +116,7 @@ displaydir($quiz->getOmrErrorDir());
 <div class="liste_fichier">
 <ul>
 <?php showFile("./", "omr.log"); ?>
+<?php showFile("./", "omr_rotate.log"); ?>
 </ul>
 </div>
 </div>

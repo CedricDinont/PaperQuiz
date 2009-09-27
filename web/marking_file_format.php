@@ -33,7 +33,7 @@ Voici la liste des champs :
 			Rx indique que la réponse numéro x est une bonne réponse. Par exemple R1.	
 		</li>
 		<li>
-			On peut combiner plusieurs bonnes réponses avec le caractères \. Par exemple R1\R2.
+			On peut combiner plusieurs bonnes réponses avec le caractère \. Par exemple R1\R2.
 		</li>
                 <li>
 			On peut remplacer le R par un O (lettre o majuscule) si la question n'attend qu'une seule bonne réponse et que l'ensemble des réponses proposées est exclusif (il est impossible qu'il y ait plusieurs bonnes réponses). Si un étudiant coche plusieurs réponses à cette question, un warning s'affichera lors du processus de correction.
@@ -47,7 +47,7 @@ Voici la liste des champs :
 <b>Bonus (1 par défaut).</b> Points à attribuer pour l'ensemble des bonnes coches sur la question. Si la question attend n coches, chaque coche vaut bonus/n.
 </li>
 <li>
-<b>Malus (-0.5 par défaut).</b> Points à attribuer pour les mauvaises coches. Chaque mauvaise coche vaut malus/n, avec n le nombre de coches attendues pour la questions.
+<b>Malus (-0.5 par défaut).</b> Points à attribuer pour les mauvaises coches. Chaque mauvaise coche vaut malus/n, avec n le nombre de coches attendues pour la question.
 </li>
 <li>
 <b>Coefficient (1 par défaut).</b> Poids de la question par rapport aux autres questions. L'ensemble des coefficents des questions forme leur barycentre. Pour calculer la note finale, on additionne les points pour chaque coche (bonus et malus) pour une question donnée. On multiplie par le coefficient de la question et on additionne avec le résultat du même calcul pour les autres questions. Enfin, on normalise la note sur 20 points.

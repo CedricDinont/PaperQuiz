@@ -3,17 +3,11 @@
   - Vérifier le cas où il y a une ligne verticale dans le calcul de l'intersection des deux droites
 
 * Scripts :
-  - Gérer plusieurs serveurs Xvfb
   - Ecrire create_marking_templates.sh
   - Détecter l'utilisation multiple d'un login
-  - Gérer mails volumineux
   - Détecter les coches dans des mauvaises lignes
 
 * Interface Web :
   - Régler problème de synchronisation sur le script de création d'un processus
-  - Permettre de dispatcher des images scannées dans différents quiz
   - Création des corrigés en ligne
-
-* mm2quiz :
-  - Exporter en Latex plutôt qu'en HTML
 

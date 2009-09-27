@@ -110,29 +110,29 @@ void writeImages(char* name, Image& image, Image& correctedImage) {
 
 int main(int argc, char** argv) {
   
-  if (argc < 16) {
+  if (argc < 17) {
     usage();
     exit(1);
   }
 
-  unsigned int expectedVerticalMarks = atoi(argv[2]);
-  unsigned int expectedHorizontalMarks = atoi(argv[3]);
-  int marksWidth = atoi(argv[4]);
-  int marksHeight = atoi(argv[5]);
+  unsigned int expectedVerticalMarks = atoi(argv[3]);
+  unsigned int expectedHorizontalMarks = atoi(argv[4]);
+  int marksWidth = atoi(argv[5]);
+  int marksHeight = atoi(argv[6]);
   int marksWidthInPixels;
   int marksHeightInPixels;
 
-  int topMarksMinPercentage = atoi(argv[6]);
-  int topMarksMaxPercentage = atoi(argv[7]);
-  int leftMarksMinPercentage = atoi(argv[8]);
-  int leftMarksMaxPercentage = atoi(argv[9]);
-  int bottomMarksMinPercentage = atoi(argv[10]);
-  int bottomMarksMaxPercentage = atoi(argv[11]);
-  int rightMarksMinPercentage = atoi(argv[12]);
-  int rightMarksMaxPercentage = atoi(argv[13]);
+  int topMarksMinPercentage = atoi(argv[7]);
+  int topMarksMaxPercentage = atoi(argv[8]);
+  int leftMarksMinPercentage = atoi(argv[9]);
+  int leftMarksMaxPercentage = atoi(argv[10]);
+  int bottomMarksMinPercentage = atoi(argv[11]);
+  int bottomMarksMaxPercentage = atoi(argv[12]);
+  int rightMarksMinPercentage = atoi(argv[13]);
+  int rightMarksMaxPercentage = atoi(argv[14]);
 
-  int binarizationThreshold = atoi(argv[14]);
-  double answerThreshold = atof(argv[15]);
+  int binarizationThreshold = atoi(argv[15]);
+  double answerThreshold = atof(argv[16]);
 
   list<MarkInfo*> topMarks, bottomMarks, leftMarks, rightMarks;
 
@@ -201,7 +201,7 @@ int main(int argc, char** argv) {
   if (error) {
     cerr << "Marks were not correctly detected." << endl;
     cout << "Marks were not correctly detected." << endl;
-    writeImages(argv[1], image, correctedImage);
+    writeImages(argv[2], image, correctedImage);
     exit(2);
   }
 
@@ -211,7 +211,7 @@ int main(int argc, char** argv) {
   list<MarkInfo*>::iterator it4;
 
   cout << "Determining answers." << endl;
-  ofstream outputFile((string(argv[1]) + ".omr1_data").c_str());
+  ofstream outputFile((string(argv[2]) + ".omr1_data").c_str());
 
   int line = 1;
   float i, j;
@@ -273,7 +273,7 @@ int main(int argc, char** argv) {
     correctedImage.draw(DrawableLine((*it)->left, (*it)->top + (*it)->height/2,(*it2)->left + (*it2)->width, (*it2)->top + (*it2)->height/2));
   }
 
-  writeImages(argv[1], image, correctedImage);
+  writeImages(argv[2], image, correctedImage);
   
   if (error) {
     cerr << "There were unsure ticks for " << argv[1] << "." << endl;
