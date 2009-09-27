@@ -48,8 +48,8 @@ do
     echo -n "OMR ${SHORT_FILE}...  "
 
     echo -n "1 "
-    # image prefix_for_output_filenames nb_vert nb_horz mark_width mark height min_top max_top min_left max_left min_bottom max_bottom min_right max_right binarization_threshold answer_threshold
-    ${SCRIPT_DIR}/omr1 ${file} ${original_file}    10 45    2 10    1 6    2 9    94  98     91 98  58000  0.5 >> ${OMR_LOG_FILE} 
+    # image prefix_for_output_filenames nb_vert nb_horz mark_width mark_height min_top max_top min_left max_left min_bottom max_bottom min_right max_right binarization_threshold answer_threshold
+    ${SCRIPT_DIR}/omr1 ${file} ${original_file}  10 45    2            10         1        7      2        10        94            98     91         98               58000              0.5         >> ${OMR_LOG_FILE} 
     if (( $? != 0 ))
     then
        ERROR="true"

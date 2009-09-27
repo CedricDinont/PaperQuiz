@@ -25,6 +25,8 @@
 <?php } ?>
 </head>
 <body>
+<?php doMainMenu(); ?>
+<hr>
 <table width="100%">
 <tr>
 <?php 
@@ -44,6 +46,7 @@
 </tr>
 </table>
 <br>
+<hr>
 <?php doMainMenu(); ?>
 
 </body>

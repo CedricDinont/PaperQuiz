@@ -71,7 +71,8 @@
    <script type="text/javascript" src="./js/fichier.js"></script>
 </head>
 <body>
-
+<?php doMainMenu(); ?>
+<hr>
 <form method="POST" action="view_omr_files.php?quiz-id=<?php echo $quiz->getId(); ?>" name="file_operations_form">
 
 <div id="arborescence">
@@ -127,6 +128,7 @@ displaydir($quiz->getOmrErrorDir());
 </form>
 <br><br>
 <br>
+<hr>
 <?php  doMainMenu() ?>
 </body>
 </html>

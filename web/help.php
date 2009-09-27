@@ -49,14 +49,15 @@ Ensuite, il est possible de déposer les corrigés pour les différentes matièr
 <h1>Correction d'un quiz</h1>
 
 Il faut tout d'abord scanner les feuilles de réponses.
-Pour cela, il faut utiliser la photocopieuse de la salle
-de repro au niveau 4.
+Pour cela, on  peut utiliser la photocopieuse de la salle
+de repro au niveau 4, la photocopieuse de la salle de repro au niveau 8 ou la photocopieuse du secrétariat des études.
+<br>
 Se positionner en mode scanner. Il n'y a pas besoin de numéro de compte
 pour pouvoir scanner. Paramétrer le scanner comme ceci :
 <ul>
 <li>Résolution : 200 dpi</li>
 <li>Couleurs : niveaux de gris</li>
-<li>Format des fichiers de sortie : JPEG</li>
+<li>Format des fichiers de sortie : TIFF / JPEG</li>
 <li>Adresse mail : qcm.isen@gmail.com</li>
 </ul>
   Utiliser le chargeur au dessus de la photocopieuse. Placer les feuilles avec la face imprimée au dessus dans le sens de lecture (la grosse marque noire en haut à gauche).

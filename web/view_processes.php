@@ -15,7 +15,18 @@ $quiz = Quiz::getQuizById($_GET['quiz-id']);
 <?php
 $processes=Processus::getAllProcesses($quiz);
 foreach ($processes as $pid => $processus) {
-  echo "<li><a href=\"view_process_progress.php?quiz-id=".$quiz->getId()."&pid=".$processus->getPid()."\">".$processus->getCommand()." (Started at ".date('d/m/Y H:i:s', $processus->getTime())." with PID ".$processus->getPid().")</a></li>";
+  echo "<li><a href=\"view_process_progress.php?quiz-id=".$quiz->getId()."&pid=".$processus->getPid()."\">".str_replace($quiz_bin_dir, "", $processus->getCommand());
+  if ($processus->getStartTime() != 0) {
+	echo " (Started at ".date('d/m/Y H:i:s', $processus->getStartTime())." with PID ".$processus->getPid();
+        if ($processus->getEndTime() != 0) {
+		echo " - Duration: ".($processus->getEndTime() - $processus->getStartTime())." seconds)";
+	} else {
+		echo ")";
+	}
+  } else {
+	echo " (PID ".$processus->getPid().")";
+  }
+  echo "</a></li>";
 }
 ?>
 </ul>

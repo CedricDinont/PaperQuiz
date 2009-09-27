@@ -22,7 +22,7 @@ done
 mv /tmp/${QUIZ_NAME}.stdout ${QUIZ_DIR}/processes/${PID}.stdout
 mv /tmp/${QUIZ_NAME}.stderr ${QUIZ_DIR}/processes/${PID}.stderr
 mv /tmp/${QUIZ_NAME}.info ${QUIZ_DIR}/processes/${PID}.info
-
+date +"%s" >> ${QUIZ_DIR}/processes/${PID}.info
 
 echo "Finished
 ${PID}" > ${QUIZ_DIR}/processes/current_process

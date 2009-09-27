@@ -8,13 +8,15 @@ class Processus {
 	private $pid;
 	private $command;
 	private $quiz;
-	private $time;
+	private $startTime;
+	private $endTime;
 
-	public function __construct($_quiz, $_command, $_pid, $_time) {
+	public function __construct($_quiz, $_command, $_pid, $_startTime, $_endTime) {
 		$this->quiz = $_quiz;
 		$this->pid = $_pid;
 		$this->command = $_command;
-		$this->time = $_time;
+		$this->startTime = $_startTime;
+		$this->endTime = $_endTime;
 	}
 
 	public function getPid() {
@@ -25,14 +27,18 @@ class Processus {
 		return $this->command;
 	}
 
-	public function getTime() {
-		return $this->time;
+	public function getStartTime() {
+		return $this->startTime;
 	}
 
-	public static function compareByTime($a, $b) {
-		if ($a->getTime() == $b->getTime()) {
+	public function getEndTime() {
+		return $this->endTime;
+	}
+
+	public static function compareByStartTime($a, $b) {
+		if ($a->getStartTime() == $b->getStartTime()) {
 			return 0;
-		} else if ($a->getTime() < $b->getTime()) {
+		} else if ($a->getStartTime() < $b->getStartTime()) {
 			return 1;
 		} else {
 			return -1;
@@ -62,7 +68,7 @@ class Processus {
 		fwrite($f, $command."\n");
 		fwrite($f, $time."\n");
 		fclose($f);
-		return new Processus($quiz, $command, $pid, $time);
+		return new Processus($quiz, $command, $pid, $time, 0);
 	}
 
 	public static function getAllProcesses($quiz) {
@@ -77,15 +83,20 @@ class Processus {
 		      $command = "Commande inconnue";
 		    }
                     if (isset($file_content[2])) {
-                      $time = trim($file_content[2]);
+                      $startTime = trim($file_content[2]);
                     } else {
-                      $time = 0;
-                    }		
-		    $processes[$entry] = new Processus($quiz, $command, trim($file_content[0]), $time);
+                      $startTime = 0;
+                    }
+                    if (isset($file_content[3])) {
+                      $endTime = trim($file_content[3]);
+                    } else {
+                      $endTime = 0;
+                    }
+		    $processes[$entry] = new Processus($quiz, $command, trim($file_content[0]), $startTime, $endTime);
 		  }
 		}
 		$d->close();
-		usort($processes, array("Processus", "compareByTime"));
+		usort($processes, array("Processus", "compareByStartTime"));
 		return $processes;
 	}
 
