@@ -359,8 +359,8 @@ public class Main {
 			System.exit(1);
 		}
 
-		LinkedList<Objet> coins_delete = new LinkedList<Objet>(coins);
-		coins_delete.remove(coinmin);
+//		LinkedList<Objet> coins_delete = new LinkedList<Objet>(coins);
+//		coins_delete.remove(coinmin);
 
 		coins.clear();
 		coins.add(coinmin);
@@ -500,7 +500,7 @@ public class Main {
 
 			System.out.println("Correction Image");
 			// on efface les trucs génants
-			ImgUtils.colorObjet(coins_delete, img, Color.WHITE);
+//			ImgUtils.colorObjet(coins_delete, img, Color.WHITE);
 //			img = ImgUtils.rotateImg(rotation, img);
 			width = img.getWidth();
 			height = img.getHeight();
@@ -589,14 +589,14 @@ public class Main {
 
 			System.out.println("Conversion de l'image corrigée en jpg");
 			// écriture de l'image corrigée en jpeg
-			try {
-				BufferedImage bufferedImage = new BufferedImage(width, height,
-						BufferedImage.TYPE_INT_RGB);
-				bufferedImage.setData(img);
-				ImageIO.write(bufferedImage, "JPEG", new File(image_out));
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+//			try {
+//				BufferedImage bufferedImage = new BufferedImage(width, height,
+//						BufferedImage.TYPE_INT_RGB);
+//				bufferedImage.setData(img);
+//				ImageIO.write(bufferedImage, "JPEG", new File(image_out));
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//			}
 		}
 		else
 		{
