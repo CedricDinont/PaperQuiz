@@ -291,7 +291,7 @@ ListeZone* rechercheBandes_largeur(struct image *img,int bande_gauche,int bande_
 		}
 		if(seuil == 255 || seuil == 0 || blocage == 256)
 		{
-			perror("seuil foireux");
+			perror("Seuil introuvable");
 			test = 0;
 		}
 		if(test)
@@ -515,7 +515,7 @@ d'analyse
 =========================
 */
 
-int** analyse(struct image *img,ListeZone *liste_haut,ListeZone *liste_droite,ListeZone *liste_bas,ListeZone *liste_gauche,int rotation)
+int** analyse(struct image *img,ListeZone *liste_haut,ListeZone *liste_droite,ListeZone *liste_bas,ListeZone *liste_gauche,int rotation,int seuil_noircie, double pourcentage_noircie,int seuil_croix, double pourcentage_croix)
 {
 	int nb_haut = nb_zones(liste_haut);
 	int nb_gauche = nb_zones(liste_gauche);
@@ -536,7 +536,7 @@ int** analyse(struct image *img,ListeZone *liste_haut,ListeZone *liste_droite,Li
 	}
 	
 	// coor para
-	int hgx,hgy,hdx,hdy,bgx,bgy,bdx,bdy;
+	double hgx,hgy,hdx,hdy,bgx,bgy,bdx,bdy;
 	// décalages
 	double decg,decd,dech,decb;
 	
@@ -574,11 +574,11 @@ int** analyse(struct image *img,ListeZone *liste_haut,ListeZone *liste_droite,Li
 			bdy = (double)(decd * (double)zone_gauche->fin + zone_haut->fin)/(1.0-decd*decb);
 			
 			// case noircie
-			resultats[i][j] = analyseCase(img,rotation,hgy,hgx,bdy,bdx,230,0.6);
+			resultats[i][j] = analyseCase(img,rotation,hgy,hgx,bdy,bdx,seuil_noircie,pourcentage_noircie);
 			if(resultats[i][j] == 0)
 			{
 				// croix ?
-				resultats[i][j] = analyseCase(img,rotation,hgy,hgx,bdy,bdx,160,0.25);
+				resultats[i][j] = analyseCase(img,rotation,hgy,hgx,bdy,bdx,seuil_croix,pourcentage_croix);
 			}
 		}
 	}
@@ -605,7 +605,7 @@ void tracerDroites(struct image *img,ListeZone *liste_haut,ListeZone *liste_droi
 	}
 	
 	// coor para
-	int hgx,hgy,bgx,bgy;
+	double hgx,hgy,bgx,bgy;
 	// décalages
 	double decg,decd,dech,decb;
 	
@@ -710,7 +710,7 @@ void tracerPixel(struct image *img,int rotation,int hgx,int hgy)
 	setpixel(img, hgx, hgy, 255, 0, 0);
 }
 
-int analyseCase(struct image *img,int rotation,int hgx,int hgy,int bdx,int bdy,int seuil,double proportion)
+int analyseCase(struct image *img,int rotation,double hgx,double hgy,double bdx,double bdy,int seuil,double proportion)
 {
 	int x,y;
 	int r,g,b;

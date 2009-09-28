@@ -7,6 +7,10 @@ mon algo pour scanner les qcm
 
 #define HAUTEUR_BANDE_VERTICALE 190
 #define HAUTEUR_BANDE_HORIZONTALE 200
+#define SEUIL_NOIRCIE 230
+#define POURCENTAGE_NOIRCIE 0.6
+#define SEUIL_CROIX 160
+#define POURCENTAGE_CROIX 0.35
 
 int main(int argc,char** argv)
 {
@@ -347,7 +351,7 @@ marques
 		printf("Analyse de l'image\n");
 #endif
 		// analyse de l'image avec les listes contenant les rotations à appliquer
-		int **resultats = analyse(img,liste_haut,liste_droite,liste_bas,liste_gauche,rotation);
+		int **resultats = analyse(img,liste_haut,liste_droite,liste_bas,liste_gauche,rotation,SEUIL_NOIRCIE,POURCENTAGE_NOIRCIE,SEUIL_CROIX,POURCENTAGE_CROIX);
 #if DEBUG
 		printf("Tracer des droites de correction\n");
 #endif

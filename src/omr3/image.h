@@ -31,8 +31,8 @@ void inverserCoorZone(int base,ListeZone **liste);
 void tracerDroites(struct image *img,ListeZone *liste_haut,ListeZone *liste_droite,ListeZone *liste_bas,ListeZone *liste_gauche,int rotation);
 void tracerPixel(struct image *img,int rotation,int hgx,int hgy);
 
-int** analyse(struct image *img,ListeZone *liste_haut,ListeZone *liste_droite,ListeZone *liste_bas,ListeZone *liste_gauche,int rotation);
-int analyseCase(struct image *img,int rotation,int hgx,int hgy,int bdx,int bdy,int seuil,double proportion);
+int** analyse(struct image *img,ListeZone *liste_haut,ListeZone *liste_droite,ListeZone *liste_bas,ListeZone *liste_gauche,int rotation,int seuil_noircie, double pourcentage_noircie,int seuil_croix, double pourcentage_croix);
+int analyseCase(struct image *img,int rotation,double hgx,double hgy,double bdx,double bdy,int seuil,double proportion);
 
 // gestion des tableaux de résultats
 int** creationResultats(int hauteur, int largeur);
