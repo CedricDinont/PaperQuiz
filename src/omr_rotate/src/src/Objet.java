@@ -116,4 +116,11 @@ public class Objet {
 		}
 		return dmoy/taille;
 	}
+	
+	public double densite(){
+		double d = 0;
+		d = ((double)this.is.size())/((imax-imin)*(jmax-jmin));
+//		System.out.println("d="+this.is.size()+" "+(imax-imin)*(jmax-jmin));
+		return d;
+	}
 }

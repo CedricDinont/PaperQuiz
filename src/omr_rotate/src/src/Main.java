@@ -1,6 +1,5 @@
 package src;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
@@ -227,8 +226,9 @@ public class Main {
 
 	public static int dmin_repere = 16;
 	public static int dmax_repere = 22;
+	public static double densite_min = 0.75;
 
-	public static double exploration = 1;
+	public static double exploration = 3;
 	public static double pourcentage_coin = 0.50;
 
 	/**
@@ -292,12 +292,11 @@ public class Main {
 
 		LinkedList<Objet> coins = new LinkedList<Objet>();
 		LinkedList<Objet> reperes = new LinkedList<Objet>();
-		LinkedList<Objet> marques = new LinkedList<Objet>();
 
 		while (!pixels.getFirst().isEmpty()) {
 			int i = pixels.getFirst().removeFirst();
 			int j = pixels.getSecond().removeFirst();
-			if (pix[i][j]) {
+			if (pix[i][j] && !visited[i][j]) {
 				objeti = new LinkedList<Integer>();
 				objetj = new LinkedList<Integer>();
 				imin = width * 2;
@@ -314,6 +313,9 @@ public class Main {
 					objet.jmin = jmin;
 					objet.jmax = jmax;
 					coins.addLast(objet);
+					if(objet.densite()>Main.densite_min){
+						coins.addLast(objet);
+					}
 				} else if (objeti.size() > seuil_reperes) {
 					Objet objet = new Objet();
 					objet.is = objeti;
@@ -323,19 +325,9 @@ public class Main {
 					objet.jmin = jmin;
 					objet.jmax = jmax;
 					// encore un filtre sur l'écriture
-					double d = objet.distance();
-					if (d > dmin_repere && d < dmax_repere) {
+					if(objet.densite()>Main.densite_min){
 						reperes.addLast(objet);
 					}
-				} else if (objeti.size() > seuil_marques) {
-					Objet objet = new Objet();
-					objet.is = objeti;
-					objet.js = objetj;
-					objet.imin = imin;
-					objet.imax = imax;
-					objet.jmin = jmin;
-					objet.jmax = jmax;
-					marques.addLast(objet);
 				}
 			}
 		}
@@ -367,8 +359,7 @@ public class Main {
 		displayObjets(coins, "coin retenu");
 
 		System.out.println("Reperes " + reperes.size());
-		displayObjets(reperes, "");
-		System.out.println("Marques " + marques.size());
+//		displayObjets(reperes, "");
 
 		// détermination de la rotation
 		int rotation = -1;
@@ -438,10 +429,6 @@ public class Main {
 			System.out.println("Rotation listes repères");
 			applyRotation(rotation, reperes);
 			simplifyToCentre(reperes);
-
-			System.out.println("Rotation listes marques");
-			applyRotation(rotation, marques);
-			simplifyToCentre(marques);
 
 			for (Objet repere : reperes) {
 				if (repere.isHorizontal()) {
@@ -587,7 +574,7 @@ public class Main {
 				System.exit(1);
 			}
 
-			System.out.println("Conversion de l'image corrigée en jpg");
+//			System.out.println("Conversion de l'image corrigée en jpg");
 			// écriture de l'image corrigée en jpeg
 //			try {
 //				BufferedImage bufferedImage = new BufferedImage(width, height,
