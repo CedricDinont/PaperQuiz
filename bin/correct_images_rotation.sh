@@ -37,16 +37,20 @@ do
 	# pour le crop on récupère les dimensions de l'image avant rotation, il faut donc tenir compte de l'orientation de départ
 	if [ "${ORIENTATION}" == "1" -o "${ORIENTATION}" == "3" ]
 	then
-		WIDTH=$(identify -format '%h' ${file}.rotated_temp.jpg)
-		HEIGHT=$(identify -format '%w' ${file}.rotated_temp.jpg)
+		ORIGINAL_WIDTH=$(identify -format '%h' ${file})
+		ORIGINAL_HEIGHT=$(identify -format '%w' ${file})
 	else
-		WIDTH=$(identify -format '%w' ${file}.rotated_temp.jpg)
-		HEIGHT=$(identify -format '%h' ${file}.rotated_temp.jpg)
+		ORIGINAL_WIDTH=$(identify -format '%w' ${file})
+		ORIGINAL_HEIGHT=$(identify -format '%h' ${file})
 	fi
 
 	echo -n " (angle: ${ROTATION}) "
 #	convert ${file}.rotated_temp.jpg -rotate ${ROTATION} -crop ${WIDTH}x${HEIGHT} ${file}.rotated.jpg
-	convert ${file} -rotate ${ROTATION} ${file}.rotated.jpg
+	convert ${file} -rotate ${ROTATION} ${file}.rotated_temp.jpg
+	ROTATED_WIDTH=$(identify -format '%w' ${file}.rotated_temp.jpg)
+        ROTATED_HEIGHT=$(identify -format '%h' ${file}.rotated_temp.jpg)
+	convert ${file}.rotated_temp.jpg -crop ${ORIGINAL_WIDTH}x${ORIGINAL_HEIGHT}+$(( (${ROTATED_WIDTH}-${ORIGINAL_WIDTH})/2 ))+$(( (${ROTATED_HEIGHT}-${ORIGINAL_HEIGHT})/2 ))  ${file}.rotated.jpg
+
 	rm ${file}.rotated_temp.jpg 2> /dev/null
 	cat ${TMP_OMR_ROTATE_LOG} >> ${OMR_ROTATE_LOG}
 

@@ -41,8 +41,8 @@
 	<th><center>Erreur standard</center></th>
 </tr>
 <tr>
-	  <td style="font-size:80%"><?php echo implode('<br>', file($filename_base.".stdout")); ?>&nbsp;</td>
-	  <td style="font-size:80%"><?php echo implode('<br>', file($filename_base.".stderr")); ?>&nbsp;</td>
+	  <td style="font-size:80%" valign="top"><?php echo implode('<br>', file($filename_base.".stdout")); ?>&nbsp;</td>
+	  <td style="font-size:80%" valign="top"><?php echo implode('<br>', file($filename_base.".stderr")); ?>&nbsp;</td>
 </tr>
 </table>
 <br>

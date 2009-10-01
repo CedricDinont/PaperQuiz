@@ -65,7 +65,7 @@ do
 
     if [ -f ${original_file}.output2.bmp ]
     then
-	convert ${original_file}.output2.bmp ${original_file}_corrected2.jpg
+	convert ${original_file}.output2.bmp -quality 70 ${original_file}_corrected2.jpg
     	rm -f ${original_file}.output2.bmp 2>&1 > /dev/null
     fi
 
@@ -79,7 +79,7 @@ do
 
     if [ -f ${original_file}.output3.bmp ]
     then
-	convert ${original_file}.output3.bmp ${original_file}_corrected3.jpg
+	convert ${original_file}.output3.bmp -quality 70 ${original_file}_corrected3.jpg
     	rm -f ${original_file}.output3.bmp 2>&1 > /dev/null
     fi
 

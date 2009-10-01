@@ -10,6 +10,8 @@
         <link rel="stylesheet" type="text/css" href="style/quiz.css" />
 </head>
 <body>
+<?php  doMainMenu() ?>
+<hr>
 <?php
 $nbFiles = 0;
 if ($handle = opendir($ftp_dir)) {
@@ -48,6 +50,7 @@ if ($nbFiles == 0) {
 }
 ?>
 <br /><br />
+<hr>
 <?php  doMainMenu() ?>
 </body>
 </html>
