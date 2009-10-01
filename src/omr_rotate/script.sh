@@ -11,17 +11,17 @@ do
 	# pour le crop on récupère les dimensions de l'image avant rotation, il faut donc tenir compte de l'orientation de départ
 	if [ "${ORIENTATION}" == "1" -o "${ORIENTATION}" == "3" ]
 	then
-		WIDTH=$(identify -format '%h' ${file}.corrected.jpeg)
-		HEIGHT=$(identify -format '%w' ${file}.corrected.jpeg)
+		WIDTH=$(identify -format '%h' ${file})
+		HEIGHT=$(identify -format '%w' ${file})
 	else
-		WIDTH=$(identify -format '%w' ${file}.corrected.jpeg)
-		HEIGHT=$(identify -format '%h' ${file}.corrected.jpeg)
+		WIDTH=$(identify -format '%w' ${file})
+		HEIGHT=$(identify -format '%h' ${file})
    fi
 	ROTATION=$(grep 'alpha=' log_omr_rotate | cut -f 2 -d = )
 	echo ${WIDTH}x${HEIGHT}_${ROTATION}
-	convert -rotate ${ROTATION} ${file}.corrected.jpeg ${file}.corrected2.jpeg
-	convert -crop ${WIDTH}x${HEIGHT} ${file}.corrected2.jpeg ${file}.corrected3.jpeg
-	cp ${file}.corrected3-0.jpeg ${file}.corrected.jpeg
-	rm ${file}.corrected3-* ${file}.corrected2.jpeg
+	convert -interpolate integer -rotate ${ROTATION} ${file} ${file}.corrected.jpeg
+	convert -crop ${WIDTH}x${HEIGHT} ${file}.corrected.jpeg ${file}.corrected2.jpeg
+	cp ${file}.corrected2-0.jpeg ${file}.corrected.jpeg
+	rm ${file}.corrected2-*
 done
 rm log_omr_rotate
