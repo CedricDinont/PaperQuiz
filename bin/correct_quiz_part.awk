@@ -1,4 +1,4 @@
- # normal usage: awk -f ../correct_quiz_part.awk brut.txt
+ # normal usage: awk -f correct_quiz_part.awk brut.txt
 
 function int2letter(a,   b) {
     if(a==0) 
@@ -447,6 +447,7 @@ BEGIN {
     printf "\n" > ooffile;
     line++;
     ###### NEWLINE
+
 }
 
 #-------------------------------------------------------------------------------------------------------------
@@ -456,17 +457,21 @@ $1!~"Code" && $1!~"#" {
     # r=0  stands for "no answer"
     # r=-1 stands for "perfect match"
 
-    absent[$1]=0;
     if( !($1 in stutab) ) {
 	stutab[$1]=sprintf("%s%c%s","_UNKNOWN",OOFS,"_UNKNOWN");
 	printf "WARNING - unknown student ID %d in student file %s\n",$1,students > "/dev/stderr";
-	if(nr_students>0) {
+	if(nr_students>0 && unknown==0) {
 	    unknown=1; # FLAG this situation to warn about ranking errors
 	    printf "\t\"RANK\" column has no more meaning\n" > "/dev/stderr";
 	}
     }
     printf "%s%c%s%c=$%s%d",stutab[$1],OOFS,$1,OOFS,coltotrounded,line > ooffile;   # remember that stutab[s] has two fields
 
+    if( $1 in alreadySeenStudent )
+	printf "WARNING - already encountered student ID %d (%s) in student file %s\n",$1,stutab[$1],students;
+    alreadySeenStudent[$1]=1;
+    absent[$1]=0;
+    
     for(q=min_question;q<=max_question;q++) {
 
 	corresponding_field=q-min_question+2;
