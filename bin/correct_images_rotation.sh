@@ -32,6 +32,12 @@ do
 	# fichier à tester, image corrigée, seuil, position repere
 	java -jar -Xmn128M -Xms256M -Xmx256M -Xss4096k -Djava.awt.headless=true ${SCRIPT_DIR}/omr_rotate.jar ${file} ${file}.rotated_temp.jpg 220 hg > ${TMP_OMR_ROTATE_LOG}
 
+	if [ $? -ne 0 ]
+        then
+		echo " [ERROR]"
+		continue
+        fi
+
         ROTATION=$(grep 'alpha=' ${TMP_OMR_ROTATE_LOG} | cut -f 2 -d = )
 	ORIENTATION=$(grep 'orientation=' ${TMP_OMR_ROTATE_LOG} | cut -f 2 -d = )
 	# pour le crop on récupère les dimensions de l'image avant rotation, il faut donc tenir compte de l'orientation de départ
@@ -44,7 +50,7 @@ do
 		ORIGINAL_HEIGHT=$(identify -format '%h' ${file})
 	fi
 
-	echo -n " (angle: ${ROTATION}) "
+	printf " (angle: %.4f) " ${ROTATION}	
 #	convert ${file}.rotated_temp.jpg -rotate ${ROTATION} -crop ${WIDTH}x${HEIGHT} ${file}.rotated.jpg
 	convert ${file} -rotate ${ROTATION} ${file}.rotated_temp.jpg
 	ROTATED_WIDTH=$(identify -format '%w' ${file}.rotated_temp.jpg)

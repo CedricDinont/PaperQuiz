@@ -57,13 +57,13 @@ pour pouvoir scanner. Paramétrer le scanner comme ceci :
 <ul>
 <li>Résolution : 200 dpi</li>
 <li>Couleurs : niveaux de gris</li>
+<li>Contraste: maximum</li>
 <li>Format des fichiers de sortie : TIFF / JPEG</li>
-<li>Adresse mail : qcm.isen@gmail.com</li>
+<li>Adresse mail : qcm.isen@gmail.com ou FTP : dev.isen.fr</li>
 </ul>
   Utiliser le chargeur au dessus de la photocopieuse. Placer les feuilles avec la face imprimée au dessus dans le sens de lecture (la grosse marque noire en haut à gauche).
 <br>
-Il ne faut pas scanner plus de 25 feuilles à la fois pour ne pas dépasser
-la limite de taille des mails.
+En mode mail, il ne faut pas scanner plus de 25 feuilles à la fois pour ne pas dépasser la limite de taille des mails.
 
 <br>
   Pour les prochaines étapes, il est conseillé de conserver les pages dans l'ordre où elles ont été scannées.
