@@ -1,6 +1,6 @@
 #!/bin/bash
 echo -n "4 "
-INPUT_FILES=`ls ../img/*.jpg 2> /dev/null`
+INPUT_FILES=`ls ../img_dur/*.jpeg 2> /dev/null`
 for file in ${INPUT_FILES} 
 do
 	echo ${file}
