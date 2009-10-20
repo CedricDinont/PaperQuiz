@@ -558,7 +558,7 @@ END {
     printf "avg" > ooffile;
     for(q=2;q<=colstart-1;q++)
 	printf "%c",OOFS > ooffile;
-    printf "=$%s%d",coltot,line > ooffile;
+    printf "=$%s%d",coltotrounded,line > ooffile;
     for(q=1;q<=nr_questions+free_text_q+2;q++) { # +2 for "TOTAL" statistics
 	colname=int2letter(colstart-1+q);
 	printf "%c=AVERAGE(%s$%d:%s$%d)",OOFS,colname,first_stuline,colname,last_stuline > ooffile;
@@ -571,7 +571,7 @@ END {
     printf "rms" > ooffile;
     for(q=2;q<=colstart-1;q++)
 	printf "%c",OOFS > ooffile;
-    printf "=$%s%d",coltot,line > ooffile;
+    printf "=$%s%d",coltotrounded,line > ooffile;
     for(q=1;q<=nr_questions+free_text_q+2;q++) { # +2 for "TOTAL" statistics
 	colname=int2letter(colstart-1+q);
 	printf "%c=STDEV(%s$%d:%s$%d)",OOFS,colname,first_stuline,colname,last_stuline > ooffile;
@@ -584,7 +584,7 @@ END {
     printf "max" > ooffile;
     for(q=2;q<=colstart-1;q++)
 	printf "%c",OOFS > ooffile;
-    printf "=$%s%d",coltot,line > ooffile;
+    printf "=$%s%d",coltotrounded,line > ooffile;
     for(q=1;q<=nr_questions+free_text_q+2;q++) { # +2 for "TOTAL" statistics
 	colname=int2letter(colstart-1+q);
 	printf "%c=MAX(%s$%d:%s$%d)",OOFS,colname,first_stuline,colname,last_stuline > ooffile;
@@ -597,7 +597,7 @@ END {
     printf "min" > ooffile;
     for(q=2;q<=colstart-1;q++)
 	printf "%c",OOFS > ooffile;
-    printf "=$%s%d",coltot,line > ooffile;
+    printf "=$%s%d",coltotrounded,line > ooffile;
     for(q=1;q<=nr_questions+free_text_q+2;q++) { # +2 for "TOTAL" statistics
 	colname=int2letter(colstart-1+q);
 	printf "%c=MIN(%s$%d:%s$%d)",OOFS,colname,first_stuline,colname,last_stuline > ooffile;
