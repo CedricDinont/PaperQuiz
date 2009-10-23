@@ -1,5 +1,6 @@
 package src;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
@@ -227,9 +228,12 @@ public class Main {
 	public static int dmin_repere = 16;
 	public static int dmax_repere = 22;
 	public static double densite_min = 0.75;
+	public static double diagonale_max = 500;
 
 	public static double exploration = 3;
 	public static double pourcentage_coin = 0.50;
+
+	public static boolean debug = false;
 
 	/**
 	 * c'est parti
@@ -313,7 +317,7 @@ public class Main {
 					objet.jmin = jmin;
 					objet.jmax = jmax;
 					coins.addLast(objet);
-					if(objet.densite()>Main.densite_min){
+					if (objet.densite() > Main.densite_min) {
 						coins.addLast(objet);
 					}
 				} else if (objeti.size() > seuil_reperes) {
@@ -325,7 +329,7 @@ public class Main {
 					objet.jmin = jmin;
 					objet.jmax = jmax;
 					// encore un filtre sur l'écriture
-					if(objet.densite()>Main.densite_min){
+					if (objet.densite() > Main.densite_min && objet.diagonale() < Main.diagonale_max) {
 						reperes.addLast(objet);
 					}
 				}
@@ -351,15 +355,18 @@ public class Main {
 			System.exit(1);
 		}
 
-//		LinkedList<Objet> coins_delete = new LinkedList<Objet>(coins);
-//		coins_delete.remove(coinmin);
+		LinkedList<Objet> coins_delete = null;
+		if (debug) {
+			coins_delete = new LinkedList<Objet>(coins);
+			coins_delete.remove(coinmin);
+		}
 
 		coins.clear();
 		coins.add(coinmin);
 		displayObjets(coins, "coin retenu");
 
 		System.out.println("Reperes " + reperes.size());
-//		displayObjets(reperes, "");
+		// displayObjets(reperes, "");
 
 		// détermination de la rotation
 		int rotation = -1;
@@ -424,7 +431,7 @@ public class Main {
 		// repere les marques horizontales et verticales
 		if (rotation >= 0) {
 			// sans rotation
-			System.out.println("orientation="+rotation);
+			System.out.println("orientation=" + rotation);
 
 			System.out.println("Rotation listes repères");
 			applyRotation(rotation, reperes);
@@ -454,9 +461,9 @@ public class Main {
 			System.out.println("Position coin après rotation " + coinx + ";"
 					+ coiny);
 
-//			System.out.println("Rotation coins à effacer");
-//			applyRotation(rotation, coins_delete);
-//			simplifyToCentre(coins_delete);
+			// System.out.println("Rotation coins à effacer");
+			// applyRotation(rotation, coins_delete);
+			// simplifyToCentre(coins_delete);
 
 			System.out
 					.println("Determination des listes de repères gauche droite haut bas");
@@ -487,35 +494,31 @@ public class Main {
 
 			System.out.println("Correction Image");
 			// on efface les trucs génants
-//			ImgUtils.colorObjet(coins_delete, img, Color.WHITE);
-//			img = ImgUtils.rotateImg(rotation, img);
+			if (debug) {
+			 ImgUtils.colorObjet(coins_delete, img, Color.WHITE);
+				img = ImgUtils.rotateImg(rotation, img);	
+			}
 			width = img.getWidth();
 			height = img.getHeight();
 			System.out.println("nouvelles dimensions w=" + width + " h="
 					+ height);
 
-//			for (Objet repere : reperes) {
-//				int gx = (int) repere.icentre;
-//				int gy = (int) repere.jcentre;
-//				ImgUtils.drawSquare(gx - 5, gx + 5, gy - 5, gy + 5, img,
-//						Color.YELLOW);
-//			}
-//
-//			for (Objet marque : marques) {
-//				int gx = (int) marque.icentre;
-//				int gy = (int) marque.jcentre;
-//				ImgUtils.drawSquare(gx - 5, gx + 5, gy - 5, gy + 5, img,
-//						Color.CYAN);
-//			}
-//
-//			System.out.println("coins " + coins_delete.size());
-//			for (Objet coin_del : coins_delete) {
-//				int gx = (int) coin_del.icentre;
-//				int gy = (int) coin_del.jcentre;
-//				ImgUtils.drawSquare(gx - 5, gx + 5, gy - 5, gy + 5, img,
-//						Color.PINK);
-//			}
+			if (debug) {
+				for (Objet repere : reperes) {
+					int gx = (int) repere.icentre;
+					int gy = (int) repere.jcentre;
+					ImgUtils.drawSquare(gx - 5, gx + 5, gy - 5, gy + 5, img,
+							Color.YELLOW);
+				}
 
+				System.out.println("coins " + coins_delete.size());
+				for (Objet coin_del : coins_delete) {
+					int gx = (int) coin_del.icentre;
+					int gy = (int) coin_del.jcentre;
+					ImgUtils.drawSquare(gx - 5, gx + 5, gy - 5, gy + 5, img,
+							Color.PINK);
+				}
+			}
 
 			System.out.println("Image corrigée");
 			System.out.println("hauteur=" + height + " __ largeur=" + width);
@@ -566,28 +569,31 @@ public class Main {
 				alpha = Math.signum((bas.icentre - haut.icentre))
 						* Math.acos((bas.jcentre - haut.jcentre) / hyp);
 				System.out.println("hy=" + hyp);
-				System.out.println("alpha=" + ((alpha * 180 / Math.PI)-rotation*90));
-			}
-			else
-			{
-				System.err.println("Problème repères: impossible de calculer alpha");
-				System.exit(1);
+				System.out.println("alpha="
+						+ ((alpha * 180 / Math.PI) - rotation * 90));
+			} else {
+				System.err
+						.println("Problème repères: impossible de calculer alpha");
+				if (!debug) {
+					System.exit(1);
+				}
 			}
 
-//			System.out.println("Conversion de l'image corrigée en jpg");
-			// écriture de l'image corrigée en jpeg
-//			try {
-//				BufferedImage bufferedImage = new BufferedImage(width, height,
-//						BufferedImage.TYPE_INT_RGB);
-//				bufferedImage.setData(img);
-//				ImageIO.write(bufferedImage, "JPEG", new File(image_out));
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//			}
-		}
-		else
-		{
-			System.err.println("Problème marque: impossible de déterminer orientation");
+			if (debug) {
+				System.out.println("Conversion de l'image corrigée en jpg");
+				// écriture de l'image corrigée en jpeg
+				try {
+					BufferedImage bufferedImage = new BufferedImage(width,
+							height, BufferedImage.TYPE_INT_RGB);
+					bufferedImage.setData(img);
+					ImageIO.write(bufferedImage, "JPEG", new File(image_out));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		} else {
+			System.err
+					.println("Problème marque: impossible de déterminer orientation");
 			System.exit(1);
 		}
 

@@ -123,4 +123,10 @@ public class Objet {
 //		System.out.println("d="+this.is.size()+" "+(imax-imin)*(jmax-jmin));
 		return d;
 	}
+	
+	public double diagonale(){
+		double d = 0;
+		d = Math.sqrt((imax-imin)*(imax-imin)+(jmax-jmin)*(jmax-jmin));
+		return d;
+	}
 }
