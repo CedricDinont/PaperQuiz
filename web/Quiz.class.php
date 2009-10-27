@@ -103,6 +103,15 @@ class Quiz {
 	public function rename($new_name) {
 
 	}
+
+	public function getDate() {
+		$quiz_name_fields = split("-", $this->name);
+		$date = $quiz_name_fields[0];
+		$date_fields = split("_", $date);
+		$timestamp = mktime(0, 0, 0, $date_fields[1], $date_fields[2], $date_fields[0]);
+		return $timestamp;
+	}
+
 }
 
 ?>

@@ -295,6 +295,20 @@ function alertChanged() {
     alert("Vous avez fait des modifications sur les marques reconnues. Vous devez appliquer ou annuler les modifications avant de continuer.");
 }
 
+                function showFindLogin() {
+                        findLogin = document.getElementById("findLogin");
+                        findLogin.src="https://campus.isen.fr/calendars/find_calendar.php";
+                        findLogin.style.display = "block";
+                        document.getElementById("findLoginHideMenu").style.display = "block";
+                }
+
+                function hideFindLogin() {
+                        findLogin = document.getElementById("findLogin");
+                        findLogin.src="";
+                        findLogin.style.display = "none";
+                        document.getElementById("findLoginHideMenu").style.display = "none";
+                }
+
 	  function init() {
 	    imageWidth = document.image.width;
 	    imageHeight = document.image.height;
@@ -349,6 +363,7 @@ function alertChanged() {
 	    <option value="omr_errors" <?php if ($current_dir == "omr_errors/") echo "selected"; ?>>Errors</option>
      <option value="omr_output" <?php if ($current_dir != "omr_errors/") echo "selected"; ?>>Output</option>
   </select>
+  <button onclick="showFindLogin(); return false;" class="form_elem">Find login</button>
   <button onclick="goToQuizMenu(); return false;" class="form_elem">Quiz menu</button>
 <div id="image_div" name="image_div" style="border:Opx;margin:0px;width:65%; height:95%;background-color: #CCCCCC;
 	   display:block; overflow:auto;position:absolute; left:0px;top:25px;">
@@ -380,5 +395,7 @@ function alertChanged() {
 </div>
 </div>
 </form>
+<iframe id="findLogin" style="display: none; position: absolute; left: 400px; top: 400px; width: 500px; height: 450px; background-color: grey;"></iframe>
+<div id="findLoginHideMenu" style="display: none; position: absolute; left: 875px; top: 400px;"><button class="form_elem" width="25px" onclick="hideFindLogin(); return false;">X</button></div>
 </body>
 </html>

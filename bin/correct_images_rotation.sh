@@ -23,6 +23,9 @@ TMP_OMR_ROTATE_LOG=/tmp/${QUIZ_NAME}.omr_rotate.log
 
 touch ${OMR_ROTATE_LOG}
 
+ERRORS="false"
+
+
 for file in ${INPUT_FILES} 
 do
 	echo -n "${file}"
@@ -34,6 +37,7 @@ do
 
 	if [ $? -ne 0 ]
         then
+		ERRORS="true"
 		echo " [ERROR]"
 		continue
         fi
@@ -66,5 +70,13 @@ done
 rm ${TMP_OMR_ROTATE_LOG}
 
 echo ""
-echo "All done successfully."
+
+if [ "${ERRORS}" = "true" ]
+then
+    echo "There were errors but you can continue with OMR."
+    exit 2
+else
+    echo "There were no error."
+    exit 0
+fi
 

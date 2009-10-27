@@ -1,27 +1,80 @@
 <?php
 	require_once('Quiz.class.php');
+
+	$max_date = strtotime("- 1 month -1 day");
 ?>
 <html>
 <head>
 	<title>Quiz</title>
         <link rel="stylesheet" type="text/css" href="style/quiz.css" />
+	<script>
+		function init() {
+			size1 = document.getElementById("current_month_quizes").style.width;
+                        size2 = document.getElementById("old_quizes").style.width;
+			if (size1 < size2) {
+				document.getElementById("current_month_quizes").style.width = size2;
+			} else {
+				document.getElementById("old_quizes").style.width = size1;
+			}
+		}
+	</script>
 </head>
-<body>
+<body onload="">
 Que voulez-vous faire ?
 <ul>
 <li><a href="create_quiz.php">Créer un quiz</a></li>
 <li>Accéder à un quiz existant :
+<ul>
+<li> 
 <form action="quiz_workflow.php" method="get">
-<select name="quiz-id" class="form_elem">
+Dernier mois :<br /> 
+<?php
+$quizes=Quiz::getAllQuizes();
+$nb_quizes = 0;
+foreach ($quizes as $quiz_name => $quiz) {
+        if ($quiz->getDate() >= $max_date) {
+        	$nb_quizes++;
+	}
+}
+?>
+<table>
+<tr valign="top">
+<td style="border:0px;">
+<select name="quiz-id" class="form_elem" id="current_month_quizes" size="<?php echo $nb_quizes; ?>">
 <?php
 $quizes=Quiz::getAllQuizes();
 foreach ($quizes as $quiz_name => $quiz) {
-   	echo "<option value=\"".$quiz->getId()."\">".$quiz->getName()."</option>";
+	if ($quiz->getDate() >= $max_date) {
+	   	echo "<option value=\"".$quiz->getId()."\">".$quiz->getName()."</option>";
+	}
+}
+?>
+</select>
+</td><td style="border:0px;">
+<input type="submit" value="Go" class="form_elem">
+</td>
+</tr>
+</table>
+</form>
+</li>
+<li>
+<form action="quiz_workflow.php" method="get">
+Archives : <br/>
+<select name="quiz-id" class="form_elem" id="old_quizes">
+<?php
+$quizes=Quiz::getAllQuizes();
+foreach ($quizes as $quiz_name => $quiz) {
+        if ($quiz->getDate() < $max_date) {
+                echo "<option value=\"".$quiz->getId()."\">".$quiz->getName()."</option>";
+        }
 }
 ?>
 </select>
 <input type="submit" value="Go" class="form_elem">
+</li>
+</ul>
 </form>
+
 </li>
 <li><a href="help.php">Lire l'aide</a></li>
 </ul>
