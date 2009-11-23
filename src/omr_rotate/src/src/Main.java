@@ -202,14 +202,22 @@ public class Main {
 	public static String image_in = "/home/francois/projets/omr3/test2.jpg";
 	public static String image_out = "/home/francois/projets/omr3/test2_corrected.jpg";
 
-	public static int seuil = 200;
-	public static boolean[][] pix;
-	public static boolean[][] visited;
-	public static Paire<LinkedList<Integer>, LinkedList<Integer>> pixels;
+	public static final int standard_width = 1654;
+	public static final int standard_height = 2340;
+	public static final int standard_base = 1000;
+	public static final double rapport_standard = (double)standard_height
+			/ standard_width;
+	public static double proportion_correc = 1;
+	public static double proportion_espilon = 0.05;
 
 	public static int width;
 	public static int height;
 	public static int marge = 0;
+
+	public static int seuil = 220;
+	public static boolean[][] pix;
+	public static boolean[][] visited;
+	public static Paire<LinkedList<Integer>, LinkedList<Integer>> pixels;
 
 	// variables pour l'exploration
 	public static LinkedList<Integer> objeti;
@@ -221,14 +229,14 @@ public class Main {
 
 	public static String str_orientation = "hg";
 	public static int orientation = 0;
-	public static int seuil_coin = 2000;
-	public static int seuil_reperes = 1000;
-	public static int seuil_marques = 200;
+	public static int seuil_coin = (int) (2000 * proportion_correc * proportion_correc);
+	public static int seuil_reperes = (int) (1000 * proportion_correc * proportion_correc);
+	public static int seuil_marques = (int) (200 * proportion_correc * proportion_correc);
 
-	public static int dmin_repere = 16;
-	public static int dmax_repere = 22;
+	public static int dmin_repere = (int) (16 * proportion_correc);
+	public static int dmax_repere = (int) (22 * proportion_correc);
 	public static double densite_min = 0.75;
-	public static double diagonale_max = 500;
+	public static double diagonale_max = (int) (500* proportion_correc);
 
 	public static double exploration = 3;
 	public static double pourcentage_coin = 0.50;
@@ -261,12 +269,50 @@ public class Main {
 		long tdeb = System.currentTimeMillis();
 
 		System.out.println("Chargement de l'image");
+		WritableRaster img = null;
 		// récupération d'un buffer représentant l'image
-		WritableRaster img = Main.loadRaster(Main.image_in);
+		try {
+			img = Main.loadRaster(Main.image_in);
+		} catch (Exception e) {
+			System.err.println("image non trouvee");
+			System.exit(1);
+		}
 
 		// détermination de sa taille
 		width = img.getWidth();
 		height = img.getHeight();
+		
+		double correction = 1;
+		double rapport = (double) height / (double) width;
+		correction = (double)height/(double)standard_height;
+		if (rapport < 1) {
+			rapport = (double) width / (double) height;
+			correction = (double)width/(double)standard_height;
+		}
+		System.out.println("rapport "+rapport);
+		if (-rapport_standard * proportion_espilon + rapport_standard < rapport
+				&& rapport < rapport_standard * proportion_espilon
+						+ rapport_standard) {
+			System.out
+					.println("correction des mesures suivants les proportions de l'image"
+							+ " rapport="
+							+ rapport
+							+ " rapport_standard="
+							+ rapport_standard);
+			proportion_correc = correction;
+			System.out.println("nouvelle proportion=" + proportion_correc);
+
+		} else {
+			System.err.println("error on dimensions");
+			System.exit(1);
+		}
+		
+		seuil_coin = (int) (2000 * proportion_correc * proportion_correc);
+		seuil_reperes = (int) (1000 * proportion_correc * proportion_correc);
+		seuil_marques = (int) (200 * proportion_correc * proportion_correc);
+		dmin_repere = (int) (16 * proportion_correc);
+		dmax_repere = (int) (22 * proportion_correc);
+		diagonale_max = (int) (500* proportion_correc);
 
 		System.out.println("étude des pixels de l'image");
 		int[] rgb = new int[4];
@@ -329,7 +375,8 @@ public class Main {
 					objet.jmin = jmin;
 					objet.jmax = jmax;
 					// encore un filtre sur l'écriture
-					if (objet.densite() > Main.densite_min && objet.diagonale() < Main.diagonale_max) {
+					if (objet.densite() > Main.densite_min
+							&& objet.diagonale() < Main.diagonale_max) {
 						reperes.addLast(objet);
 					}
 				}
@@ -495,8 +542,8 @@ public class Main {
 			System.out.println("Correction Image");
 			// on efface les trucs génants
 			if (debug) {
-			 ImgUtils.colorObjet(coins_delete, img, Color.WHITE);
-				img = ImgUtils.rotateImg(rotation, img);	
+				ImgUtils.colorObjet(coins_delete, img, Color.WHITE);
+				img = ImgUtils.rotateImg(rotation, img);
 			}
 			width = img.getWidth();
 			height = img.getHeight();
