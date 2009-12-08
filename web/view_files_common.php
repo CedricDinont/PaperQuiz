@@ -87,7 +87,11 @@ function showFile($dir, $file) {
     if($nom_fic != ""){
     	echo "fichier=\"".$nom_fic."\" ";
     }
-    echo "type=\"checkbox\" name=\"files[]\" value=\"".$dir.$file."\"><a href=\"".$page.".php?quiz-id=".$_GET['quiz-id']."&filename=".$dir.$file."\">".$file."</a></li>\n";
+    echo "type=\"checkbox\" name=\"files[]\" value=\"".$dir.$file."\"><a href=\"".$page.".php?quiz-id=".$_GET['quiz-id']."&filename=".urlencode($dir.$file);
+    if (endsWith($file, ".ods")) {
+	echo "&attachment=true";
+    }
+    echo "\">".$file."</a></li>\n";
 }
 
 function getFile($dir, $file) {

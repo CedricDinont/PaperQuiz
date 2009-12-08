@@ -18,7 +18,7 @@ $d = dir($quiz->getCorrectionDir());
 while (false !== ($entry = $d->read())) {
   if (substr_compare($entry, ".ods", strlen($entry) - 4) == 0) {
     $no_file = false;
-    echo "<li><a href=\"view_file.php?quiz-id=".$_GET['quiz-id']."&attachment=true&filename=correction/".$entry."\">".$entry."</a></li>";
+    echo "<li><a href=\"view_file.php?quiz-id=".$_GET['quiz-id']."&attachment=true&filename=correction/",rawurlencode($entry),"\">".$entry."</a></li>";
   }
 }
 if ($no_file) {

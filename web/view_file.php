@@ -9,7 +9,7 @@ function endsWith( $str, $sub ) {
   return (strcmp(substr( $str, strlen( $str ) - strlen( $sub ) ), $sub ) == 0);
 }
 
-$file = $quiz->getDir().$_GET['filename'];
+$file = $quiz->getDir().rawurldecode($_GET['filename']);
 $taille = filesize($file);
 $array = explode("/", $file);
 $simple_filename = $array[count($array)- 1];
