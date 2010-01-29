@@ -52,7 +52,7 @@ BEGIN {
 
     if(OOFS=="")
 	# OpenOffice separator
-	# Do not use ";" since this sign is needed in OpenOffice functions (IF and so on)
+	# Do not use ";" since this symbol is needed in OpenOffice functions (IF and so on)
 	OOFS=",";
 
 #-------------------------------------------------------------------------------------------------------------
@@ -187,7 +187,7 @@ BEGIN {
 		gsub("\t","",$0); # remove tabs
 
 		ft_nr_answers[free_text_q]=$2;
-		if(ft_nr_answers[free_text_q]==0)
+		if(ft_nr_answers[free_text_q]==0 || ft_nr_answers[free_text_q]=="")
 		    ft_nr_answers[free_text_q]=1; # prevent division by 0
 
 		if(NF>=4)
