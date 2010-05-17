@@ -13,6 +13,7 @@ echo ${PID}
 echo "Running
 ${PID}" > ${QUIZ_DIR}/processes/current_process
 
+#wait ${PID}
 while ps -p ${PID} > /dev/null
 do
     sleep 1
