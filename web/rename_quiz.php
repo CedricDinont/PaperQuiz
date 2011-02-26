@@ -4,6 +4,15 @@
 
 	$quiz = Quiz::getQuizById($_GET['quiz-id']);
 
+          if ($q->hasRunningProcess()) {
+                        echo "<html><head><title>Erreur</title></head><body>Erreur: un processus est actif pour ce quiz. Vous ne pouvez pas le renommer actuellement.<br><br>";
+                        global $quiz;
+                        $quiz = $q;
+                        doMainMenu();
+                        echo "</body></html>";
+                        exit();
+          }
+
 ?>
 <html>
 <head>
