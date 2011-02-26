@@ -2,7 +2,7 @@
 	require_once('Quiz.class.php');
 	require_once('quiz_common.php');
 
-	$quiz = Quiz::getQuizById($_GET['quiz-id']);
+	$q = Quiz::getQuizById($_GET['quiz-id']);
 
           if ($q->hasRunningProcess()) {
                         echo "<html><head><title>Erreur</title></head><body>Erreur: un processus est actif pour ce quiz. Vous ne pouvez pas le renommer actuellement.<br><br>";
@@ -12,6 +12,8 @@
                         echo "</body></html>";
                         exit();
           }
+
+	$quiz = $q;
 
 ?>
 <html>
