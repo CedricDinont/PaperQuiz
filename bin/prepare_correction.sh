@@ -84,7 +84,7 @@ NR > 5 {
   nb_questions = nb_questions + 1
 }
 END {
-  for (question_number = 1; question_number < 80; question_number = question_number + 1) {
+  for (question_number = 1; question_number <= 80; question_number = question_number + 1) {
     if ((question_number >= min) && (question_number <= max)) {
     first_answer=1
     for (i = 1; i <= 5; i = i + 1) {
