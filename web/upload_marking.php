@@ -25,7 +25,7 @@ if (isset($_POST['action']) && ($_POST['action'] == "upload-marking")) {
   echo "<br>Upload terminé.<br>";
 } else {
 ?>
-  Sélection des fichiers de correction pour le quiz <? echo $quiz->getName(); ?>.
+  Sélection des fichiers de correction pour le quiz <?php echo $quiz->getName(); ?>.
 <br><br>
 Veuillez sélectionner le fichier correspondant à chaque matière.<br>Vous pouvez envoyer un ou plusieurs fichiers à la fois.<br>Les anciens fichiers de correction éventuellement présents sur le serveur  seront remplacés.<br><br>
 <form method="POST" enctype="multipart/form-data" action="upload_marking.php?&quiz-id=<?php echo $_GET['quiz-id']; ?>">

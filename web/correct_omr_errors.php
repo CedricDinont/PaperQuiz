@@ -276,6 +276,7 @@ function mrChanged() {
 function imageChanged() {
   if (changed) {
     alertChanged();
+    alert(document.main_form.current_image.value);
   } else {
     document.main_form.action.value='change_image'; 
     document.main_form.submit();
@@ -323,7 +324,8 @@ function alertChanged() {
 </head>
 <body style="border:Opx;margin:0px;" onload="init();fitWidth();">
 <form name="main_form" method="POST" action="correct_omr_errors.php?quiz-id=<?php echo $quiz->getId(); ?>" style="border:Opx;margin:0px;">
-	    <input type="hidden" name="action" value="">
+  <input type="hidden" name="action" value="">
+  <input type="hidden" name="current_image" value="<?php echo $current_image; ?>">
   <button onclick="normalZoom(); return false;" class="form_elem">100%</button>
   <button onclick="fitHeight(); return false;" class="form_elem" >Fit height</button>
   <button onclick="fitWidth(); return false;" class="form_elem">Fit width</button>
@@ -344,7 +346,7 @@ function alertChanged() {
 <option value=".omr3_data" <?php if ($mr_file_ext == ".omr3_data") { echo "selected"; } ?> >OMR3</option>
   </select>
   <button onclick="applyChanges(); return false;" class="form_elem">Apply</button>
- <button onclick="discardChanges(); return false;" class="form_elem">Discard</button>
+  <button onclick="discardChanges(); return false;" class="form_elem">Discard</button>
   <button onclick="nextImage(); return false;" class="form_elem">Next image</button>
   <button onclick="previousImage(); return false;" class="form_elem">Previous image</button>
   <select name="image_file" class="form_elem" onchange="imageChanged();">
@@ -365,7 +367,7 @@ function alertChanged() {
   </select>
   <button onclick="showFindLogin(); return false;" class="form_elem">Find login</button>
   <button onclick="goToQuizMenu(); return false;" class="form_elem">Quiz menu</button>
-<div id="image_div" name="image_div" style="border:Opx;margin:0px;width:65%; height:95%;background-color: #CCCCCC;
+  <div id="image_div" name="image_div" style="border:Opx;margin:0px;width:65%; height:95%;background-color: #CCCCCC;
 	   display:block; overflow:auto;position:absolute; left:0px;top:25px;">
 	    <?php if ($current_image != "") { ?>
 					      <img onClick="zoomIn();" id="image" name="image" src="view_file.php?quiz-id=<?php echo $quiz->getId(); ?>&filename=<?php echo $current_dir.$current_image; if ($mr_file_ext == ".omr2_data") {echo "_corrected2.jpg";} else if ($mr_file_ext == ".omr3_data") {echo "_corrected3.jpg";} else { echo "_corrected.jpg"; } ?>">
