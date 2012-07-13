@@ -13,6 +13,10 @@ LOGINS=`awk 'BEGIN {FS=";" }
 for LOGIN in ${LOGINS}
 do
     NAME=`${SCRIPT_DIR}/get_student_name.sh ${LOGIN}`
+    if [ "${NAME}" = "" ]
+    then
+	NAME="UNKNOWN_NAME;UNKNOWN_FIRST_NAME"
+    fi
     echo "${LOGIN} -> ${NAME}"
     echo "${NAME};${LOGIN}" >> ${STUDENTS_FILE}
 done

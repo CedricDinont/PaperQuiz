@@ -8,8 +8,8 @@ fi
 
 STUDENT_LOGIN=$1
 
-SURNAME=`ldapsearch -h campus.isen.fr -x -u -b "ou=Students,l=Lille,o=isen,c=fr" "uid=${STUDENT_LOGIN}" | grep -E "^sn:" | cut -d " " -f 2-`
-GIVEN_NAME=`ldapsearch -h campus.isen.fr -x -u -b "ou=Students,l=Lille,o=isen,c=fr" "uid=${STUDENT_LOGIN}" | grep -E "^givenName:" | cut -d " " -f 2-`
+SURNAME=`ldapsearch -h ldapserver -x -u -b "ou=Students,l=Lille,o=isen,c=fr" "uid=${STUDENT_LOGIN}" | grep -E "^sn:" | cut -d " " -f 2-`
+GIVEN_NAME=`ldapsearch -h ldapserver -x -u -b "ou=Students,l=Lille,o=isen,c=fr" "uid=${STUDENT_LOGIN}" | grep -E "^givenName:" | cut -d " " -f 2-`
 
 if [ "${SURNAME}" = "" ]
 then
