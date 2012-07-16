@@ -536,7 +536,7 @@ int** analyse(struct image *img,ListeZone *liste_haut,ListeZone *liste_droite,Li
 	}
 	
 	// coor para
-	double hgx,hgy,hdx,hdy,bgx,bgy,bdx,bdy;
+	double hgx,hgy,bdx,bdy;
 	// décalages
 	double decg,decd,dech,decb;
 	
@@ -563,12 +563,6 @@ int** analyse(struct image *img,ListeZone *liste_haut,ListeZone *liste_droite,Li
 			
 			hgx = (double)(dech * (double)zone_haut->deb + zone_gauche->deb)/(1.0-decg*dech);
 			hgy = (double)(decg * (double)zone_gauche->deb + zone_haut->deb)/(1.0-decg*dech);
-			
-			hdx = (double)(dech * (double)zone_haut->fin + zone_gauche->deb)/(1.0-decd*dech);
-			hdy = (double)(decd * (double)zone_gauche->deb + zone_haut->fin)/(1.0-decd*dech);
-			
-			bgx = (double)(decb * (double)zone_haut->deb + zone_gauche->fin)/(1.0-decg*decb);
-			bgy = (double)(decg * (double)zone_gauche->fin + zone_haut->deb)/(1.0-decg*decb);
 			
 			bdx = (double)(decb * (double)zone_haut->fin + zone_gauche->fin)/(1.0-decd*decb);
 			bdy = (double)(decd * (double)zone_gauche->fin + zone_haut->fin)/(1.0-decd*decb);
@@ -811,15 +805,11 @@ résultats
 
 int** creationResultats(int hauteur, int largeur)
 {
-	int** resultats = malloc(sizeof(int)*hauteur);
-	int i,j;
+	int** resultats = calloc(hauteur,sizeof(int*));
+	int i;
 	for(i=0;i<hauteur;i++)
 	{
-		resultats[i] = malloc(sizeof(int)*largeur);
-		for(j=0;j<largeur;j++)
-		{
-			resultats[i][j] = 0;
-		}
+		resultats[i] = calloc(largeur,sizeof(int));
 	}
 	return resultats;
 }

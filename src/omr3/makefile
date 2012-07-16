@@ -2,7 +2,7 @@ CFLAGS=-Wall -g -DDEBUG
 OUTPUT_DIR=../../bin/
 
 omr3:main.o image.o zone.o
-	gcc main.o image.o zone.o `sdl-config --libs` -lSDL_image -lSDL_gfx -O3 -o omr3
+	gcc main.o image.o zone.o `sdl-config --libs` -lSDL_image -lSDL_gfx -o omr3
 
 all:install
 
