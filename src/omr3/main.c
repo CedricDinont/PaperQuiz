@@ -180,7 +180,7 @@ suivant le repère qui est vu comme une bande
 		// pas de repère
 		else
 		{
-			fprintf(stderr,"Bandes incohérantes Haut Gauche\n");
+			fprintf(stderr,"Bandes incohérentes Haut Gauche\n");
 		}
 		if(rotation != -1)
 		{
@@ -228,7 +228,7 @@ suivant le repère qui est vu comme une bande
 		// pas de repère
 		else
 		{
-			fprintf(stderr,"Bandes incohérantes Haut Droite\n");
+			fprintf(stderr,"Bandes incohérentes Haut Droite\n");
 		}
 		if(rotation != -1)
 		{
@@ -277,7 +277,7 @@ suivant le repère qui est vu comme une bande
 		// pas de repère
 		else
 		{
-			fprintf(stderr,"Bandes incohérantes Bas Droite\n");
+			fprintf(stderr,"Bandes incohérentes Bas Droite\n");
 		}
 		if(rotation != -1)
 		{
@@ -327,7 +327,7 @@ suivant le repère qui est vu comme une bande
 		// pas de repère
 		else
 		{
-			fprintf(stderr,"Bandes incohérantes Bas Gauche\n");
+			fprintf(stderr,"Bandes incohérentes Bas Gauche\n");
 		}
 		if(rotation != -1)
 		{
