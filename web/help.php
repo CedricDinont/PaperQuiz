@@ -7,7 +7,7 @@ if (isset($_GET['quiz-id'])) {
   }
 ?>
 <?php $page_title='Aide'; include 'header.php' ?>
-<h1>Description générale de l'application</h1>
+<h3>Description générale de l'application</h3>
 
 Quiz permet de corriger des QCM réalisés sur papier.
 La feuille de réponses permet de créer des quiz contenant jusqu'à 80 questions avec chacune au maximum 5 réponses possibles.
@@ -16,7 +16,7 @@ Les feuilles de réponses sont scannées puis traitées par plusieurs programmes
  sont fournis dans un fichier Open Office par matière.<br><br>
 Cette page décrit les fonctionnalités disponibles dans cette interface Web en ne décrivant que ce qui est nécessaire du fonctionnement interne de l'application.
 <br><br>
-<h1>Création et paramétrage d'un quiz</h1>
+<h3>Création et paramétrage d'un quiz</h3>
 La page d'accueil du site permet de créer un nouveau quiz ou d'accéder aux informations concernant un quiz existant.<br><br>
 Pour créer un quiz, il faut renseigner les informations suivantes :
 <ul>
@@ -41,7 +41,7 @@ Ensuite, il est possible de déposer les corrigés pour les différentes matièr
 </ul>
 
 <br><br>
-<h1>Correction d'un quiz</h1>
+<h3>Correction d'un quiz</h3>
 
 Il faut tout d'abord scanner les feuilles de réponses.
 Pour cela, on  peut utiliser la photocopieuse de la salle
@@ -81,20 +81,20 @@ La correction effective permet de générer le fichier Open Office final avec le
 A la fin de la correction, on archive le sujet du quiz avec les feuilles de réponses.
 
 <br><br><br>
-<h1>Fonctionnalités supplémentaires de l'interface Web</h1>
+<h3>Fonctionnalités supplémentaires de l'interface Web</h3>
 <ul>
 <li>Il est possible de visualiser les sorties standard et d'erreur de l'ensemble des processus déjà exécutés.</li>
 <li>Il est possible d'accéder directement à l'ensemble des fichiers liés à la reconnaissance des marques (images d'entrée, de sortie, fichiers avec les marques reconnues, logs) et à la correction (fichiers de correction, fichiers de réponses des étudiants, fichier d'information sur les étudiants, fichiers .csv intermédiaires et fichiers Open Office finaux).</li>
 </ul>
 
 <br><br>
-<h1>Bugs connus de l'interface Web</h1>
+<h3>Bugs connus de l'interface Web</h3>
 <ul>
 <li>Par moments, lorsqu'on visualise la sortie d'un programme, une erreur s'affiche indiquant que des fichiers ne peuvent être ouverts. Il suffit de recharger la page pour que tout rentre dans l'ordre.</li>
 <li>Dans la page de correction des erreurs de reconnaissance des marques, le système de déplacement simultané des deux ascenceurs ne fonctionne pas bien. Le système de zoom ("fit width" et "fit height") ne fonctionne pas bien également.</li>
 </ul>
 <br><br>
-<h1>Améliorations prévues de l'interface Web</h1>
+<h3>Améliorations prévues de l'interface Web</h3>
 <ul>
 <li>Dans la page de création d'un quiz : mettre un sélecteur de date en JavaScript.</li>
 <li>Utiliser de l'Ajax dans la page qui affiche les sorties des processus pour que ce soit plus fluide.</li>
