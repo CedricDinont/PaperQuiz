@@ -174,7 +174,7 @@ function doFilesMenu() {
   echo "<option value=\"correction\">correction</option>";
 // echo "<option value=\".\">base</option>";
   echo "</select></div><br>";
-  echo "<input type=\"submit\" class=\"form_elem\" onclick=\"confirmAction(); return false;\">";
+  echo "<button type=\"submit\" class=\"btn btn-primary\" onclick=\"confirmAction(); return false;\">Valider</button>";
 }
 
 function doFileOperation() {

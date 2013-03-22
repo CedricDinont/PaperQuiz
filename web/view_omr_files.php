@@ -20,8 +20,8 @@
 				$taille = sizeof($group);
 				if(sizeof($group)>1)
 				{
-					echo "<button class=\"selection btn\" type=\"button\" onClick=\"doSimpleinSection(this.parentNode,true);\" value=\"tous\">tous</input>";
-					echo "<button class=\"selection btn\" type=\"button\" onClick=\"doSimpleinSection(this.parentNode,false);\" value=\"aucun\">aucun</input>";
+					echo "<button class=\"selection btn\" type=\"button\" onClick=\"doSimpleinSection(this.parentNode,true);\" value=\"tous\">tous</button>";
+					echo "<button class=\"selection btn\" type=\"button\" onClick=\"doSimpleinSection(this.parentNode,false);\" value=\"aucun\">aucun</button>";
 					$count_group++;
 					if($count_group==$nb_group){
 						echo "<ul class=\"last\">";
