@@ -20,7 +20,10 @@ if (isset($_GET['action'])) {
 ?>
 
 <form method="POST" action="configure_quiz.php?action=save_changes&quiz-id=<?php echo $_GET['quiz-id']; ?>">
-<table border>
+<table>
+<tr>
+  <th>Matière</th><th>Questions</th>
+</tr>
 <?php
   $file_content = file($quiz->getDir() . "quiz.conf");
   $line_nb = 0;
@@ -38,8 +41,13 @@ for ($i = 0; $i < $nb_quiz_parts; $i++) {
       }
     }
   }
+  //<span class=\"add-on\">...</span>
   
-  echo "<tr><td>Matière : <input class=\"form_elem\" type=\"text\" name=\"quiz_part_".$i."\" value=\"".$quiz_part."\"></input></td><td>Première question : <input class=\"form_elem\" type=\"text\" name=\"min_question_".$i."\" value=\"".$question_min."\"></input></td><td>Dernière question : <input class=\"form_elem\" type=\"text\" name=\"max_question_".$i."\" value=\"".$question_max."\"></input></td></tr>";
+  echo "<tr><td><input type=\"text\" placeholder=\"Matière\" name=\"quiz_part_".$i."\" value=\"".$quiz_part."\"></input></td>
+	    <td>
+		<input class=\"span2\" placeholder=\"à partir de\" type=\"text\" name=\"min_question_".$i."\" value=\"".$question_min."\"></input>
+		<input class=\"span2\" placeholder=\"jusqu'à\" type=\"text\" name=\"max_question_".$i."\" value=\"".$question_max."\"></input>
+		</div></td></tr>";
 }
 ?>
 </table>

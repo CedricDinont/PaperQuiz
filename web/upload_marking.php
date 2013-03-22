@@ -32,13 +32,13 @@ foreach ($file_content as $line_nb => $line) {
     $params = split(":", $line);
     if (count($params) == 3) {
       $quiz_part = $params[0];
-      echo "<tr><td>Matière : ".$quiz_part."</td><td>Fichier : <input class=\"form_elem\" type=\"file\" name=\"marking_files[".$quiz_part."]\"></td></tr>";
+      echo "<tr><td>Matière : ".$quiz_part."</td><td>Fichier : <input type=\"file\" name=\"marking_files[".$quiz_part."]\"></td></tr>";
     }
   }
 }
 ?>
 </table>
-<input type="submit" class="form_elem"></input>
+<button type="submit" class="btn btn-primary"><i class="icon-save"></i> Envoyer</Button>
 </form>
 
 <?php

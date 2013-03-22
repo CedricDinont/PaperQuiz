@@ -1,7 +1,7 @@
 <?php
-	require_once('Quiz.class.php');
-	require_once('quiz_common.php');
-   require_once('view_files_common.php');
+    require_once('Quiz.class.php');
+    require_once('quiz_common.php');
+    require_once('view_files_common.php');
 	
 	$quiz = Quiz::getQuizById($_GET['quiz-id']);
         doFileOperation();
