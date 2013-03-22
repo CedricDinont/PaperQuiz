@@ -3,22 +3,16 @@
 	require_once('quiz_common.php');
 
 	$quiz = Quiz::getQuizById($_GET['quiz-id']);
-?>
-<html>
-<head>
-        <title>Quiz workflow</title>
-        <link rel="stylesheet" type="text/css" href="style/quiz.css" />
-</head>
-<body>
-Que voulez-vous faire sur le quiz 
+?><?php $page_title='Quiz workflow'; include 'header.php' ?>
+
+<p>Que voulez-vous faire sur le quiz 
 <?php
-	echo $quiz->getName();
-?> ?
+	if ($quiz) echo $quiz->getName(); else echo 'unkown';
+?> ?</p>
 
 <ul>
-
 <li>Quiz
-<ul>
+<ul class="nav nav-pills">
 <li>
 <a href="configure_quiz.php?quiz-id=<?php echo $_GET['quiz-id'] ?>">Configurer le quiz</a>
 </li>
@@ -121,5 +115,4 @@ Traitements sur les images scannées
 
 <br>
 <?php  doMainMenu() ?>
-</body>
-</html>
+<?php include 'footer.html' ?>

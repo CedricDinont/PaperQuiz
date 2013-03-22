@@ -3,23 +3,18 @@
 
 	$max_date = strtotime("- 1 month -1 day");
 ?>
-<html>
-<head>
-	<title>Quiz</title>
-        <link rel="stylesheet" type="text/css" href="style/quiz.css" />
-	<script>
-		function init() {
-			size1 = document.getElementById("current_month_quizes").style.width;
-                        size2 = document.getElementById("old_quizes").style.width;
-			if (size1 < size2) {
-				document.getElementById("current_month_quizes").style.width = size2;
-			} else {
-				document.getElementById("old_quizes").style.width = size1;
-			}
+<?php $page_title='Quiz'; include 'header.php' ?>
+<script>
+	function init() {
+		size1 = document.getElementById("current_month_quizes").style.width;
+		size2 = document.getElementById("old_quizes").style.width;
+		if (size1 < size2) {
+			document.getElementById("current_month_quizes").style.width = size2;
+		} else {
+			document.getElementById("old_quizes").style.width = size1;
 		}
-	</script>
-</head>
-<body onload="">
+	}
+</script>
 Que voulez-vous faire ?
 <ul>
 <li><a href="create_quiz.php">Créer un quiz</a></li>
@@ -51,7 +46,7 @@ foreach ($quizes as $quiz_name => $quiz) {
 ?>
 </select>
 </td><td style="border:0px;">
-<input type="submit" value="Go" class="form_elem">
+<button type="submit" class="btn btn-primary">Go</button>
 </td>
 </tr>
 </table>
@@ -70,7 +65,7 @@ foreach ($quizes as $quiz_name => $quiz) {
 }
 ?>
 </select>
-<input type="submit" value="Go" class="form_elem">
+<button type="submit" class="btn btn-primary">Go</button>
 </li>
 </ul>
 </form>
@@ -78,4 +73,4 @@ foreach ($quizes as $quiz_name => $quiz) {
 </li>
 <li><a href="help.php">Lire l'aide</a></li>
 </ul>
-</body>
+<?php include 'footer.html' ?>

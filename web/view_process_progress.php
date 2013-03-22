@@ -14,17 +14,12 @@
 	  $filename_base = $quiz->getProcessesDir().$quiz->getLastProcessPid();
 	  $hasToRefreshPage = FALSE;
 	}
-?>
-<html>
-<head>
-        <title>Visualisation des sorties du processus</title>
-        <link rel="stylesheet" type="text/css" href="style/quiz.css" />
+?><?php $page_title='Visualisation des sorties du processus'; include 'simple_header.php' ?>
 <?php 
   if ($hasToRefreshPage) { ?>
 	<meta http-equiv="refresh" content="5">
 <?php } ?>
-</head>
-<body>
+<?php include 'end_header.php' ?>
 <?php doMainMenu(); ?>
 <hr>
 <table width="100%">
@@ -48,5 +43,4 @@
 <br>
 <hr>
 <?php doMainMenu(); ?>
-
-</body>
+<?php include 'footer.html' ?>

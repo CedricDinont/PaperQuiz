@@ -5,12 +5,7 @@
 	$quiz = Quiz::getQuizById($_GET['quiz-id']);
         $nb_quiz_parts = 10;
 ?>
-<html>
-<head>
-	<title>Configuration du quiz</title>
-        <link rel="stylesheet" type="text/css" href="style/quiz.css" />
-</head>
-<body>
+<?php $page_title='Configuration du quiz'; include 'header.php' ?>
 <?php
 if (isset($_GET['action'])) {
   $file = fopen($quiz->getDir() . "quiz.conf", "w");
@@ -48,7 +43,7 @@ for ($i = 0; $i < $nb_quiz_parts; $i++) {
 }
 ?>
 </table>
-<input type="submit" class="form_elem"></input>
+<button type="submit" class="btn btn-primary">Enregistrer</button>
 </form>
 
 <?php
@@ -57,5 +52,4 @@ for ($i = 0; $i < $nb_quiz_parts; $i++) {
 
 <br>
 <?php  doMainMenu() ?>
-</body>
-</html>
+<?php include 'footer.html' ?>

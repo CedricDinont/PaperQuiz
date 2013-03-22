@@ -6,12 +6,7 @@
   $mois = date("m");
   $annee = date("Y");
 ?>
-<html>
-<head>
-        <title>Création d'un quiz</title>
-        <link rel="stylesheet" type="text/css" href="style/quiz.css" />
-</head>
-<body>
+<?php $page_title='Création d\'un quiz'; include 'header.php' ?>
 <?php
 	if (isset($_POST['action']) && ($_POST['action'] == "create")) {
 		$name = str_replace(' ','_',$_POST['quiz-name']);
@@ -106,9 +101,8 @@ Veuillez renplir le formulaire suivant en respectant les règles suivantes :
 </tr><tr><td>Groupe d'étudiants :</td><td> <input type="text" name="group" class="form_elem"></td>
 </tr><tr><td>Intitulé du quiz : </td><td><input type="text" name="quiz-name" class="form_elem"></td>
 </table>
-	<input type="submit" class="form_elem">
+	<button type="submit" class="btn btn-primary">Créer le quiz</button>
 </form>
 <?php }
   doMainMenu() ?>
-</body>
-</html>
+<?php include 'footer.html' ?>

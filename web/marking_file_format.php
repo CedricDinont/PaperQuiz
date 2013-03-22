@@ -6,13 +6,7 @@ if (isset($_GET['quiz-id'])) {
         $quiz = Quiz::getQuizById($_GET['quiz-id']);
   }
 ?>
-<html>
-<head>
-        <title>Format de fichier des corrigés</title>
-        <link rel="stylesheet" type="text/css" href="style/quiz.css" />
-</head>
-<body>
-<h1>Format de fichier des corrigés</h1>
+<?php $page_title='Format de fichier des corrigés'; include 'header.php' ?>
 Chaque ligne correspond à la description d'une question. On peut insérer des commentaires avec le caractère # en début de ligne.<br />
 <br/ >
 Chaque ligne de description d'une question est un ensemble de champs séparés par un point-virgule. Les 3 premiers champs sont obligatoires. Tous les autres sont optionnels. Si on spécifie un champ optionnel, on n'est pas obligé de spécifier ceux qui le suivent.
@@ -64,7 +58,5 @@ Voici la liste des champs :
 </ol>
 <br>
 <?php  doMainMenu() ?>
-
-</body>
-</html>
+<?php include 'footer.html' ?>
 

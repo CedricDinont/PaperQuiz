@@ -3,13 +3,7 @@
 	require_once('quiz_common.php');
 
 	$quiz = Quiz::getQuizById($_GET['quiz-id']);
-?>
-<html>
-<head>
-	<title>Sélection d'un fichier d'information sur les étudiants</title>
-        <link rel="stylesheet" type="text/css" href="style/quiz.css" />
-</head>
-<body>
+?><?php $page_title='Sélection d\'un fichier d\'information sur les étudiants'; include 'header.php' ?>
 <?php
 	if (isset($_POST['action']) && ($_POST['action'] == "update-students-file")) {
 	  $src_file = $students_dir . $_POST['students-file'];
@@ -42,10 +36,9 @@ foreach ($files as $nb => $file) {
 }
 ?>
 </select>
-<input type="submit" class="form_elem">
+<button type="submit" class="btn btn-primary">Sélectionner</button>
 </form>
   <?php } ?>
 <br>
 <?php  doMainMenu() ?>
-</body>
-</html>
+<?php include 'footer.html' ?>

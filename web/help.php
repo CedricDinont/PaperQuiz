@@ -6,12 +6,7 @@ if (isset($_GET['quiz-id'])) {
         $quiz = Quiz::getQuizById($_GET['quiz-id']);
   }
 ?>
-<html>
-<head>
-        <title>Aide</title>
-        <link rel="stylesheet" type="text/css" href="style/quiz.css" />
-</head>
-<body>
+<?php $page_title='Aide'; include 'header.php' ?>
 <h1>Description générale de l'application</h1>
 
 Quiz permet de corriger des QCM réalisés sur papier.
@@ -112,6 +107,4 @@ A la fin de la correction, on archive le sujet du quiz avec les feuilles de rép
 </ul>
 <br>
 <?php  doMainMenu() ?>
-
-</body>
-</html>
+<?php include 'footer.html' ?>

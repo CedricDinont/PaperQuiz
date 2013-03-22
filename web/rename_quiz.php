@@ -4,24 +4,19 @@
 
 	$q = Quiz::getQuizById($_GET['quiz-id']);
 
-          if ($q->hasRunningProcess()) {
-                        echo "<html><head><title>Erreur</title></head><body>Erreur: un processus est actif pour ce quiz. Vous ne pouvez pas le renommer actuellement.<br><br>";
+          if ($q && $q->hasRunningProcess()) {
+		$page_title='Erreur'; include 'header.php';
+                        echo "<h2>un processus est actif pour ce quiz. Vous ne pouvez pas le renommer actuellement.</h2>";
                         global $quiz;
                         $quiz = $q;
                         doMainMenu();
-                        echo "</body></html>";
+                        include 'footer.html';
                         exit();
           }
 
 	$quiz = $q;
 
-?>
-<html>
-<head>
-	<title>Renommer un quiz</title>
-        <link rel="stylesheet" type="text/css" href="style/quiz.css" />
-</head>
-<body>
+?><?php $page_title='Renommer un quiz'; include 'header.php' ?>
 <?php
 	if (isset($_POST['action']) && ($_POST['action'] == "rename")) {
 	  $new_dir_name=str_replace($quiz->getName(), $_POST['new-name'], $quiz->getDir());
@@ -39,10 +34,9 @@
 <tr><td>Ancien nom : </td><td><?php echo $quiz->getName(); ?></td></tr>
 <tr><td>Nouveau nom : </td><td><input class="form_elem" type="text" name="new-name" size="40" value="<?php echo $quiz->getName(); ?>"></td></tr>
 </table>
-	<input type="submit" class="form_elem">
+	<button type="submit" class="btn-primary btn">Renommer</button>
 </form>
   <?php } ?>
 <br>
 <?php  doMainMenu() ?>
-</body>
-</html>
+<?php include 'footer.html' ?>

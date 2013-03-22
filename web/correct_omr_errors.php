@@ -195,10 +195,7 @@ if ($current_image != "") {
   loadMrFile($quiz->getDir().$current_dir.$current_image.$mr_file_ext);
 }
 
-?><html>
-<head>
-	<title>Correction des erreurs de reconnaissance des marques</title>
-        <link rel="stylesheet" type="text/css" href="style/quiz.css" />
+?><?php $page_title='Correction des erreurs de reconnaissance des marques'; include 'simple_header.php' ?>
 	<script>
           changed = false;
           zoomFactor = 0.1
@@ -399,5 +396,6 @@ function alertChanged() {
 </form>
 <iframe id="findLogin" style="display: none; position: absolute; left: 400px; top: 400px; width: 500px; height: 450px; background-color: grey;"></iframe>
 <div id="findLoginHideMenu" style="display: none; position: absolute; left: 875px; top: 400px;"><button class="form_elem" width="25px" onclick="hideFindLogin(); return false;">X</button></div>
+<script type="application/javascript" src="js/bootstrap.min.js"/>
 </body>
 </html>

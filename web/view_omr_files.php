@@ -20,8 +20,8 @@
 				$taille = sizeof($group);
 				if(sizeof($group)>1)
 				{
-					echo "<input class=\"selection\" type=\"button\" onClick=\"doSimpleinSection(this.parentNode,true);\" value=\"tous\"></input>";
-					echo "<input class=\"selection\" type=\"button\" onClick=\"doSimpleinSection(this.parentNode,false);\" value=\"aucun\"></input>";
+					echo "<button class=\"selection btn\" type=\"button\" onClick=\"doSimpleinSection(this.parentNode,true);\" value=\"tous\">tous</input>";
+					echo "<button class=\"selection btn\" type=\"button\" onClick=\"doSimpleinSection(this.parentNode,false);\" value=\"aucun\">aucun</input>";
 					$count_group++;
 					if($count_group==$nb_group){
 						echo "<ul class=\"last\">";
@@ -63,14 +63,8 @@
 			echo "</ul>";
 		}
    }
-?>
-<html>
-<head>
-	<title>Visualisation des fichiers liés à la reconnaissance des marques</title>
-   <link rel="stylesheet" type="text/css" href="style/quiz.css" />
-   <script type="text/javascript" src="./js/fichier.js"></script>
-</head>
-<body>
+?><?php $page_title='Visualisation des fichiers liés à la reconnaissance des marques'; include 'header.php' ?>
+<script type="text/javascript" src="./js/fichier.js"></script>
 <?php doMainMenu(); ?>
 <hr>
 <form method="POST" action="view_omr_files.php?quiz-id=<?php echo $quiz->getId(); ?>" name="file_operations_form">
@@ -130,5 +124,4 @@ displaydir($quiz->getOmrErrorDir());
 <br>
 <hr>
 <?php  doMainMenu() ?>
-</body>
-</html>
+<?php include 'footer.html' ?>

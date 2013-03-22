@@ -4,12 +4,7 @@
 
         $quiz = Quiz::getQuizById($_GET['quiz-id']);
 ?>
-<html>
-<head>
-        <title>Récupérer les images scannées depuis le FTP de dev.isen.fr</title>
-        <link rel="stylesheet" type="text/css" href="style/quiz.css" />
-</head>
-<body>
+<?php $page_title='Récupérer les images scannées depuis le FTP de dev.isen.fr'; include 'header.php' ?>
 <?php  doMainMenu() ?>
 <hr>
 <?php
@@ -52,6 +47,4 @@ if ($nbFiles == 0) {
 <br /><br />
 <hr>
 <?php  doMainMenu() ?>
-</body>
-</html>
-
+<?php include 'footer.html' ?>

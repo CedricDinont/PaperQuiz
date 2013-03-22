@@ -4,15 +4,9 @@
 
 	$quiz = Quiz::getQuizById($_GET['quiz-id']);
 ?>
-<html>
-<head>
-	<title>Supprimer un quiz</title>
-        <link rel="stylesheet" type="text/css" href="style/quiz.css" />
-</head>
-<body>
+<?php $page_title='Supprimer un quiz'; include 'header.php' ?>
 Fonctionnalité non disponible sur cette interface web.<br>
 	  Demandez à <?php echo $admin_name; ?> pour supprimer un quiz.<br>
 <br>
 <?php  doMainMenu() ?>
-</body>
-</html>
+<?php include 'footer.html' ?>

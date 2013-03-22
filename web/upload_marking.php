@@ -3,13 +3,7 @@
 	require_once('quiz_common.php');
 
 	$quiz = Quiz::getQuizById($_GET['quiz-id']);
-?>
-<html>
-<head>
-	<title>Déposer un fichier de correction</title>
-        <link rel="stylesheet" type="text/css" href="style/quiz.css" />
-</head>
-<body>
+?><?php $page_title='Déposer un fichier de correction'; include 'header.php' ?>
 <?php
 if (isset($_POST['action']) && ($_POST['action'] == "upload-marking")) {
   foreach ($_FILES["marking_files"]["error"] as $key => $error) {
@@ -53,5 +47,4 @@ foreach ($file_content as $line_nb => $line) {
 
 <br>
 <?php  doMainMenu() ?>
-</body>
-</html>
+<?php include 'footer.html' ?>

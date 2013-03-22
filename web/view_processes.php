@@ -4,13 +4,7 @@ require_once('Quiz.class.php');
 require_once('quiz_common.php');
 
 $quiz = Quiz::getQuizById($_GET['quiz-id']);
-?>
-<html>
-<head>
-        <title>Processus terminés</title>
-        <link rel="stylesheet" type="text/css" href="style/quiz.css" />
-</head>
-<body>
+?><?php $page_title='Processus terminés'; include 'header.php' ?>
 <ul>
 <?php
 $processes=Processus::getAllProcesses($quiz);
@@ -32,5 +26,4 @@ foreach ($processes as $pid => $processus) {
 </ul>
 <br>
 <?php  doMainMenu() ?>
-</body>
-</html>
+<?php include 'footer.html' ?>

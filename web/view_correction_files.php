@@ -5,13 +5,7 @@
 
 	$quiz = Quiz::getQuizById($_GET['quiz-id']);
         doFileOperation();
-?>
-<html>
-<head>
-	<title>Visualisation des fichiers liés à la correction</title>
-        <link rel="stylesheet" type="text/css" href="style/quiz.css" />
-</head>
-<body>
+?><?php $page_title='Visualisation des fichiers liés à la correction'; include 'header.php' ?>
 <form method="POST" action="view_correction_files.php?quiz-id=<?php echo $quiz->getId(); ?>" name="file_operations_form">
 <h1>Fichiers du répertoire de correction</h1>
 <ul>
@@ -42,5 +36,4 @@
 <br><br>
 <br>
 <?php  doMainMenu() ?>
-</body>
-</html>
+<?php include 'footer.html' ?>
