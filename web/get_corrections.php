@@ -22,6 +22,22 @@ if ($no_file) {
 }
 ?>
 </ul>
+
+<ul>
+<?php
+$no_file = true;
+$d = dir($quiz->getCorrectionDir());
+while (false !== ($entry = $d->read())) {
+  if (substr_compare($entry, ".ods", strlen($entry) - 4) == 0) {
+    $no_file = false;
+    echo "<li><a href=\"view_file.php?quiz-id=".$_GET['quiz-id']."&attachment=true&filename=correction/",rawurlencode($entry),"\"><i class='icon-download'></i> ".$entry."</a></li>";
+  }
+}
+if ($no_file) {
+  echo "<li class='alert alert-error'>Aucun fichier OpenOffice de résultat n'a été généré pour l'instant.</li>";
+}
+?>
+</ul>
 <br>
 <?php  doMainMenu() ?>
 <?php include 'footer.html' ?>
