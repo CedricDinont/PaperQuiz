@@ -18,7 +18,7 @@ while (false !== ($entry = $d->read())) {
   }
 }
 if ($no_file) {
-  echo "<li class='error'>Aucun fichier CSV de résultat n'a été généré pour l'instant.</li>";
+  echo "<li class='alert alert-error'>Aucun fichier CSV de résultat n'a été généré pour l'instant.</li>";
 }
 ?>
 </ul>
