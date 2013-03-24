@@ -326,13 +326,13 @@ function alertChanged() {
   <input type="hidden" name="action" value="">
   <input type="hidden" name="current_image" value="<?php echo $current_image; ?>">
   <div class="btn-group">
-    <button onclick="normalZoom(); return false;" class="btn"><i class="icon-screenshot"></i></button>
-    <button onclick="fitHeight(); return false;" class="btn" ><i class="icon-resize-vertical"></i></button>
-    <button onclick="fitWidth(); return false;" class="btn"><i class="icon-resize-horizontal"></i></button>
-    <button onclick="zoomIn(); return false;" class="btn"><i class="icon-zoom-in"></i></button>
-    <button onclick="zoomOut(); return false;" class="btn"><i class="icon-zoom-out"></i></button>
+    <button onclick="normalZoom(); return false;" class="btn btn-small"><i class="icon-screenshot"></i></button>
+    <button onclick="fitHeight(); return false;" class="btn btn-small" ><i class="icon-resize-vertical"></i></button>
+    <button onclick="fitWidth(); return false;" class="btn btn-small"><i class="icon-resize-horizontal"></i></button>
+    <button onclick="zoomIn(); return false;" class="btn btn-small"><i class="icon-zoom-in"></i></button>
+    <button onclick="zoomOut(); return false;" class="btn btn-small"><i class="icon-zoom-out"></i></button>
   </div>
-  <select name="mr_file" class="form_elem" onchange="mrChanged();">
+  <select name="mr_file" class="btn btn-small" onchange="mrChanged();">
 <?php 
   if (file_exists($quiz->getDir().$current_dir.$current_image.".mmr_data")) {
     echo "<option value=\".mmr_data\" ";
@@ -347,14 +347,14 @@ function alertChanged() {
 <option value=".omr3_data" <?php if ($mr_file_ext == ".omr3_data") { echo "selected"; } ?> >OMR3</option>
   </select>
   <div class="btn-group">
-  <button onclick="applyChanges(); return false;" alt="Apply" class="btn btn-primary"><i class="icon-save"></i></button>
-  <button onclick="discardChanges(); return false;" alt="Discard" class="btn"><i class="icon-undo"></i></button>
+  <button onclick="applyChanges(); return false;" alt="Apply" class="btn btn-primary btn-small"><i class="icon-save"></i></button>
+  <button onclick="discardChanges(); return false;" alt="Discard" class="btn btn-small"><i class="icon-undo"></i></button>
   </div>
   <div class="btn-group">
-    <button onclick="previousImage(); return false;" class="btn"><i class="icon-chevron-left"></i></button>
-    <button onclick="nextImage(); return false;" class="btn"><i class="icon-chevron-right"></i></button>
+    <button onclick="previousImage(); return false;" class="btn btn-small"><i class="icon-chevron-left"></i></button>
+    <button onclick="nextImage(); return false;" class="btn btn-small"><i class="icon-chevron-right"></i></button>
   </div>
-  <select name="image_file" onchange="imageChanged();">
+  <select name="image_file" class="btn btn-small" onchange="imageChanged();">
 <?php 
 	    foreach ($images as $nb => $image) {
 	    echo "<option value=\"".$image."\" ";
@@ -366,17 +366,17 @@ function alertChanged() {
 	    
 ?>
   </select>
-  <select name="directory" class="form_elem" onchange="directoryChanged();">
+  <select name="directory" class="btn btn-small" onchange="directoryChanged();">
 	    <option value="omr_errors" <?php if ($current_dir == "omr_errors/") echo "selected"; ?>>Errors</option>
      <option value="omr_output" <?php if ($current_dir != "omr_errors/") echo "selected"; ?>>Output</option>
   </select>
   <div class="btn-group">
-    <button onclick="showFindLogin(); return false;" class="btn btn-info">Find login</button>
-    <button onclick="goToQuizMenu(); return false;" class="btn btn-info">Quiz menu</button>
+    <button onclick="showFindLogin(); return false;" class="btn btn-info btn-small disabled">Find login</button>
+    <button onclick="goToQuizMenu(); return false;" class="btn btn-primary btn-small">Quiz menu</button>
   </div>
   </div></div>
   <div id="image_div" name="image_div" style="border:Opx;margin:0px;width:65%; height:95%;background-color: #CCCCCC;
-	   display:block; overflow:auto;position:absolute; left:0px;top:45px;">
+	   display:block; overflow:auto;position:absolute; left:0px;top:40px;">
 	    <?php if ($current_image != "") { ?>
 					      <img onClick="zoomIn();" id="image" name="image" src="view_file.php?quiz-id=<?php echo $quiz->getId(); ?>&filename=<?php echo $current_dir.$current_image; if ($mr_file_ext == ".omr2_data") {echo "_corrected2.jpg";} else if ($mr_file_ext == ".omr3_data") {echo "_corrected3.jpg";} else { echo "_corrected.jpg"; } ?>">
 					      <?php } else { echo "Aucune image dans ce répertoire."; }?>
@@ -384,7 +384,7 @@ function alertChanged() {
 
 <div id="table_div" style="border:Opx;margin:0px;width:35%; height:95%;background-color: #CCCCCC;
 	   display:block; overflow:auto;position:absolute;
-	   left:65%;top:45px;">
+	   left:65%;top:40px;">
 
 <div >
 <span style="position:absolute; left:0px; top:0px;">
@@ -405,8 +405,10 @@ function alertChanged() {
 </div>
 </div>
 </form>
+<!--
 <iframe id="findLogin" style="display: none; position: absolute; left: 400px; top: 400px; width: 500px; height: 450px; background-color: grey;"></iframe>
 <div id="findLoginHideMenu" style="display: none; position: absolute; left: 875px; top: 400px;"><button class="btn btn-primary" width="25px" onclick="hideFindLogin(); return false;">X</button></div>
 <script type="application/javascript" src="js/bootstrap.min.js"/>
+-->
 </body>
 </html>

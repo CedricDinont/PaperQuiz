@@ -18,7 +18,7 @@
 Si le fichier d'information sur les étudiants que vous recherchez ne se trouve pas dans la liste, demandez à <?php echo $admin_name; ?> de l'ajouter.
 <br><br>
 Fichier d'informations sur les étudiants :
-<form method="POST" action="select_standard_students_file.php?quiz-id=<?php echo $_GET['quiz-id'] ?>">
+<form method="POST" class="form-horizontal" action="select_standard_students_file.php?quiz-id=<?php echo $_GET['quiz-id'] ?>">
 <input type="hidden" name="action" value="update-students-file">
 <select name="students-file" class="form_elem">
 <?php

@@ -6,7 +6,7 @@ if (isset($_GET['quiz-id'])) {
         $quiz = Quiz::getQuizById($_GET['quiz-id']);
   }
 ?>
-<?php $page_title='Aide'; include 'header.php' ?>
+<?php $active_page='help'; $page_title='Aide'; include 'header.php' ?>
 <h3>Description générale de l'application</h3>
 
 Quiz permet de corriger des QCM réalisés sur papier.

@@ -3,7 +3,7 @@
 
 	$max_date = strtotime("- 1 month -1 day");
 ?>
-<?php $page_title='Quiz'; include 'header.php' ?>
+<?php $active_page='home'; $page_title='Quiz'; include 'header.php' ?>
 <script>
 	function init() {
 		size1 = document.getElementById("current_month_quizes").style.width;
@@ -17,7 +17,7 @@
 </script>
 Que voulez-vous faire ?
 <ul>
-<li><a href="create_quiz.php"><i class="icon-new-alt"></i> Créer un quiz</a></li>
+<li><a class="btn btn-primary" href="create_quiz.php"><i class="icon-file-alt"></i> Créer un quiz</a></li>
 <li>Accéder à un quiz existant :
 <ul>
 <li> 
@@ -46,14 +46,14 @@ foreach ($quizes as $quiz_name => $quiz) {
 ?>
 </select>
 </td><td style="border:0px;">
-<button type="submit" class="btn btn-primary"><i class="icon-folder"></i> Go</button>
+<button type="submit" class="btn btn-primary"><i class="icon-folder-open"></i> Go</button>
 </td>
 </tr>
 </table>
 </form>
 </li>
 <li>
-<form action="quiz_workflow.php" method="get">
+<form action="quiz_workflow.php" class="form-horizontal" method="get">
 Archives : <br/>
 <select name="quiz-id" class="form_elem" id="old_quizes">
 <?php
@@ -65,12 +65,11 @@ foreach ($quizes as $quiz_name => $quiz) {
 }
 ?>
 </select>
-<button type="submit" class="btn btn-primary"><i class="icon-folder"></i> Go</button>
+<button type="submit" class="btn btn-primary"><i class="icon-folder-open"></i> Go</button>
 </li>
 </ul>
 </form>
 
 </li>
-<li><a href="help.php">Lire l'aide</a></li>
 </ul>
 <?php include 'footer.html' ?>
