@@ -17,7 +17,7 @@
 </script>
 Que voulez-vous faire ?
 <ul>
-<li><a href="create_quiz.php">Créer un quiz</a></li>
+<li><a href="create_quiz.php"><i class="icon-new-alt"></i> Créer un quiz</a></li>
 <li>Accéder à un quiz existant :
 <ul>
 <li> 
@@ -46,7 +46,7 @@ foreach ($quizes as $quiz_name => $quiz) {
 ?>
 </select>
 </td><td style="border:0px;">
-<button type="submit" class="btn btn-primary">Go</button>
+<button type="submit" class="btn btn-primary"><i class="icon-folder"></i> Go</button>
 </td>
 </tr>
 </table>
@@ -65,7 +65,7 @@ foreach ($quizes as $quiz_name => $quiz) {
 }
 ?>
 </select>
-<button type="submit" class="btn btn-primary">Go</button>
+<button type="submit" class="btn btn-primary"><i class="icon-folder"></i> Go</button>
 </li>
 </ul>
 </form>
