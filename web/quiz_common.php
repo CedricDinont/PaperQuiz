@@ -9,11 +9,7 @@ function doMainMenu() {
 	if (isset($quiz)) {
 	  echo " - <a href=\"quiz_workflow.php?quiz-id=".$quiz->getId()."\">Retour au menu du quiz</a>";
 	}
-	echo " - <a href=\"help.php";
-	if (isset($quiz)) {
-	  echo "?quiz-id=".$quiz->getId();
-	}
-	echo "\">Aide</a></div>";
+	echo "</div>";
 }
 
 function checkParentDirectoryInFilename($filename) {
