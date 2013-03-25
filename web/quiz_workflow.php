@@ -52,7 +52,7 @@ Traitements sur les images scannées
 </div>
 
 <div class="row-fluid">
-<div class="hero-unit span8 offset2">
+<div class="hero-unit span8 offset1">
 <h3>Correction</h3>
 <ul class="icons">
 <li>
