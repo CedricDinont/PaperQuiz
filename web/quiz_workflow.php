@@ -115,6 +115,4 @@ Traitements sur les images scannées
 </ul>
 </div>
 </div>
-
-<?php  doMainMenu() ?>
 <?php include 'footer.html' ?>
