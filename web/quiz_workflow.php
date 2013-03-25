@@ -12,7 +12,7 @@
 
 <div class="row-fluid">
 <div class="span6">
-<h3>Quiz</h3>
+<h3 class="page-header">Quiz</h3>
 <ul class="nav nav-pills">
 <li>
 <a class="btn" href="configure_quiz.php?quiz-id=<?php echo $_GET['quiz-id'] ?>"><i class="icon-cog"></i> Configurer le quiz</a>
@@ -27,7 +27,7 @@
 </div>
 
 <div class="span6">
-<h3>Reconnaissance des marques</h3>
+<h3 class="page-header">Reconnaissance des marques</h3>
 <ul>
 <li>
 Récupérer les images scannées
@@ -52,8 +52,8 @@ Traitements sur les images scannées
 </div>
 
 <div class="row-fluid">
-<div class="hero-unit span8 offset1">
-<h3>Correction</h3>
+<div class="span8 offset1">
+<h3 class="page-header">Correction</h3>
 <ul class="icons">
 <li>
 <a href="prepare_correction.php?quiz-id=<?php echo $_GET['quiz-id'] ?>"><i class="icon-tasks"></i> Préparer la correction</a>
@@ -89,7 +89,7 @@ Traitements sur les images scannées
 
 <div class="row-fluid">
 <div class="span6">
-<h3>Processus</h3>
+<h3 class="page-header">Processus</h3>
 <ul class=" nav nav-pills">
 <li>
 <a class="btn" href="view_process_progress.php?quiz-id=<?php echo $quiz->getId() ?>"><i class="icon-dashboard"></i> Voir la progression du processus courant</a>
@@ -101,7 +101,7 @@ Traitements sur les images scannées
 
 
 <div class="span6">
-<h3>Fichiers</h3>
+<h3 class="page-header">Fichiers</h3>
 <ul class=" nav nav-pills">
 <li>
 <a class="btn" href="view_omr_files.php?quiz-id=<?php echo $quiz->getId() ?>"><i class="icon-download"></i> Reconnaissance des marques</a>
