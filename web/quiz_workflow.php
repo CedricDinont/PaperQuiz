@@ -11,7 +11,7 @@
 ?> ?</p>
 
 <ul>
-<li>Quiz
+<li><h3>Quiz</h3>
 <ul class="nav nav-pills">
 <li>
 <a class="btn" href="configure_quiz.php?quiz-id=<?php echo $_GET['quiz-id'] ?>"><i class="icon-cog"></i> Configurer le quiz</a>
@@ -26,21 +26,22 @@
 </li>
 <br />
 
-<li>Reconnaissance des marques
+<li><h3>Reconnaissance des marques</h3>
 <ul>
 <li>
-Récupérer les images scannées <a href="fetch_mails.php?quiz-id=<?php echo $_GET['quiz-id'] ?>"><i class="icon-envelope"></i> sur le mail qcm.isen@gmail.com</a> / <a href="get_ftp_files.php?quiz-id=<?php echo $_GET['quiz-id'] ?>"><i class="icon-cloud-download"></i> sur le FTP de dev.isen.fr</a>
+Récupérer les images scannées
+  <div class="nav nav-pills">
+  <a class="btn" title="sur le mail qcm.isen@gmail.com" href="fetch_mails.php?quiz-id=<?php echo $_GET['quiz-id'] ?>"><i class="icon-envelope"></i>&nbsp;</a>
+  <a class="btn btn-primary" title="sur le FTP de dev.isen.fr" href="get_ftp_files.php?quiz-id=<?php echo $_GET['quiz-id'] ?>"><i class="icon-cloud-download"></i>&nbsp;</a>
+  </div>
 </li>
 <li>
 Traitements sur les images scannées
-<ul>
-	<li>
-		<a href="correct_images_rotation.php?quiz-id=<?php echo $_GET['quiz-id'] ?>"><i class="icon-facetime-video"></i> Corriger la rotation des images</a> / <a href="omr.php?quiz-id=<?php echo $_GET['quiz-id'] ?>"><i class="icon-barcode"></i> Lancer la reconnaissance des marques</a>
-	</li>
-	<li>
-		<a href="rotate_and_omr.php?quiz-id=<?php echo $_GET['quiz-id'] ?>"><i class="icon-facetime-video"></i><i class="icon-barcode"></i> Corriger la rotation et reconnaître les marques en une seule étape</a>
-	</li>
-</ul>
+<div class="nav nav-pills">
+	<a class="btn" title="Corriger la rotation des images" href="correct_images_rotation.php?quiz-id=<?php echo $_GET['quiz-id'] ?>"><i class="icon-facetime-video"></i>&nbsp;</a>
+	<a class="btn" title="Lancer la reconnaissance des marques" href="omr.php?quiz-id=<?php echo $_GET['quiz-id'] ?>"><i class="icon-barcode"></i>&nbsp;</a>
+	<a class="btn btn-primary" title="Corriger la rotation et reconnaître les marques en une seule étape" href="rotate_and_omr.php?quiz-id=<?php echo $_GET['quiz-id'] ?>"><i class="icon-facetime-video"></i> <i class="icon-barcode"></i></a>
+</div>
 </li>
 <li>
 <a href="correct_omr_errors.php?quiz-id=<?php echo $_GET['quiz-id'] ?>">Corriger les erreurs de reconnaissance</a>
@@ -49,7 +50,7 @@ Traitements sur les images scannées
 </li>
 <br />
 
-<li>Correction
+<li><h3>Correction</h3>
 <ul class="icons">
 <li>
 <a href="prepare_correction.php?quiz-id=<?php echo $_GET['quiz-id'] ?>"><i class="icon-tasks"></i> Préparer la correction</a>
@@ -83,7 +84,7 @@ Traitements sur les images scannées
 </li>
 <br />
 
-<li>Processus
+<li><h3>Processus</h3>
 <ul class=" nav nav-pills">
 <li>
 <a class="btn" href="view_process_progress.php?quiz-id=<?php echo $quiz->getId() ?>"><i class="icon-dashboard"></i> Voir la progression du processus courant</a>
@@ -95,7 +96,7 @@ Traitements sur les images scannées
 </li>
 <br />
 
-<li>Fichiers
+<li><h3>Fichiers</h3>
 <ul class=" nav nav-pills">
 <li>
 <a class="btn" href="view_omr_files.php?quiz-id=<?php echo $quiz->getId() ?>"><i class="icon-download"></i> Reconnaissance des marques</a>
