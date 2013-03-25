@@ -10,8 +10,9 @@
 	if ($quiz) echo $quiz->getName(); else echo 'unkown';
 ?> ?</p>
 
-<ul>
-<li><h3>Quiz</h3>
+<div class="row-fluid">
+<div class="span6">
+<h3>Quiz</h3>
 <ul class="nav nav-pills">
 <li>
 <a class="btn" href="configure_quiz.php?quiz-id=<?php echo $_GET['quiz-id'] ?>"><i class="icon-cog"></i> Configurer le quiz</a>
@@ -23,10 +24,10 @@
 <a class="btn" href="remove_quiz.php?quiz-id=<?php echo $_GET['quiz-id'] ?>"><i class="icon-trash"></i> Supprimer le quiz</a>
 </li>
 </ul>
-</li>
-<br />
+</div>
 
-<li><h3>Reconnaissance des marques</h3>
+<div class="span6">
+<h3>Reconnaissance des marques</h3>
 <ul>
 <li>
 Récupérer les images scannées
@@ -47,10 +48,12 @@ Traitements sur les images scannées
 <a href="correct_omr_errors.php?quiz-id=<?php echo $_GET['quiz-id'] ?>">Corriger les erreurs de reconnaissance</a>
 </li>
 </ul>
-</li>
-<br />
+</div>
+</div>
 
-<li><h3>Correction</h3>
+<div class="row-fluid">
+<div class="hero-unit span10 offset1">
+<h3>Correction</h3>
 <ul class="icons">
 <li>
 <a href="prepare_correction.php?quiz-id=<?php echo $_GET['quiz-id'] ?>"><i class="icon-tasks"></i> Préparer la correction</a>
@@ -81,10 +84,12 @@ Traitements sur les images scannées
 <a href="">Associer un fichier FreeMind à une matière</a>
 </li> -->
 </ul>
-</li>
-<br />
+</div>
+</div>
 
-<li><h3>Processus</h3>
+<div class="row-fluid">
+<div class="span6">
+<h3>Processus</h3>
 <ul class=" nav nav-pills">
 <li>
 <a class="btn" href="view_process_progress.php?quiz-id=<?php echo $quiz->getId() ?>"><i class="icon-dashboard"></i> Voir la progression du processus courant</a>
@@ -92,11 +97,11 @@ Traitements sur les images scannées
 <li>
 <a class="btn" href="view_processes.php?quiz-id=<?php echo $_GET['quiz-id'] ?>">Voir les processus terminés</a>
 </li>
-</ul>
-</li>
-<br />
+</div>
 
-<li><h3>Fichiers</h3>
+
+<div class="span6">
+<h3>Fichiers</h3>
 <ul class=" nav nav-pills">
 <li>
 <a class="btn" href="view_omr_files.php?quiz-id=<?php echo $quiz->getId() ?>"><i class="icon-download"></i> Reconnaissance des marques</a>
@@ -108,12 +113,8 @@ Traitements sur les images scannées
 <a class="btn" href="get_corrections.php?quiz-id=<?php echo $_GET['quiz-id'] ?>"><i class="icon-download"></i> OpenOffice avec les résultats</a>
 </li>
 </ul>
-</li>
+</div>
+</div>
 
-</ul>
-
-
-
-<br>
 <?php  doMainMenu() ?>
 <?php include 'footer.html' ?>
