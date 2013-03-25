@@ -92,10 +92,10 @@ Traitements sur les images scannées
 <h3 class="page-header">Processus</h3>
 <ul class=" nav">
 <li>
-<a class="btn" href="view_process_progress.php?quiz-id=<?php //echo $quiz->getId() ?>"><i class="icon-dashboard"></i> Voir la progression du processus courant</a>
+<a class="btn" href="view_process_progress.php?quiz-id=<?php echo $quiz->getId() ?>"><i class="icon-dashboard"></i> Voir la progression du processus courant</a>
 </li>
 <li>
-<a class="btn" href="view_processes.php?quiz-id=<?php //echo $quiz->getId() ?>">Voir les processus terminés</a>
+<a class="btn" href="view_processes.php?quiz-id=<?php echo $quiz->getId() ?>">Voir les processus terminés</a>
 </li>
 </ul>
 </div>
@@ -105,13 +105,13 @@ Traitements sur les images scannées
 <h3 class="page-header">Fichiers</h3>
 <ul class="nav">
 <li>
-<a class="btn" href="view_omr_files.php?quiz-id=<?php //echo $quiz->getId() ?>"><i class="icon-download"></i> Reconnaissance des marques</a>
+<a class="btn" href="view_omr_files.php?quiz-id=<?php echo $quiz->getId() ?>"><i class="icon-download"></i> Reconnaissance des marques</a>
 </li>
 <li>
-<a class="btn" href="view_correction_files.php?quiz-id=<?php //echo $quiz->getId() ?>"><i class="icon-download"></i> Correction</a>
+<a class="btn" href="view_correction_files.php?quiz-id=<?php echo $quiz->getId() ?>"><i class="icon-download"></i> Correction</a>
 </li>
 <li>
-<a class="btn" href="get_corrections.php?quiz-id=<?php //echo $quiz->getId() ?>"><i class="icon-download"></i> OpenOffice avec les résultats</a>
+<a class="btn" href="get_corrections.php?quiz-id=<?php echo $quiz->getId() ?>"><i class="icon-download"></i> OpenOffice avec les résultats</a>
 </li>
 </ul>
 </div>

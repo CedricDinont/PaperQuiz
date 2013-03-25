@@ -1,6 +1,6 @@
 </head>
 <body>
-    <div class="navbar navbar-inverse navbar-static-top">
+    <div class="navbar navbar-inverse navbar-static-top" data-toggle="collapse" data-target=".nav-collapse">
       <div class="navbar-inner">
 	  <ul class="nav">
 	    <li class="brand"><i class="icon-book 2x-scale"></i>QuizApp</li>
